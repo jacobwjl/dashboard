@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="steel">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══ THEMES ══════════════════════════════════════════════════ */
+[data-theme="steel"]{--base:#0e1117;--mantle:#090d13;--crust:#060910;--s0:#161b22;--s1:#21262d;--s2:#30363d;--ov0:#484f58;--ov1:#6e7681;--sub0:#8b949e;--sub1:#b1bac4;--tx:#e6edf3;--ac:#388bfd;--ac2:#58a6ff;--ac3:#79c0ff;--green:#3fb950;--yellow:#d29922;--red:#f85149;--teal:#39c5cf;--peach:#e3954a;--sky:#58a6ff;--m1:rgba(56,139,253,.12);--m2:rgba(63,185,80,.07);--m3:rgba(57,197,207,.06)}
+[data-theme="ember"]{--base:#1c1610;--mantle:#161209;--crust:#110e06;--s0:#2c2318;--s1:#3d3222;--s2:#51432e;--ov0:#7a6548;--ov1:#9c8260;--sub0:#c9a97a;--sub1:#ddc49a;--tx:#f2deb8;--ac:#e8a045;--ac2:#c97b2f;--ac3:#f5c97a;--green:#8fb86b;--yellow:#e8c547;--red:#d45f3c;--teal:#6aab9e;--peach:#e07a45;--sky:#7db8c9;--m1:rgba(232,160,69,.12);--m2:rgba(201,123,47,.08);--m3:rgba(143,184,107,.06)}
+[data-theme="canopy"]{--base:#0d1210;--mantle:#080e0b;--crust:#050a07;--s0:#141f19;--s1:#1e2e24;--s2:#2a3f32;--ov0:#3d5c48;--ov1:#527a60;--sub0:#6fa882;--sub1:#8fc4a0;--tx:#c8e6c0;--ac:#4ec76e;--ac2:#89d98a;--ac3:#b8f0a0;--green:#4ec76e;--yellow:#c8d44e;--red:#e05c5c;--teal:#4ec4b0;--peach:#c89a4e;--sky:#4ebec8;--m1:rgba(78,199,110,.12);--m2:rgba(200,212,78,.07);--m3:rgba(78,196,176,.06)}
+[data-theme="neon"]{--base:#100a14;--mantle:#0b0710;--crust:#07050d;--s0:#1a0f24;--s1:#261535;--s2:#341e48;--ov0:#5c3d7a;--ov1:#7a52a0;--sub0:#a87ac8;--sub1:#c4a0e0;--tx:#f0e0ff;--ac:#ff2d78;--ac2:#c43aff;--ac3:#ff8ac4;--green:#39e87a;--yellow:#ffe566;--red:#ff3a3a;--teal:#2de8d0;--peach:#ff8c42;--sky:#38d5ff;--m1:rgba(255,45,120,.13);--m2:rgba(196,58,255,.09);--m3:rgba(45,232,208,.06)}
+
+/* ══ RESET ═══════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--base);color:var(--tx);min-height:100vh;overflow-x:hidden;line-height:1.5}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s1);border-radius:99px}
+::selection{background:var(--ac);color:var(--base)}
+input,textarea,button,select{font-family:inherit;font-size:inherit;color:inherit;border:none;outline:none;background:none}
+button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(--ac)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:4px}
+
+/* ══ BACKGROUND ══════════════════════════════════════════════ */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 700px 480px at 15% 38%,var(--m1),transparent),
+    radial-gradient(ellipse 550px 600px at 82% 20%,var(--m2),transparent),
+    radial-gradient(ellipse 500px 400px at 58% 78%,var(--m3),transparent);
+  animation:meshShift 30s ease-in-out infinite alternate}
+@keyframes meshShift{0%{filter:blur(0)}100%{filter:blur(1px)}}
+
+/* ══ LAYOUT ══════════════════════════════════════════════════ */
+.layout{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ══ SIDEBAR ═════════════════════════════════════════════════ */
+.sidebar{
+  width:220px;flex-shrink:0;
+  position:fixed;top:0;left:0;bottom:0;
+  background:rgba(0,0,0,.25);
+  backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;
+  padding:20px 12px 16px;
+  z-index:50;overflow-y:auto;overflow-x:hidden}
+.sb-brand{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--ov0);padding:0 10px;margin-bottom:16px}
+.sb-clock{font-family:'JetBrains Mono',monospace;font-size:1.9rem;font-weight:300;line-height:1;color:var(--tx);padding:0 10px}
+.sb-date{font-size:.68rem;color:var(--ov0);padding:4px 10px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:10px 0}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 12px;border-radius:9px;
+  font-size:.8rem;font-weight:500;color:var(--sub0);
+  transition:all 150ms;width:100%;text-align:left;position:relative}
+.nav-item svg{flex-shrink:0;opacity:.7;transition:opacity 150ms}
+.nav-item:hover{background:rgba(255,255,255,.06);color:var(--tx)}
+.nav-item:hover svg{opacity:1}
+.nav-item.on{background:rgba(255,255,255,.08);color:var(--tx)}
+.nav-item.on svg{opacity:1}
+.nav-item.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--ac);border-radius:0 3px 3px 0}
+.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 0}
+.sb-quickstat{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:.75rem;color:var(--sub0);border-radius:8px;cursor:pointer;transition:background 150ms}
+.sb-quickstat:hover{background:rgba(255,255,255,.05);color:var(--tx)}
+.sb-quickstat .label{color:var(--ov0);font-size:.65rem}
+.sb-spacer{flex:1}
+/* ══ TIMER COMPACT (sidebar ring) ════════════════════════════ */
+.sb-timer-compact{padding:8px 0 4px;text-align:center;cursor:pointer;border-radius:10px;transition:background 150ms;margin:0 4px}
+.sb-timer-compact:hover{background:rgba(255,255,255,.05)}
+.stc-ring-wrap{position:relative;width:56px;height:56px;margin:0 auto 5px}
+.stc-ring-wrap svg{transform:rotate(-90deg)}
+.stc-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:3}
+.stc-prog{fill:none;stroke:var(--ac);stroke-width:3;stroke-linecap:round;stroke-dasharray:144.5;stroke-dashoffset:144.5;transition:stroke-dashoffset 1s linear}
+.stc-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;font-variant-numeric:tabular-nums}
+.stc-badge{position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);font-size:.5rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.stc-label{font-size:.58rem;color:var(--ov0);letter-spacing:.03em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 6px}
+/* ══ TIMER PANEL ═════════════════════════════════════════════ */
+.tp-backdrop{position:fixed;inset:0;z-index:49;display:none}
+.tp-backdrop.on{display:block}
+.timer-panel{position:fixed;top:0;left:220px;bottom:0;width:320px;z-index:52;
+  background:rgba(8,8,14,.82);backdrop-filter:blur(28px) saturate(1.5);-webkit-backdrop-filter:blur(28px) saturate(1.5);
+  border-right:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;
+  transform:translateX(-320px);visibility:hidden;
+  transition:transform 200ms cubic-bezier(.16,1,.3,1),visibility 0s linear 200ms}
+.timer-panel.on{transform:translateX(0);visibility:visible;transition:transform 200ms cubic-bezier(.16,1,.3,1),visibility 0s linear 0s}
+.tp-head{display:flex;align-items:center;padding:16px 14px 12px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.tp-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ov0);flex:1}
+.tp-hbtn{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--ov0);transition:all 150ms}
+.tp-hbtn:hover{background:rgba(255,255,255,.08);color:var(--tx)}
+.tp-list{flex:1;overflow-y:auto;padding:10px 10px;display:flex;flex-direction:column;gap:6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.15) transparent}
+.tp-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.25);font-size:.75rem;padding:40px 0}
+/* Timer Cards */
+.tcard{position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:10px 12px 8px 18px;transition:background 150ms,border-color 150ms}
+.tcard:hover{background:rgba(255,255,255,.055)}
+.tcard.running{border-color:rgba(255,255,255,.13)}
+.tcard-accent{position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0}
+.tcard-row1{display:flex;align-items:center;gap:7px}
+.tcard-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tcard-dot.running{animation:dot-alive 2s ease-in-out infinite}
+@keyframes dot-alive{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+.tcard-lbl{flex:1;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tcard-time{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:.92rem;font-weight:600;flex-shrink:0}
+.tcard-time.warn{color:#f56565}
+@keyframes timer-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.tcard-time.pulse{animation:timer-pulse 1s ease-in-out infinite}
+.tcard-ctrls{display:flex;gap:2px;flex-shrink:0;margin-left:4px}
+.tcard-btn{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:rgba(255,255,255,.38);transition:all 150ms}
+.tcard-btn:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.85)}
+.tcard-btn.primary{font-size:.8rem}
+.tcard-row2{font-size:.62rem;color:rgba(255,255,255,.38);margin-top:3px;padding-left:14px}
+/* Add Timer Form */
+.tp-add{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:12px;margin:0 0 2px;flex-shrink:0}
+.tp-add-types{display:flex;gap:3px;margin-bottom:10px;flex-wrap:wrap}
+.tp-type-btn{flex:1;min-width:0;padding:5px 3px;border-radius:6px;font-size:.58rem;font-weight:600;text-align:center;color:rgba(255,255,255,.38);border:1px solid transparent;transition:all 150ms;background:none;cursor:pointer;white-space:nowrap}
+.tp-type-btn:hover{color:rgba(255,255,255,.7)}
+.tp-type-btn.on{border-color:rgba(255,255,255,.18);color:var(--tx);background:rgba(255,255,255,.06)}
+.tp-presets{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.tp-preset{font-size:.64rem;padding:3px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);transition:all 150ms;cursor:pointer;background:none}
+.tp-preset:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.85)}
+.tp-preset.on{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:var(--tx)}
+.tp-inp{width:100%;padding:6px 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:.75rem;color:var(--tx);margin-bottom:8px;transition:border-color 150ms}
+.tp-inp:focus{border-color:var(--ac);outline:none}
+.tp-inp::placeholder{color:rgba(255,255,255,.22)}
+.tp-start-btn{width:100%;padding:7px;border-radius:7px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.75);font-size:.75rem;font-weight:600;transition:all 150ms}
+.tp-start-btn:hover{background:rgba(255,255,255,.13);color:var(--tx)}
+/* Themes */
+.sb-bottom{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 0;border-top:1px solid rgba(255,255,255,.05);margin-top:8px}
+.sb-themes{display:flex;gap:7px;align-items:center}
+.tdot{width:13px;height:13px;border-radius:50%;border:2px solid transparent;transition:all 150ms;flex-shrink:0}
+.tdot:hover{transform:scale(1.25)}
+.tdot.on{border-color:rgba(255,255,255,.5);transform:scale(1.15)}
+.sb-settings{color:var(--ov0);font-size:.9rem;padding:4px;border-radius:6px;transition:all 150ms;line-height:1}
+.sb-settings:hover{color:var(--tx);background:rgba(255,255,255,.06)}
+/* Mobile hamburger */
+.menu-btn{display:none;position:fixed;top:14px;left:14px;z-index:60;
+  width:36px;height:36px;border-radius:8px;
+  background:rgba(0,0,0,.3);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;color:var(--sub0)}
+.sb-overlay{display:none;position:fixed;inset:0;z-index:49;background:rgba(0,0,0,.5)}
+
+/* ══ MAIN CONTENT ════════════════════════════════════════════ */
+.main{margin-left:220px;flex:1;padding:24px 32px 48px;min-width:0}
+
+/* ══ SEARCH ══════════════════════════════════════════════════ */
+.search-wrap{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.search-inner{position:relative;flex:1}
+.sbar{width:100%;padding:11px 16px 11px 40px;
+  background:rgba(255,255,255,.04);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.07);border-radius:11px;color:var(--tx);font-size:.9rem;
+  transition:all 200ms}
+.sbar::placeholder{color:var(--ov0)}
+.sbar:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(203,166,247,.1);background:rgba(255,255,255,.06)}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ov0);pointer-events:none}
+.sbadge{font-size:.65rem;padding:5px 11px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:var(--ov0);white-space:nowrap;transition:all 150ms;flex-shrink:0}
+.sbadge:hover{background:rgba(255,255,255,.09);color:var(--tx)}
+
+/* ══ TICKER ══════════════════════════════════════════════════ */
+.ticker-bar{overflow:hidden;height:34px;display:flex;align-items:center;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;
+  margin-bottom:22px;
+  -webkit-mask:linear-gradient(90deg,transparent,#fff 5%,#fff 95%,transparent);
+  mask:linear-gradient(90deg,transparent,#fff 5%,#fff 95%,transparent)}
+.ticker-track{display:flex;align-items:center;width:max-content;animation:tickScroll 90s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes tickScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ti{font-size:.7rem;padding:0 14px;white-space:nowrap;color:var(--sub0);display:inline-flex;align-items:center;gap:5px}
+.ti strong{color:var(--tx);font-weight:600;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.ti-sep{color:var(--ov0);font-size:.65rem;user-select:none;opacity:.6}
+
+/* ══ PAGES ═══════════════════════════════════════════════════ */
+.page{display:none;animation:fadeUp 280ms ease-out both}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ov0);margin-bottom:18px}
+
+/* ══ WEATHER ANIMATIONS ══════════════════════════════════════ */
+@keyframes wxFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes wxGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(249,226,175,.5))}50%{filter:drop-shadow(0 0 20px rgba(249,226,175,.9))}}
+@keyframes wxMoon{0%,100%{filter:drop-shadow(0 0 8px rgba(137,180,250,.4))}50%{filter:drop-shadow(0 0 16px rgba(137,180,250,.8))}}
+@keyframes wxRain{0%{transform:translateY(-10px);opacity:0}20%{opacity:1}100%{transform:translateY(32px);opacity:0}}
+@keyframes wxSnow{0%{transform:translateY(-10px) rotate(0);opacity:0}20%{opacity:.9}100%{transform:translateY(32px) rotate(200deg);opacity:0}}
+@keyframes wxLightning{0%,85%,100%{opacity:1}88%,94%{opacity:.05}}
+@keyframes wxCloud{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+.wx-sunny{animation:wxFloat 3.5s ease-in-out infinite,wxGlow 3.5s ease-in-out infinite}
+.wx-night{animation:wxFloat 4s ease-in-out infinite,wxMoon 4s ease-in-out infinite}
+.wx-cloudy{animation:wxCloud 5s ease-in-out infinite}
+.wx-rainy{animation:wxFloat 3s ease-in-out infinite}
+.wx-snowy{animation:wxFloat 5s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(137,220,235,.4))}
+.wx-stormy{animation:wxLightning 2.8s ease-in-out infinite}
+.rain-drop{position:absolute;width:2px;border-radius:2px;background:var(--sky);opacity:0;animation:wxRain 1s linear infinite}
+.snow-dot{position:absolute;font-size:.6rem;opacity:0;animation:wxSnow 1.5s linear infinite}
+.wx-icon-wrap{position:relative;display:inline-flex;font-size:3.8rem;line-height:1}
+
+/* ══ OVERVIEW PAGE ════════════════════════════════════════════ */
+.ov-greeting{font-size:1.5rem;font-weight:300;margin-bottom:4px}
+.ov-quote{font-size:.72rem;font-style:italic;color:var(--ov0);margin-bottom:20px;line-height:1.6}
+.wx-panel{padding:24px 28px;border-radius:14px;margin-bottom:20px;
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 4px 24px rgba(0,0,0,.2)}
+.wx-hero-row{display:flex;align-items:center;gap:20px;margin-bottom:18px}
+.wx-temp-big{font-family:'JetBrains Mono',monospace;font-size:3.2rem;font-weight:300;line-height:1}
+.wx-desc{font-size:1rem;color:var(--sub0);margin-top:2px}
+.wx-loc{font-size:.72rem;color:var(--ov0);margin-top:4px}
+.wx-stats-row{display:flex;gap:20px;flex-wrap:wrap;padding:14px 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:18px}
+.wx-stat{display:flex;flex-direction:column;gap:2px}
+.wx-stat .v{font-size:.82rem;font-weight:500;color:var(--tx)}
+.wx-stat .k{font-size:.6rem;color:var(--ov0);text-transform:uppercase;letter-spacing:.06em}
+.forecast-row{display:flex;gap:6px;margin-bottom:14px}
+.fday{flex:1;text-align:center;padding:8px 4px;background:rgba(255,255,255,.03);border-radius:9px;min-width:0}
+.fday-name{font-size:.58rem;color:var(--ov0);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.fday-icon{font-size:1.3rem;margin:4px 0}
+.fday-temps{font-family:'JetBrains Mono',monospace;font-size:.62rem}
+.fday-hi{color:var(--tx)}.fday-lo{color:var(--ov0)}
+.precip-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin:4px 5px 2px}
+.precip-fill{height:100%;background:var(--sky);border-radius:2px}
+.precip-pct{font-size:.52rem;color:var(--ov0)}
+.ov-bottom{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:0}
+.panel{padding:20px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.panel-title{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ov0);margin-bottom:14px}
+
+/* Calendar */
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-title{font-size:.8rem;font-weight:600}
+.cal-nav{color:var(--ov0);font-size:1rem;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all 150ms}
+.cal-nav:hover{background:var(--s0);color:var(--tx)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:.55rem;color:var(--ov0);font-weight:600;padding:3px 0}
+.cal-day{text-align:center;font-size:.7rem;padding:5px 2px;border-radius:5px;transition:background 150ms}
+.cal-day:hover{background:var(--s0)}
+.cal-day.today{background:var(--ac);color:var(--base);font-weight:600}
+.cal-day.faded{color:var(--s2)}
+
+/* Quote panel */
+.quote-body{font-style:italic;font-size:.82rem;line-height:1.65;color:var(--sub0);margin-bottom:8px}
+.quote-auth{font-size:.68rem;color:var(--ov0)}
+
+/* ══ NEWS PAGE ════════════════════════════════════════════════ */
+.source-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.spill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;
+  font-size:.7rem;font-weight:500;background:var(--s0);color:var(--sub0);
+  border:1px solid transparent;transition:all 150ms}
+.spill:hover{background:var(--s1);color:var(--tx)}
+.spill.on{color:var(--tx);border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.08)}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.news-feed{display:flex;flex-direction:column}
+.feed-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.04);transition:background 150ms}
+.feed-item:last-child{border-bottom:none}
+.feed-item:hover{background:rgba(255,255,255,.02);margin:0 -8px;padding-left:8px;padding-right:8px;border-radius:8px}
+.feed-source-info{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.fsrc{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ov0)}
+.ftime{font-size:.6rem;color:var(--s2)}
+.feed-title{font-size:.84rem;line-height:1.45;color:var(--tx);display:block;margin-bottom:2px}
+.feed-title:hover{color:var(--ac)}
+.feed-desc{font-size:.72rem;color:var(--ov0);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-loading{padding:40px 0;text-align:center;color:var(--ov0);font-size:.8rem}
+.news-refresh{font-size:.65rem;padding:5px 12px;border-radius:7px;background:var(--s0);color:var(--ov0);transition:all 150ms;float:right}
+.news-refresh:hover{background:var(--s1);color:var(--tx)}
+.news-updated{font-size:.62rem;color:var(--s2);margin-bottom:10px}
+
+/* ══ MARKETS PAGE ═════════════════════════════════════════════ */
+.markets-panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);overflow:hidden}
+.stk-topbar{display:flex;align-items:center;gap:8px;padding:14px 18px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.stk-tabs{display:flex;gap:4px;flex:1}
+.stk-tab{font-size:.76rem;font-weight:600;padding:6px 14px;border-radius:8px 8px 0 0;color:var(--ov0);transition:all 150ms;border-bottom:2px solid transparent;margin-bottom:-1px}
+.stk-tab:hover{color:var(--tx)}
+.stk-tab.on{color:var(--tx);border-bottom-color:var(--ac);background:rgba(255,255,255,.04)}
+.stk-meta{display:flex;align-items:center;gap:10px;padding-bottom:8px}
+.stk-updated{font-size:.6rem;color:var(--s2)}
+.stk-header{
+  display:grid;
+  grid-template-columns:1fr 130px 110px 110px 90px;
+  align-items:center;padding:0 18px;height:32px;
+  border-bottom:1px solid rgba(255,255,255,.06)}
+.stk-hcell{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0)}
+.stk-hcell.r{text-align:right}
+.stk-body{max-height:520px;overflow-y:auto}
+.stk-row{
+  display:grid;
+  grid-template-columns:1fr 130px 110px 110px 90px;
+  align-items:center;padding:0 18px;height:52px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  transition:background 120ms;cursor:pointer}
+.stk-row:last-child{border-bottom:none}
+.stk-row:hover{background:rgba(255,255,255,.03)}
+.stk-col-name{display:flex;align-items:center;gap:8px;min-width:0}
+.coin-ico{width:20px;height:20px;border-radius:50%;flex-shrink:0}
+.stk-sym{font-size:.82rem;font-weight:700;color:var(--tx);flex-shrink:0}
+.stk-name{font-size:.72rem;color:var(--ov0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stk-num{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:.84rem;font-weight:400;text-align:right;color:var(--tx)}
+.stk-pill{display:inline-flex;align-items:center;justify-content:flex-end;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:.75rem;font-weight:600;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.stk-pill.up{background:rgba(166,227,161,.15);color:var(--green)}
+.stk-pill.dn{background:rgba(243,139,168,.12);color:var(--red)}
+.stk-col-chg{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.stk-col-price,.stk-col-mcap,.stk-col-vol{display:flex;align-items:center;justify-content:flex-end}
+.stk-rank{font-size:.6rem;font-weight:700;color:var(--s2);min-width:18px;text-align:right}
+.stk-footnote{font-size:.6rem;color:var(--s2);padding:10px 18px 12px;border-top:1px solid rgba(255,255,255,.04);text-align:center}
+.stk-live-badge{display:inline-flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--green);padding:2px 6px;border-radius:4px;background:rgba(166,227,161,.1)}
+.stk-seed-badge{display:inline-flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ov0);padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.05)}
+
+/* ══ STOCK DETAIL MODAL ═══════════════════════════════════════ */
+.stkm-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.stkm-overlay.on{display:flex}
+.stkm{
+  background:var(--mantle);border:1px solid rgba(255,255,255,.1);
+  border-radius:18px;width:min(940px,96vw);max-height:92vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 48px 96px rgba(0,0,0,.7)}
+.stkm-head{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.stkm-icon{width:36px;height:36px;border-radius:8px;background:var(--s0);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.stkm-icon img{width:28px;height:28px}
+.stkm-sym{font-size:1.35rem;font-weight:800;color:var(--tx);letter-spacing:-.01em}
+.stkm-name{font-size:.75rem;color:var(--ov0);margin-top:1px}
+.stkm-price-block{margin-left:auto;text-align:right}
+.stkm-price{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:500;color:var(--tx);line-height:1.1}
+.stkm-chg{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:.82rem;font-weight:600;margin-top:4px}
+.stkm-chg.up{color:var(--green)}.stkm-chg.dn{color:var(--red)}
+.stkm-close{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--ov0);transition:all 150ms;flex-shrink:0;margin-left:12px}
+.stkm-close:hover{background:rgba(255,255,255,.08);color:var(--tx)}
+.stkm-chart{flex-shrink:0;height:430px;background:var(--crust);position:relative}
+.stkm-chart-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ov0);font-size:.8rem}
+.stkm-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid rgba(255,255,255,.05);flex-shrink:0;overflow-y:auto}
+.stkm-stat{padding:13px 18px;border-right:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
+.stkm-stat:nth-child(4n){border-right:none}
+.stkm-stat-lbl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ov0);margin-bottom:4px}
+.stkm-stat-val{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:.86rem;color:var(--tx)}
+.stkm-stat-val.up{color:var(--green)}.stkm-stat-val.dn{color:var(--red)}
+
+/* ══ TASKS PAGE ═══════════════════════════════════════════════ */
+.tasks-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.todo-irow{display:flex;gap:8px;margin-bottom:14px}
+.todo-inp{flex:1;padding:9px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:9px;font-size:.82rem;transition:all 200ms}
+.todo-inp:focus{border-color:var(--ac);background:rgba(255,255,255,.07)}
+.todo-add{padding:9px 16px;border-radius:9px;background:rgba(203,166,247,.15);color:var(--ac);font-size:.8rem;font-weight:500;transition:all 150ms}
+.todo-add:hover{background:rgba(203,166,247,.25)}
+.tlist{display:flex;flex-direction:column;gap:6px;min-height:180px;max-height:360px;overflow-y:auto;padding-right:2px}
+.ti2{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;background:rgba(255,255,255,.03);transition:background 150ms}
+.ti2:hover{background:rgba(255,255,255,.05)}
+.tcb{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--s2);flex-shrink:0;transition:all 150ms;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.tcb.on{background:var(--green);border-color:var(--green);color:var(--base)}
+.tcb.on::after{content:'✓';font-size:.65rem;font-weight:700}
+.ttx{flex:1;font-size:.82rem}.ttx.done{text-decoration:line-through;color:var(--ov0)}
+.tdel{color:var(--s2);font-size:.75rem;opacity:0;transition:all 150ms;padding:2px 4px}
+.ti2:hover .tdel{opacity:1}.tdel:hover{color:var(--red)}
+.tfooter{display:flex;gap:4px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.05)}
+.tfilter{font-size:.68rem;padding:3px 9px;border-radius:6px;color:var(--ov0);transition:all 150ms}
+.tfilter.on{background:var(--s0);color:var(--tx)}.tfilter:hover{color:var(--tx)}
+.tcnt{margin-left:auto;font-size:.65rem;color:var(--s2)}
+.notes-area{width:100%;min-height:280px;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:9px;font-size:.82rem;resize:vertical;color:var(--tx);line-height:1.6;transition:border-color 200ms}
+.notes-area:focus{border-color:var(--ac);outline:none}
+.notes-area::placeholder{color:var(--ov0)}
+.notes-foot{font-size:.62rem;color:var(--s2);margin-top:6px;text-align:right}
+
+/* ══ BOOKMARKS PAGE ═══════════════════════════════════════════ */
+.bm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
+.bm{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;
+  border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  font-size:.7rem;color:var(--sub0);text-align:center;transition:all 150ms}
+.bm:hover{background:rgba(255,255,255,.08);color:var(--tx);transform:translateY(-2px);border-color:rgba(255,255,255,.12);text-decoration:none}
+.bm-ico{width:34px;height:34px;border-radius:8px;background:var(--s0);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bm-ico img{width:20px;height:20px}
+.bm-add-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;
+  border-radius:12px;border:1px dashed rgba(255,255,255,.1);font-size:.7rem;color:var(--ov0);
+  transition:all 150ms;background:none;width:100%}
+.bm-add-btn:hover{border-color:var(--ac);color:var(--ac);background:rgba(203,166,247,.05)}
+.bm-add-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--ov0)}
+
+/* ══ SETTINGS ════════════════════════════════════════════════ */
+.s-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(4px)}
+.s-overlay.on{display:flex}
+.s-modal{background:var(--mantle);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:28px;width:360px;max-width:calc(100vw - 32px)}
+.s-modal h2{font-size:.95rem;font-weight:600;margin-bottom:20px}
+.s-row{margin-bottom:16px}
+.s-row label{display:block;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0);margin-bottom:6px}
+.s-inp{width:100%;padding:9px 12px;background:var(--s0);border:1px solid rgba(255,255,255,.07);border-radius:9px;font-size:.82rem;color:var(--tx);transition:border-color 200ms}
+.s-inp:focus{border-color:var(--ac)}
+.s-btns{display:flex;gap:8px;margin-top:20px}
+.s-save{flex:1;padding:10px;border-radius:9px;background:rgba(203,166,247,.2);color:var(--ac);font-weight:600;font-size:.82rem;transition:all 150ms}
+.s-save:hover{background:rgba(203,166,247,.3)}
+.s-close{padding:10px 18px;border-radius:9px;background:var(--s0);color:var(--ov0);font-size:.82rem;transition:all 150ms}
+.s-close:hover{background:var(--s1);color:var(--tx)}
+.s-unit-row{display:flex;gap:6px}
+.ubtn{padding:7px 16px;border-radius:7px;font-size:.78rem;background:var(--s0);color:var(--ov0);transition:all 150ms}
+.ubtn.on{background:rgba(203,166,247,.2);color:var(--ac)}
+.ubtn:hover{background:var(--s1)}
+
+/* ══ UTILITIES ════════════════════════════════════════════════ */
+.empty{padding:28px 0;text-align:center;color:var(--ov0);font-size:.78rem}
+.loading{padding:28px 0;text-align:center;color:var(--ov0);font-size:.78rem}
+.rb{color:var(--ov0);font-size:.9rem;padding:3px 6px;border-radius:5px;transition:all 150ms}
+.rb:hover{background:var(--s0);color:var(--tx)}
+
+/* ══ RESPONSIVE ══════════════════════════════════════════════ */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);transition:transform 280ms cubic-bezier(.4,0,.2,1)}
+  .sidebar.open{transform:translateX(0)}
+  .sb-overlay{display:block}
+  .main{margin-left:0;padding:60px 18px 48px}
+  .menu-btn{display:flex}
+  .tasks-layout{grid-template-columns:1fr}
+  .ov-bottom{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .forecast-row{gap:3px}
+  .bm-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- Mobile menu button -->
+<button class="menu-btn" id="menuBtn" onclick="toggleMenu()" aria-label="Menu">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sb-overlay" id="sbOverlay" onclick="toggleMenu()"></div>
+
+<div class="layout">
+<!-- ══ SIDEBAR ════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">Dashboard</div>
+  <div class="sb-clock" id="hTime">00:00:00</div>
+  <div class="sb-date" id="hDate"></div>
+
+  <nav class="sb-nav">
+    <button class="nav-item on" data-page="overview" onclick="showPage('overview')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Overview
+    </button>
+    <button class="nav-item" data-page="news" onclick="showPage('news')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>
+      Local News
+    </button>
+    <button class="nav-item" data-page="stocks" onclick="showPage('stocks')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      Markets
+    </button>
+    <button class="nav-item" data-page="tasks" onclick="showPage('tasks')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Tasks &amp; Notes
+    </button>
+    <button class="nav-item" data-page="bookmarks" onclick="showPage('bookmarks')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+      Bookmarks
+    </button>
+  </nav>
+
+  <div class="sb-divider"></div>
+
+  <!-- Quick stats -->
+  <div class="sb-quickstat" onclick="showPage('overview')" id="sbWx">
+    <span style="font-size:1.3rem">&#127777;&#65039;</span>
+    <div><div style="font-size:.78rem;color:var(--tx)">&#8212;</div><div class="label">Weather</div></div>
+  </div>
+  <div class="sb-quickstat" id="sbMoon">
+    <span style="font-size:1.1rem">&#127761;</span>
+    <div id="sbMoonTxt"><div style="font-size:.75rem;color:var(--tx)">&#8212;</div><div class="label">Moon</div></div>
+  </div>
+
+  <div class="sb-spacer"></div>
+  <div class="sb-divider"></div>
+
+  <!-- Multi-Timer compact ring -->
+  <div class="sb-timer-compact" id="timerCompact" onclick="toggleTimerPanel()" title="Open Timers (T)">
+    <div class="stc-ring-wrap">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <circle class="stc-track" cx="28" cy="28" r="23"/>
+        <circle class="stc-prog" id="tcRing" cx="28" cy="28" r="23"/>
+      </svg>
+      <div class="stc-time" id="tcTime"></div>
+      <div class="stc-badge" id="tcBadge" style="display:none"></div>
+    </div>
+    <div class="stc-label" id="tcLabel">Add Timer</div>
+  </div>
+
+  <div class="sb-divider"></div>
+  <div class="sb-bottom">
+    <div class="sb-themes">
+      <button class="tdot" style="background:#388bfd" onclick="setTheme('steel')" data-t="steel" title="Steel"></button>
+      <button class="tdot" style="background:#e8a045" onclick="setTheme('ember')" data-t="ember" title="Ember"></button>
+      <button class="tdot" style="background:#4ec76e" onclick="setTheme('canopy')" data-t="canopy" title="Canopy"></button>
+      <button class="tdot" style="background:#ff2d78" onclick="setTheme('neon')" data-t="neon" title="Neon"></button>
+    </div>
+    <button class="sb-settings" onclick="openSettings()" title="Settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════ -->
+<main class="main">
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <svg class="si" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="sbar" id="sbar" placeholder="Search..." autocomplete="off" spellcheck="false">
+    </div>
+    <button class="sbadge" id="sbadge" onclick="cycleEngine()">Google</button>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-track" id="tickerTrack">
+      <!-- built by initTicker() -->
+    </div>
+  </div>
+
+  <!-- ── OVERVIEW ──────────────────────────────────────────── -->
+  <section class="page on" id="page-overview">
+    <div class="ov-greeting" id="greeting">Good morning</div>
+    <div class="ov-quote" id="hQuote"></div>
+
+    <!-- Weather panel -->
+    <div class="wx-panel" id="wxCard">
+      <div id="wxBody"><div class="loading">Loading weather&hellip;</div></div>
+    </div>
+
+    <div class="ov-bottom">
+      <!-- Calendar -->
+      <div class="panel">
+        <div class="panel-title">Calendar</div>
+        <div id="calBody"></div>
+      </div>
+      <!-- Quote -->
+      <div class="panel" style="display:flex;flex-direction:column;justify-content:center">
+        <div class="panel-title">Today&rsquo;s Thought</div>
+        <div class="quote-body" id="quoteBody"></div>
+        <div class="quote-auth" id="quoteAuth"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LOCAL NEWS ────────────────────────────────────────── -->
+  <section class="page" id="page-news">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="page-title" style="margin-bottom:0">Local News &mdash; Cobourg &amp; Northumberland</div>
+      <button class="news-refresh" onclick="fetchAllNews(true)">Refresh</button>
+    </div>
+    <div class="source-pills" id="sourcePills"></div>
+    <div class="news-updated" id="newsUpdated"></div>
+    <div id="newsFeed"><div class="news-loading">Loading local news&hellip;</div></div>
+  </section>
+
+  <!-- ── MARKETS ───────────────────────────────────────────── -->
+  <section class="page" id="page-stocks">
+    <div class="markets-panel">
+      <div class="stk-topbar">
+        <div class="stk-tabs">
+          <button class="stk-tab on" data-tab="tsx" onclick="switchStockTab('tsx')">TSX</button>
+          <button class="stk-tab" data-tab="crypto" onclick="switchStockTab('crypto')">Crypto</button>
+        </div>
+        <div class="stk-meta">
+          <span class="stk-updated" id="stkUpdated"></span>
+          <button class="rb" onclick="fetchStocks()">&#8635; Refresh</button>
+        </div>
+      </div>
+      <div class="stk-header">
+        <div class="stk-hcell">Name</div>
+        <div class="stk-hcell r">Price (CAD)</div>
+        <div class="stk-hcell r">24h Change</div>
+        <div class="stk-hcell r">Market Cap</div>
+        <div class="stk-hcell r">Volume</div>
+      </div>
+      <div id="tsxBody" class="stk-body"><div class="loading">Loading&hellip;</div></div>
+      <div id="cryptoBody" class="stk-body" style="display:none"><div class="loading">Loading&hellip;</div></div>
+    </div>
+  </section>
+
+  <!-- ── TASKS & NOTES ─────────────────────────────────────── -->
+  <section class="page" id="page-tasks">
+    <div class="tasks-layout">
+      <div class="panel">
+        <div class="panel-title">Tasks</div>
+        <div class="todo-irow">
+          <input class="todo-inp" id="tInp" placeholder="Add a task&hellip;" onkeydown="if(event.key==='Enter')addTodo()">
+          <button class="todo-add" onclick="addTodo()">Add</button>
+        </div>
+        <div class="tlist" id="tList"></div>
+        <div class="tfooter">
+          <button class="tfilter on" data-f="all" onclick="setTF('all')">All</button>
+          <button class="tfilter" data-f="active" onclick="setTF('active')">Active</button>
+          <button class="tfilter" data-f="done" onclick="setTF('done')">Done</button>
+          <span class="tcnt" id="tCnt"></span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Notes</div>
+        <textarea class="notes-area" id="nArea" placeholder="Your scratchpad&hellip;" oninput="saveNotes()"></textarea>
+        <div class="notes-foot" id="nFoot">Saved</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BOOKMARKS ─────────────────────────────────────────── -->
+  <section class="page" id="page-bookmarks">
+    <div class="page-title">Bookmarks</div>
+    <div class="bm-grid" id="bmBody"></div>
+  </section>
+
+</main>
+</div>
+
+<!-- Settings Modal -->
+<div class="s-overlay" id="sOverlay" onclick="e=>e.target===this&&openSettings()">
+  <div class="s-modal" onclick="event.stopPropagation()">
+    <h2>Settings</h2>
+    <div class="s-row">
+      <label>Your Name</label>
+      <input class="s-inp" id="sName" placeholder="Optional">
+    </div>
+    <div class="s-row">
+      <label>City (overrides GPS)</label>
+      <input class="s-inp" id="sCity" placeholder="e.g. Cobourg" oninput="debouncedGeo(this.value)">
+    </div>
+    <div class="s-row">
+      <label>Temperature</label>
+      <div class="s-unit-row">
+        <button class="ubtn on" id="unitC" onclick="setUnit('C')">&deg;C</button>
+        <button class="ubtn" id="unitF" onclick="setUnit('F')">&deg;F</button>
+      </div>
+    </div>
+    <div class="s-btns">
+      <button class="s-save" onclick="saveSettings()">Save</button>
+      <button class="s-close" onclick="openSettings()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Timer Panel -->
+<div class="tp-backdrop" id="tpBackdrop" onclick="toggleTimerPanel()"></div>
+<div class="timer-panel" id="timerPanel">
+  <div class="tp-head">
+    <span class="tp-title">Timers</span>
+    <div style="display:flex;gap:4px">
+      <button class="tp-hbtn" onclick="openAddTimer()" title="Add timer" style="font-size:1.1rem;font-weight:300">+</button>
+      <button class="tp-hbtn" onclick="toggleTimerPanel()" title="Close (T)">&#x2715;</button>
+    </div>
+  </div>
+  <div class="tp-list" id="tpList"></div>
+</div>
+
+<!-- Stock Detail Modal -->
+<div class="stkm-overlay" id="stockModal" onclick="if(event.target===this)closeStockModal()">
+  <div class="stkm">
+    <div class="stkm-head">
+      <div class="stkm-icon" id="smIcon"></div>
+      <div>
+        <div class="stkm-sym" id="smSym"></div>
+        <div class="stkm-name" id="smName"></div>
+      </div>
+      <div class="stkm-price-block">
+        <div class="stkm-price" id="smPrice"></div>
+        <div class="stkm-chg" id="smChg"></div>
+      </div>
+      <button class="stkm-close" onclick="closeStockModal()">&#x2715;</button>
+    </div>
+    <div class="stkm-chart" id="tvChart">
+      <div class="stkm-chart-loading">Loading chart&hellip;</div>
+    </div>
+    <div class="stkm-stats" id="smStats"></div>
+  </div>
+</div>
+
+<script>
+/* ── HELPERS ──────────────────────────────────────────── */
+const LS=(k,v)=>v!==undefined?(v===null?localStorage.removeItem('dash-'+k):localStorage.setItem('dash-'+k,JSON.stringify(v))):JSON.parse(localStorage.getItem('dash-'+k));
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const escA=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;');
+function stripHTML(h){const d=document.createElement('div');d.innerHTML=h;return(d.textContent||'').replace(/\s+/g,' ').trim()}
+function timeAgo(ds){const d=new Date(ds),diff=Math.floor((Date.now()-d)/1000);if(diff<60)return'just now';if(diff<3600)return Math.floor(diff/60)+'m ago';if(diff<86400)return Math.floor(diff/3600)+'h ago';if(diff<604800)return Math.floor(diff/86400)+'d ago';return d.toLocaleDateString('en-CA',{month:'short',day:'numeric'})}
+
+/* ── DATA ─────────────────────────────────────────────── */
+const defaultBMs=[
+  {name:'Google',url:'https://google.com'},{name:'YouTube',url:'https://youtube.com'},
+  {name:'GitHub',url:'https://github.com'},{name:'Gmail',url:'https://mail.google.com'},
+  {name:'Reddit',url:'https://reddit.com'},{name:'X',url:'https://x.com'},
+  {name:'ChatGPT',url:'https://chat.openai.com'},{name:'Claude',url:'https://claude.ai'},
+];
+const worldClocks=[
+  {city:'Los Angeles',tz:'America/Los_Angeles'},
+  {city:'Denver',tz:'America/Denver'},
+  {city:'Chicago',tz:'America/Chicago'},
+  {city:'New York',tz:'America/New_York'},
+  {city:'Cobourg',tz:'America/Toronto'},
+  {city:'London',tz:'Europe/London'},
+  {city:'Paris',tz:'Europe/Paris'},
+  {city:'Moscow',tz:'Europe/Moscow'},
+  {city:'Dubai',tz:'Asia/Dubai'},
+  {city:'Mumbai',tz:'Asia/Kolkata'},
+  {city:'Bangkok',tz:'Asia/Bangkok'},
+  {city:'Singapore',tz:'Asia/Singapore'},
+  {city:'Tokyo',tz:'Asia/Tokyo'},
+  {city:'Sydney',tz:'Australia/Sydney'},
+  {city:'Auckland',tz:'Pacific/Auckland'},
+];
+const quotes=[
+  {t:"The best way to predict the future is to invent it.",a:"Alan Kay"},
+  {t:"Simplicity is the ultimate sophistication.",a:"Leonardo da Vinci"},
+  {t:"Any sufficiently advanced technology is indistinguishable from magic.",a:"Arthur C. Clarke"},
+  {t:"The only way to do great work is to love what you do.",a:"Steve Jobs"},
+  {t:"Talk is cheap. Show me the code.",a:"Linus Torvalds"},
+  {t:"Make it work, make it right, make it fast.",a:"Kent Beck"},
+  {t:"A ship in harbour is safe, but that is not what ships are built for.",a:"John A. Shedd"},
+  {t:"Perfection is achieved when there is nothing left to take away.",a:"Antoine de Saint-Exup\u00e9ry"},
+  {t:"First, solve the problem. Then, write the code.",a:"John Johnson"},
+  {t:"Done is better than perfect.",a:"Sheryl Sandberg"},
+  {t:"Either write something worth reading or do something worth writing.",a:"Benjamin Franklin"},
+  {t:"Imagination is more important than knowledge.",a:"Albert Einstein"},
+];
+const engines={Google:'https://www.google.com/search?q=',DuckDuckGo:'https://duckduckgo.com/?q=',Bing:'https://www.bing.com/search?q=',Brave:'https://search.brave.com/search?q='};
+const bangs={'!g':'https://www.google.com/search?q=','!ddg':'https://duckduckgo.com/?q=','!yt':'https://www.youtube.com/results?search_query=','!gh':'https://github.com/search?q=','!r':'https://www.reddit.com/search/?q=','!w':'https://en.wikipedia.org/w/index.php?search=','!npm':'https://www.npmjs.com/search?q=','!mdn':'https://developer.mozilla.org/search?q=','!so':'https://stackoverflow.com/search?q='};
+const wxCodes={0:{d:'Clear sky',i:'\u2600\uFE0F'},1:{d:'Mainly clear',i:'\uD83C\uDF24\uFE0F'},2:{d:'Partly cloudy',i:'\u26C5'},3:{d:'Overcast',i:'\u2601\uFE0F'},45:{d:'Foggy',i:'\uD83C\uDF2B\uFE0F'},48:{d:'Rime fog',i:'\uD83C\uDF2B\uFE0F'},51:{d:'Light drizzle',i:'\uD83C\uDF26\uFE0F'},53:{d:'Drizzle',i:'\uD83C\uDF26\uFE0F'},55:{d:'Heavy drizzle',i:'\uD83C\uDF27\uFE0F'},61:{d:'Light rain',i:'\uD83C\uDF27\uFE0F'},63:{d:'Rain',i:'\uD83C\uDF27\uFE0F'},65:{d:'Heavy rain',i:'\uD83C\uDF27\uFE0F'},71:{d:'Light snow',i:'\uD83C\uDF28\uFE0F'},73:{d:'Snow',i:'\u2744\uFE0F'},75:{d:'Heavy snow',i:'\u2744\uFE0F'},80:{d:'Light showers',i:'\uD83C\uDF26\uFE0F'},81:{d:'Showers',i:'\uD83C\uDF27\uFE0F'},82:{d:'Heavy showers',i:'\uD83C\uDF27\uFE0F'},95:{d:'Thunderstorm',i:'\u26C8\uFE0F'},96:{d:'Thunderstorm',i:'\u26C8\uFE0F'},99:{d:'Thunderstorm',i:'\u26C8\uFE0F'}};
+
+/* ── NEWS SOURCES ─────────────────────────────────────── */
+
+function parseRSSXML(xml){
+  const doc=new DOMParser().parseFromString(xml,'text/xml');
+  if(doc.querySelector('parsererror'))throw new Error('XML parse error');
+  // RSS 2.0
+  const rssItems=doc.querySelectorAll('channel > item');
+  if(rssItems.length){
+    return Array.from(rssItems).map(el=>{
+      const g=t=>el.querySelector(t)?.textContent?.trim()||'';
+      // <link> in RSS is text content, but some feeds use <link href="">
+      const linkEl=el.querySelector('link');
+      const link=(linkEl?.textContent?.trim())||linkEl?.getAttribute('href')||
+        el.querySelector('guid')?.textContent?.trim()||'';
+      return{title:g('title'),url:link,pubDate:g('pubDate'),desc:g('description')};
+    });
+  }
+  // Atom
+  const entries=doc.querySelectorAll('entry');
+  return Array.from(entries).map(el=>{
+    const g=t=>el.querySelector(t)?.textContent?.trim()||'';
+    const link=el.querySelector('link[rel="alternate"]')?.getAttribute('href')||
+      el.querySelector('link')?.getAttribute('href')||g('id');
+    return{title:g('title'),url:link,pubDate:g('published')||g('updated'),desc:g('summary')||g('content')};
+  });
+}
+
+function normalizeItems(srcKey,raw){
+  return raw.slice(0,15).map(item=>({
+    src:srcKey,
+    title:(item.title||'').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,'').trim(),
+    url:item.url||item.link||'',
+    date:item.pubDate?new Date(item.pubDate):new Date(0),
+    ago:item.pubDate?timeAgo(item.pubDate):'',
+    desc:stripHTML(item.desc||item.description||'').slice(0,180),
+  })).filter(i=>i.title&&i.url);
+}
+
+const newsSources=[
+  {key:'all',name:'All Sources',dot:'#cba6f7'},
+  {key:'tn',name:"Today's Northumberland",dot:'#89b4fa',feed:'https://todaysnorthumberland.ca/feed/'},
+  {key:'ct',name:'Consider This',dot:'#fab387',feed:'https://consider-this.ca/feed/'},
+  {key:'nd',name:'Northumberland Daily',dot:'#f9e2af',feed:'https://northumberlanddaily.ca/feed/'},
+  {key:'cp',name:'Cobourg Police',dot:'#f38ba8',feed:'https://cobourgpoliceservice.com/feed'},
+  {key:'rd',name:'r/Cobourg',dot:'#ff6314',reddit:true},
+];
+
+/* ── TICKER STATE ─────────────────────────────────────── */
+const ticker={wx:null,ip:null,topNews:null};
+
+function initTicker(){
+  const SEP='<span class="ti-sep">&#x269C;</span>';
+  const row=worldClocks.map((c,i)=>
+    `<span class="ti">${esc(c.city)}&nbsp;<strong class="tzv tzv-${i}">--:--</strong></span>${SEP}`
+  ).join('');
+  document.getElementById('tickerTrack').innerHTML=row+row;
+  updateTickerTimes();
+}
+function updateTickerTimes(){
+  const now=new Date();
+  for(let i=0;i<worldClocks.length;i++){
+    const t=now.toLocaleTimeString('en-CA',{timeZone:worldClocks[i].tz,hour:'2-digit',minute:'2-digit',hour12:false});
+    document.querySelectorAll('.tzv-'+i).forEach(el=>{el.textContent=t;});
+  }
+}
+
+/* ── PAGE NAVIGATION ──────────────────────────────────── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('on',b.dataset.page===id));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('on');
+  if(window.innerWidth<=900)toggleMenu(false);
+}
+function toggleMenu(force){
+  const sb=document.getElementById('sidebar'),ov=document.getElementById('sbOverlay');
+  const open=force!==undefined?force:!sb.classList.contains('open');
+  sb.classList.toggle('open',open);
+  ov.style.display=open?'block':'none';
+}
+
+/* ── CLOCK & GREETING ─────────────────────────────────── */
+function updateClock(){
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  document.getElementById('hTime').textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  document.getElementById('hDate').textContent=now.toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'});
+  const h=now.getHours(),name=LS('name')||'',ns=name?`, ${name}`:'';
+  let g='Good night';
+  if(h>=5&&h<12)g='Good morning';else if(h>=12&&h<17)g='Good afternoon';else if(h>=17&&h<21)g='Good evening';
+  document.getElementById('greeting').textContent=g+ns;
+  updateTickerTimes();
+}
+function setQuote(){
+  const now=new Date(),doy=Math.floor((now-new Date(now.getFullYear(),0,0))/86400000);
+  const q=quotes[doy%quotes.length];
+  const qh=document.getElementById('hQuote');
+  if(qh)qh.innerHTML=`\u201C${esc(q.t)}\u201D \u2014 ${esc(q.a)}`;
+  const qb=document.getElementById('quoteBody'),qa=document.getElementById('quoteAuth');
+  if(qb)qb.innerHTML=`\u201C${esc(q.t)}\u201D`;
+  if(qa)qa.textContent=`\u2014 ${q.a}`;
+}
+
+/* ── WEATHER ──────────────────────────────────────────── */
+function wxIcon(code,isDay){
+  const icon=(!isDay&&code<=1)?'\uD83C\uDF19':(wxCodes[code]||{i:'\uD83C\uDF21\uFE0F'}).i;
+  const isRain=(code>=51&&code<=82)||(code>=95),isSnow=(code>=71&&code<=86);
+  const isClear=code<=1,isStorm=code>=95;
+  let cls='wx-icon-wrap';
+  if(isClear&&isDay)cls+=' wx-sunny';else if(!isDay&&isClear)cls+=' wx-night';
+  else if(isStorm)cls+=' wx-stormy';else if(isRain)cls+=' wx-rainy';
+  else if(isSnow)cls+=' wx-snowy';else cls+=' wx-cloudy';
+  let pts='';
+  if(isRain&&!isSnow)pts='<span class="rain-drop" style="left:10%;top:68%;height:10px;animation-delay:0s"></span><span class="rain-drop" style="left:46%;top:68%;height:8px;animation-delay:.32s"></span><span class="rain-drop" style="left:78%;top:68%;height:11px;animation-delay:.65s"></span>';
+  else if(isSnow)pts='<span class="snow-dot" style="left:8%;top:60%;animation-delay:0s">\u2744</span><span class="snow-dot" style="left:50%;top:60%;animation-delay:.55s">\u2744</span><span class="snow-dot" style="left:82%;top:60%;animation-delay:1.1s">\u2744</span>';
+  return `<div class="${cls}">${icon}${pts}</div>`;
+}
+function wxGrad(code,isDay){
+  if(!isDay)return'linear-gradient(140deg,rgba(30,30,70,.6),rgba(255,255,255,.04))';
+  if(code<=1)return'linear-gradient(140deg,rgba(249,226,175,.14),rgba(250,179,135,.07),rgba(255,255,255,.04))';
+  if(code<=3)return'linear-gradient(140deg,rgba(100,115,150,.15),rgba(255,255,255,.04))';
+  if(code<=48)return'linear-gradient(140deg,rgba(80,90,120,.18),rgba(255,255,255,.04))';
+  if(code<=67)return'linear-gradient(140deg,rgba(55,95,200,.2),rgba(25,55,140,.08),rgba(255,255,255,.04))';
+  if(code<=77)return'linear-gradient(140deg,rgba(195,225,255,.2),rgba(130,210,235,.1),rgba(255,255,255,.04))';
+  if(code>=95)return'linear-gradient(140deg,rgba(75,55,120,.32),rgba(35,15,70,.18),rgba(255,255,255,.04))';
+  return'rgba(255,255,255,.04)';
+}
+function uvInfo(uv){
+  if(uv<3)return{lbl:'Low',c:'var(--green)'};
+  if(uv<6)return{lbl:'Moderate',c:'var(--yellow)'};
+  if(uv<8)return{lbl:'High',c:'var(--peach)'};
+  return{lbl:'Very High',c:'var(--red)'};
+}
+function compass(deg){return['N','NE','E','SE','S','SW','W','NW'][Math.round(deg/45)%8]}
+function tv(c){const u=LS('tempUnit')||'C';return u==='F'?Math.round(c*9/5+32)+'\u00B0F':Math.round(c)+'\u00B0C'}
+
+function buildChart(hi,lo){
+  const W=320,H=44,n=7,all=[...hi,...lo];
+  const mn=Math.min(...all),mx=Math.max(...all),rng=mx-mn||1;
+  const sx=i=>(i/(n-1))*W,sy=v=>H-((v-mn)/rng)*(H-8)-4;
+  const path=arr=>{let d=`M${sx(0).toFixed(1)},${sy(arr[0]).toFixed(1)}`;for(let i=1;i<n;i++){const cx=(sx(i-1)+sx(i))/2;d+=` C${cx.toFixed(1)},${sy(arr[i-1]).toFixed(1)},${cx.toFixed(1)},${sy(arr[i]).toFixed(1)},${sx(i).toFixed(1)},${sy(arr[i]).toFixed(1)}`;}return d};
+  const area=hi.map((v,i)=>`${i===0?'M':'L'}${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join(' ')+' '+lo.slice().reverse().map((v,i)=>`L${sx(n-1-i).toFixed(1)},${sy(v).toFixed(1)}`).join(' ')+'Z';
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:44px;overflow:visible">
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--peach)" stop-opacity=".25"/><stop offset="100%" stop-color="var(--sky)" stop-opacity=".08"/></linearGradient></defs>
+    <path d="${area}" fill="url(#cg)"/>
+    <path d="${path(hi)}" fill="none" stroke="var(--peach)" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="${path(lo)}" fill="none" stroke="var(--sky)" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,3"/>
+    ${hi.map((v,i)=>`<circle cx="${sx(i).toFixed(1)}" cy="${sy(v).toFixed(1)}" r="2.5" fill="var(--peach)"/>`).join('')}
+    ${lo.map((v,i)=>`<circle cx="${sx(i).toFixed(1)}" cy="${sy(v).toFixed(1)}" r="2" fill="var(--sky)"/>`).join('')}
+  </svg>`;
+}
+
+async function getLocation(){
+  const c=LS('location');if(c)return c;
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    const loc={lat:pos.coords.latitude,lon:pos.coords.longitude,city:''};
+    try{const ip=await fetch('https://ipapi.co/json/').then(r=>r.json());loc.city=ip.city||'';}catch(e){}
+    LS('location',loc);return loc;
+  }catch(e){
+    try{const ip=await fetch('https://ipapi.co/json/').then(r=>r.json());const loc={lat:ip.latitude,lon:ip.longitude,city:ip.city||''};LS('location',loc);return loc;}catch(e2){return null;}
+  }
+}
+
+async function fetchWeather(){
+  const loc=await getLocation();
+  if(!loc){document.getElementById('wxBody').innerHTML='<div class="empty">Set your city in settings to see weather.</div>';return;}
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}`
+      +`&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,uv_index,precipitation,is_day,visibility,surface_pressure`
+      +`&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset`
+      +`&timezone=auto&forecast_days=7`;
+    const data=await fetch(url).then(r=>r.json());
+    const c=data.current,days=data.daily,w=wxCodes[c.weather_code]||{d:'Unknown',i:'\uD83C\uDF21\uFE0F'};
+    const isDay=c.is_day===1,city=LS('city')||loc.city||'';
+    const dir=compass(c.wind_direction_10m||0);
+    const vis=(c.visibility/1000).toFixed(1);
+    const uv=c.uv_index||0,uvI=uvInfo(uv);
+    const sr=new Date(days.sunrise[0]).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit',hour12:false});
+    const ss=new Date(days.sunset[0]).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit',hour12:false});
+    // Update sidebar weather
+    document.getElementById('sbWx').innerHTML=`<span style="font-size:1.2rem">${(wxCodes[c.weather_code]||{i:'\uD83C\uDF21\uFE0F'}).i}</span><div><div style="font-size:.78rem;color:var(--tx)">${tv(c.temperature_2m)}</div><div class="label">${w.d}</div></div>`;
+    // Weather panel
+    let fh=`<div class="wx-hero-row">
+      ${wxIcon(c.weather_code,isDay)}
+      <div>
+        <div class="wx-temp-big">${tv(c.temperature_2m)}</div>
+        <div class="wx-desc">${w.d}</div>
+        <div class="wx-loc">${city?esc(city)+' \xB7 ':''} Feels like ${tv(c.apparent_temperature)}</div>
+      </div>
+    </div>
+    <div class="wx-stats-row">
+      <div class="wx-stat"><div class="v" style="color:${uvI.c}">${uv.toFixed(0)}</div><div class="k">UV \xB7 ${uvI.lbl}</div></div>
+      <div class="wx-stat"><div class="v">${c.relative_humidity_2m}%</div><div class="k">Humidity</div></div>
+      <div class="wx-stat"><div class="v">${Math.round(c.wind_speed_10m)}&thinsp;km/h ${dir}</div><div class="k">Wind</div></div>
+      <div class="wx-stat"><div class="v">${vis}&thinsp;km</div><div class="k">Visibility</div></div>
+      <div class="wx-stat"><div class="v">${sr}</div><div class="k">Sunrise</div></div>
+      <div class="wx-stat"><div class="v">${ss}</div><div class="k">Sunset</div></div>
+      <div class="wx-stat"><div class="v">${Math.round(c.surface_pressure)}&thinsp;hPa</div><div class="k">Pressure</div></div>
+    </div>
+    <div class="forecast-row">`;
+    for(let i=0;i<7;i++){
+      const dw=wxCodes[days.weather_code[i]]||{i:'\uD83C\uDF21\uFE0F'};
+      const date=new Date(days.time[i]+'T00:00:00');
+      const dn=i===0?'Today':date.toLocaleDateString('en-CA',{weekday:'short'});
+      const p=days.precipitation_probability_max[i]||0;
+      fh+=`<div class="fday"><div class="fday-name">${dn}</div><div class="fday-icon">${dw.i}</div>
+        <div class="fday-temps"><span class="fday-hi">${tv(days.temperature_2m_max[i])}</span> <span class="fday-lo">${tv(days.temperature_2m_min[i])}</span></div>
+        <div class="precip-bar"><div class="precip-fill" style="width:${p}%"></div></div>
+        <div class="precip-pct">${p}%</div></div>`;
+    }
+    fh+=`</div>${buildChart(days.temperature_2m_max,days.temperature_2m_min)}
+    <div style="display:flex;gap:14px;margin-top:8px;font-size:.6rem;color:var(--ov0)">
+      <span style="color:var(--peach)">\u2500 High</span>
+      <span style="color:var(--sky)">\u254C Low</span>
+      <span>\u2587 Rain probability</span>
+    </div>`;
+    document.getElementById('wxBody').innerHTML=fh;
+    document.getElementById('wxCard').style.background=wxGrad(c.weather_code,isDay);
+  }catch(e){document.getElementById('wxBody').innerHTML='<div class="empty">Weather unavailable.</div>';}
+}
+
+/* ── SEARCH ───────────────────────────────────────────── */
+let curEngine=LS('searchEngine')||'Google';
+function setupSearch(){
+  document.getElementById('sbadge').textContent=curEngine;
+  document.getElementById('sbar').addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const q=e.target.value.trim();if(!q)return;
+    for(const[b,u]of Object.entries(bangs)){if(q.startsWith(b+' ')){window.open(u+encodeURIComponent(q.slice(b.length+1)),'_blank');e.target.value='';return;}}
+    window.open(engines[curEngine]+encodeURIComponent(q),'_blank');e.target.value='';
+  });
+}
+function cycleEngine(){
+  const keys=Object.keys(engines);curEngine=keys[(keys.indexOf(curEngine)+1)%keys.length];
+  LS('searchEngine',curEngine);document.getElementById('sbadge').textContent=curEngine;
+}
+
+/* ── COBOURG NEWS ─────────────────────────────────────── */
+let allNewsItems=[],newsFilter='all';
+function renderSourcePills(){
+  const pills=newsSources.map(s=>`<button class="spill${s.key==='all'?' on':''}" data-src="${s.key}" onclick="filterNews('${s.key}')"><span class="sdot" style="background:${s.dot}"></span>${esc(s.name)}</button>`).join('');
+  document.getElementById('sourcePills').innerHTML=pills;
+}
+function filterNews(key){
+  newsFilter=key;
+  document.querySelectorAll('.spill').forEach(p=>p.classList.toggle('on',p.dataset.src===key));
+  renderNewsFeed();
+}
+function renderNewsFeed(){
+  const items=newsFilter==='all'?allNewsItems:allNewsItems.filter(i=>i.src===newsFilter);
+  if(!items.length){document.getElementById('newsFeed').innerHTML='<div class="empty">No articles found for this source.</div>';return;}
+  const src=k=>newsSources.find(s=>s.key===k)||{name:k,dot:'#888'};
+  document.getElementById('newsFeed').innerHTML='<div class="news-feed">'+items.slice(0,40).map(i=>{
+    const s=src(i.src);
+    return`<div class="feed-item"><div style="flex:1;min-width:0">
+      <div class="feed-source-info"><span class="sdot" style="background:${s.dot}"></span><span class="fsrc">${esc(s.name)}</span><span class="ftime">\xB7 ${i.ago}</span></div>
+      <a class="feed-title" href="${escA(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a>
+      ${i.desc?`<div class="feed-desc">${esc(i.desc)}</div>`:''}
+    </div></div>`;
+  }).join('')+'</div>';
+}
+async function fetchRSSSource(src){
+  // Strategy 1: rss2json — converts RSS to clean JSON, handles CORS
+  try{
+    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(src.feed)}&count=15`,{signal:AbortSignal.timeout(10000)});
+    const j=await r.json();
+    if(j.status==='ok'&&j.items?.length){
+      return normalizeItems(src.key,j.items.map(i=>({title:i.title,url:i.link,pubDate:i.pubDate,desc:i.description||i.content||''})));
+    }
+  }catch(e){}
+  // Strategy 2: allorigins /get — wraps response in JSON, avoids CORS
+  try{
+    const r=await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(src.feed)}`,{signal:AbortSignal.timeout(10000)});
+    const j=await r.json();
+    let xml=j.contents||'';
+    // allorigins sometimes returns content as a base64 data URI
+    if(xml.startsWith('data:')){xml=atob(xml.split(',')[1]);}
+    if(xml.length>200){return normalizeItems(src.key,parseRSSXML(xml));}
+  }catch(e){}
+  // Strategy 3: codetabs proxy
+  try{
+    const r=await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(src.feed)}`,{signal:AbortSignal.timeout(10000)});
+    if(r.ok){const txt=await r.text();if(txt.length>200)return normalizeItems(src.key,parseRSSXML(txt));}
+  }catch(e){}
+  throw new Error('All strategies failed: '+src.feed);
+}
+async function fetchCobourgReddit(){
+  const data=await fetch('https://www.reddit.com/r/Cobourg/new.json?limit=15',{headers:{'Accept':'application/json'}}).then(r=>r.json());
+  return(data?.data?.children||[]).map(c=>c.data).filter(p=>p.title).map(p=>({
+    src:'rd',
+    title:p.title,
+    url:`https://reddit.com${p.permalink}`,
+    date:new Date(p.created_utc*1000),
+    ago:timeAgo(p.created_utc*1000),
+    desc:p.selftext?p.selftext.slice(0,180):'',
+  }));
+}
+async function fetchAllNews(forceRefresh){
+  if(!forceRefresh){
+    const cached=LS('newsCache');
+    if(cached&&cached.length){allNewsItems=cached.map(i=>({...i,date:new Date(i.date),ago:timeAgo(i.date)}));renderNewsFeed();}
+  }
+  const el=document.getElementById('newsFeed');
+  if(!allNewsItems.length)el.innerHTML='<div class="news-loading">Loading local news&hellip;</div>';
+  const fetchers=[
+    ...newsSources.filter(s=>s.feed).map(s=>fetchRSSSource(s)),
+    fetchCobourgReddit(),
+  ];
+  const results=await Promise.allSettled(fetchers);
+  const merged=[];
+  for(const r of results){
+    if(r.status==='fulfilled')merged.push(...r.value);
+    else console.warn('News source failed:',r.reason?.message);
+  }
+  merged.sort((a,b)=>b.date-a.date);
+  if(merged.length){
+    allNewsItems=merged;
+    LS('newsCache',allNewsItems.map(i=>({...i,date:i.date.toISOString()})));
+  }
+  const upd=document.getElementById('newsUpdated');
+  if(upd)upd.textContent=`Updated ${new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`;
+  if(allNewsItems.length)renderNewsFeed();
+  else el.innerHTML='<div class="empty">Unable to load news. Check your connection.</div>';
+}
+
+/* ── MARKETS (TSX + Crypto CAD) ───────────────────────── */
+function fmtMcap(v){if(!v)return'—';if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';if(v>=1e9)return'$'+(v/1e9).toFixed(1)+'B';if(v>=1e6)return'$'+(v/1e6).toFixed(0)+'M';return'$'+v.toFixed(0)}
+function fmtVol(v){if(!v)return'—';if(v>=1e9)return(v/1e9).toFixed(1)+'B';if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(0)+'K';return String(v)}
+
+// Verified TSX top 29 by market cap — symbols confirmed working with Yahoo Finance
+const TSX_SYMBOLS=['RY.TO','SHOP.TO','TD.TO','ENB.TO','AEM.TO','CNQ.TO','BMO.TO','BN.TO','BNS.TO','ABX.TO','CP.TO','SU.TO','BAM.TO','WPM.TO','CNR.TO','ATD.TO','MFC.TO','L.TO','CVE.TO','TRI.TO','WCN.TO','CSU.TO','NTR.TO','FFH.TO','SLF.TO','QSR.TO','POW.TO','BCE.TO','T.TO'];
+
+// Seed data: TSX close prices Mar 12 2026 — shown immediately, replaced if live fetch succeeds
+const TSX_SEED=[
+  {sym:'RY',  name:'Royal Bank of Canada',         price:222.11, chg:-0.93, mcap:311.0e9, vol:2676343},
+  {sym:'SHOP',name:'Shopify Inc',                  price:171.94, chg:-2.29, mcap:225.3e9, vol:2214888},
+  {sym:'TD',  name:'Toronto-Dominion Bank',         price:128.24, chg:-1.59, mcap:214.3e9, vol:3587032},
+  {sym:'ENB', name:'Enbridge Inc',                  price: 73.12, chg:+0.36, mcap:159.6e9, vol:5893776},
+  {sym:'AEM', name:'Agnico Eagle Mines',            price:297.69, chg:-1.59, mcap:148.9e9, vol: 819693},
+  {sym:'CNQ', name:'Canadian Natural Resources',    price: 66.17, chg:+3.10, mcap:138.0e9, vol:28217886},
+  {sym:'BMO', name:'Bank of Montreal',              price:189.43, chg:-1.84, mcap:133.8e9, vol:1955846},
+  {sym:'BN',  name:'Brookfield Corporation',        price: 52.81, chg:-4.12, mcap:118.6e9, vol:4338872},
+  {sym:'BNS', name:'Bank of Nova Scotia',           price: 95.36, chg:-1.63, mcap:117.9e9, vol:3773601},
+  {sym:'ABX', name:'Barrick Mining',                price: 60.64, chg:-1.77, mcap:101.6e9, vol:5879477},
+  {sym:'CP',  name:'Canadian Pacific Kansas City',  price:110.64, chg:-2.00, mcap: 99.4e9, vol:1477912},
+  {sym:'SU',  name:'Suncor Energy',                 price: 81.46, chg:+2.98, mcap: 96.9e9, vol:9070933},
+  {sym:'BAM', name:'Brookfield Asset Management',   price: 58.76, chg:-3.16, mcap: 96.3e9, vol:2308560},
+  {sym:'WPM', name:'Wheaton Precious Metals',       price:198.85, chg:-1.59, mcap: 90.3e9, vol: 573792},
+  {sym:'CNR', name:'Canadian National Railway',     price:141.50, chg:-1.87, mcap: 86.5e9, vol:4534566},
+  {sym:'ATD', name:'Alimentation Couche-Tard',      price: 81.60, chg:+0.99, mcap: 76.8e9, vol:1171407},
+  {sym:'MFC', name:'Manulife Financial',            price: 45.69, chg:-0.39, mcap: 76.6e9, vol:2537035},
+  {sym:'L',   name:'Loblaw Companies',              price: 62.08, chg:-0.02, mcap: 72.8e9, vol:1508667},
+  {sym:'CVE', name:'Cenovus Energy',                price: 32.20, chg:+0.06, mcap: 60.7e9, vol:12381499},
+  {sym:'TRI', name:'Thomson Reuters',               price:135.35, chg:-3.36, mcap: 60.2e9, vol: 919888},
+  {sym:'WCN', name:'Waste Connections',             price:227.51, chg:+0.51, mcap: 58.4e9, vol: 579840},
+  {sym:'CSU', name:'Constellation Software',        price:2619.09,chg:-3.00, mcap: 55.5e9, vol: 114388},
+  {sym:'NTR', name:'Nutrien Ltd',                   price:114.41, chg:+6.23, mcap: 55.3e9, vol:2889513},
+  {sym:'FFH', name:'Fairfax Financial Holdings',    price:2262.93,chg:-0.43, mcap: 50.1e9, vol:  76598},
+  {sym:'SLF', name:'Sun Life Financial',            price: 85.68, chg:-0.81, mcap: 47.5e9, vol:2009672},
+  {sym:'QSR', name:'Restaurant Brands Intl',        price: 98.26, chg:+0.49, mcap: 44.8e9, vol: 637737},
+  {sym:'POW', name:'Power Corporation of Canada',   price: 64.64, chg:-0.54, mcap: 41.0e9, vol:1827559},
+  {sym:'BCE', name:'BCE Inc',                       price: 35.03, chg:-0.45, mcap: 32.7e9, vol:2428623},
+  {sym:'T',   name:'Telus Corporation',             price: 18.00, chg:-0.22, mcap: 28.1e9, vol:8142676},
+];
+
+let stkTab='tsx';
+
+function switchStockTab(tab){
+  stkTab=tab;
+  document.querySelectorAll('.stk-tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  document.getElementById('tsxBody').style.display=tab==='tsx'?'':'none';
+  document.getElementById('cryptoBody').style.display=tab==='crypto'?'':'none';
+}
+
+function buildStkRow(sym,name,nameHtml,price,chgPct,mcap,vol,isCrypto,img){
+  const up=chgPct>=0;
+  const pStr=price>=1?price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):price<0.01?price.toFixed(6):price.toFixed(4);
+  const da=`data-sym="${escA(sym)}" data-name="${escA(name)}" data-price="${price}" data-chg="${chgPct}" data-mcap="${mcap}" data-vol="${vol}" data-crypto="${isCrypto}"${img?` data-img="${escA(img)}"`:''}`;
+  return`<div class="stk-row" onclick="openStockModal(this)" ${da}>
+    <div class="stk-col-name">${nameHtml}</div>
+    <div class="stk-col-price stk-num">$${pStr}</div>
+    <div class="stk-col-chg"><span class="stk-pill ${up?'up':'dn'}">${up?'+':''}${chgPct.toFixed(2)}%</span></div>
+    <div class="stk-col-mcap stk-num">${fmtMcap(mcap)}</div>
+    <div class="stk-col-vol stk-num">${fmtVol(vol)}</div>
+  </div>`;
+}
+
+/* ── STOCK DETAIL MODAL ───────────────────────────────── */
+let tvScriptLoaded=false;
+
+function getCryptoTVSym(sym){
+  const m={BTC:'BINANCE:BTCUSDT',ETH:'BINANCE:ETHUSDT',SOL:'BINANCE:SOLUSDT',XRP:'BINANCE:XRPUSDT',DOGE:'BINANCE:DOGEUSDT',ADA:'BINANCE:ADAUSDT',AVAX:'BINANCE:AVAXUSDT',LINK:'BINANCE:LINKUSDT',LTC:'BINANCE:LTCUSDT',DOT:'BINANCE:DOTUSDT',UNI:'UNISWAP3:UNIUSD',XLM:'BINANCE:XLMUSDT',ATOM:'BINANCE:ATOMUSDT',NEAR:'BINANCE:NEARUSDT',SHIB:'BINANCE:SHIBUSDT',TON:'BINANCE:TONUSDT',SUI:'BINANCE:SUIUSDT',POL:'BINANCE:POLUSDT',INJ:'BINANCE:INJUSDT'};
+  return m[sym]||`BINANCE:${sym}USDT`;
+}
+
+function openStockModal(el){
+  const sym=el.dataset.sym,name=el.dataset.name;
+  const price=parseFloat(el.dataset.price),chg=parseFloat(el.dataset.chg);
+  const mcap=parseFloat(el.dataset.mcap),vol=parseFloat(el.dataset.vol);
+  const isCrypto=el.dataset.crypto==='true',img=el.dataset.img||'';
+  const up=chg>=0;
+  const pStr=price>=1?price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):price<0.01?price.toFixed(6):price.toFixed(4);
+  // Icon
+  const iconEl=document.getElementById('smIcon');
+  iconEl.innerHTML=img?`<img src="${escA(img)}" alt="">`:`<span style="font-size:.65rem;font-weight:800;color:var(--ac)">${esc(sym.slice(0,3))}</span>`;
+  // Header
+  document.getElementById('smSym').textContent=sym;
+  document.getElementById('smName').textContent=name;
+  document.getElementById('smPrice').textContent='$'+pStr;
+  const chgEl=document.getElementById('smChg');
+  chgEl.textContent=(up?'+':'')+chg.toFixed(2)+'% today';
+  chgEl.className='stkm-chg '+(up?'up':'dn');
+  // Stats grid
+  document.getElementById('smStats').innerHTML=`
+    <div class="stkm-stat"><div class="stkm-stat-lbl">Market Cap</div><div class="stkm-stat-val">${fmtMcap(mcap)}</div></div>
+    <div class="stkm-stat"><div class="stkm-stat-lbl">Volume</div><div class="stkm-stat-val">${fmtVol(vol)}</div></div>
+    <div class="stkm-stat"><div class="stkm-stat-lbl">Exchange</div><div class="stkm-stat-val">${isCrypto?'Crypto (CAD)':'TSX (CAD)'}</div></div>
+    <div class="stkm-stat"><div class="stkm-stat-lbl">24h Change</div><div class="stkm-stat-val ${up?'up':'dn'}">${up?'+':''}${chg.toFixed(2)}%</div></div>`;
+  // Chart
+  const tvSym=isCrypto?getCryptoTVSym(sym):`TSX:${sym}`;
+  document.getElementById('tvChart').innerHTML='<div class="stkm-chart-loading">Loading chart&hellip;</div>';
+  loadTVWidget(tvSym);
+  document.getElementById('stockModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+
+function closeStockModal(){
+  document.getElementById('stockModal').classList.remove('on');
+  document.body.style.overflow='';
+  document.getElementById('tvChart').innerHTML='<div class="stkm-chart-loading">Loading chart&hellip;</div>';
+}
+
+function loadTVWidget(symbol){
+  if(window.TradingView){createTVWidget(symbol);return;}
+  if(!document.getElementById('tvScript')){
+    const s=document.createElement('script');s.id='tvScript';
+    s.src='https://s3.tradingview.com/tv.js';
+    s.onload=()=>{tvScriptLoaded=true;createTVWidget(symbol);};
+    document.head.appendChild(s);
+  }
+}
+
+function createTVWidget(symbol){
+  const wrap=document.getElementById('tvChart');
+  wrap.innerHTML='';
+  const d=document.createElement('div');d.id='tvInner'+Date.now();
+  wrap.appendChild(d);
+  new TradingView.widget({
+    container_id:d.id,symbol,interval:'D',theme:'dark',style:'1',locale:'en',
+    timezone:'America/Toronto',toolbar_bg:'#1a1a2e',enable_publishing:false,
+    hide_side_toolbar:false,allow_symbol_change:true,hide_legend:false,
+    width:'100%',height:430,save_to_cloud:false,autosize:false
+  });
+}
+
+function renderTSXData(el,rows,live){
+  let html=rows.map(d=>{
+    const nameHtml=`<span class="stk-sym">${esc(d.sym)}</span><span class="stk-name">${esc(d.name)}</span>`;
+    return buildStkRow(d.sym,d.name,nameHtml,d.price,d.chg,d.mcap,d.vol,false,'');
+  }).join('');
+  if(!live)html+=`<div class="stk-footnote"><span class="stk-seed-badge">Mar 12, 2026 close</span> &nbsp;Live data blocked by browser CORS — Yahoo Finance requires a backend proxy for real-time updates.</div>`;
+  el.innerHTML=html;
+}
+
+async function fetchTSX(){
+  const el=document.getElementById('tsxBody');
+  // Show seed data immediately
+  renderTSXData(el,TSX_SEED,false);
+  document.getElementById('stkUpdated').textContent='Mar 12 close';
+  // Attempt live refresh (succeeds only if browser CORS permits)
+  const syms=TSX_SYMBOLS.join(',');
+  const yUrl=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms}&fields=symbol,shortName,regularMarketPrice,regularMarketChangePercent,marketCap,regularMarketVolume&formatted=false`;
+  try{
+    const r=await fetch(yUrl,{credentials:'include',signal:AbortSignal.timeout(8000)});
+    const j=await r.json();
+    const quotes=j?.quoteResponse?.result||[];
+    if(quotes.length){
+      quotes.sort((a,b)=>(b.marketCap||0)-(a.marketCap||0));
+      const live=quotes.map(q=>({sym:(q.symbol||'').replace('.TO',''),name:q.shortName||q.symbol,price:q.regularMarketPrice||0,chg:q.regularMarketChangePercent||0,mcap:q.marketCap||0,vol:q.regularMarketVolume||0}));
+      renderTSXData(el,live,true);
+      document.getElementById('stkUpdated').textContent='Live · '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+    }
+  }catch(e){/* CORS blocked — seed data remains shown */}
+}
+
+async function fetchCryptoCAD(){
+  const el=document.getElementById('cryptoBody');
+  el.innerHTML='<div class="loading">Fetching crypto data&hellip;</div>';
+  try{
+    const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_desc&per_page=25&page=1&sparkline=false&price_change_percentage=24h',{signal:AbortSignal.timeout(12000)});
+    const coins=await r.json();
+    if(!Array.isArray(coins)||!coins.length)throw new Error('empty');
+    let html='';
+    for(const c of coins){
+      const coinSym=(c.symbol||'').toUpperCase();
+      const nameHtml=`<img class="coin-ico" src="${escA(c.image)}" alt="" loading="lazy"><span class="stk-sym">${esc(coinSym)}</span><span class="stk-name">${esc(c.name||'')}</span>`;
+      html+=buildStkRow(coinSym,c.name||'',nameHtml,c.current_price||0,c.price_change_percentage_24h||0,c.market_cap||0,c.total_volume||0,true,c.image||'');
+    }
+    el.innerHTML=html||'<div class="empty">No data.</div>';
+    document.getElementById('stkUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){el.innerHTML='<div class="empty">Crypto data unavailable.</div>';}
+}
+
+function fetchStocks(){fetchTSX();fetchCryptoCAD();}
+
+/* ── BOOKMARKS ────────────────────────────────────────── */
+const getBMs=()=>LS('bookmarks')||defaultBMs;
+function renderBMs(){
+  const bms=getBMs();
+  let html='<div class="bm-grid">';
+  html+=bms.map((b,i)=>{
+    let dom='';try{dom=new URL(b.url).hostname;}catch(e){}
+    return`<a class="bm" href="${escA(b.url)}" target="_blank" rel="noopener" oncontextmenu="event.preventDefault();removeBM(${i})" title="${escA(b.name)} (right-click to remove)">
+      <div class="bm-ico"><img src="https://www.google.com/s2/favicons?domain=${escA(dom)}&sz=64" alt="" loading="lazy"></div>
+      ${esc(b.name)}</a>`;
+  }).join('');
+  html+=`<button class="bm-add-btn" onclick="addBM()"><div class="bm-add-icon">+</div>Add</button>`;
+  html+='</div>';
+  document.getElementById('bmBody').innerHTML=html;
+}
+function addBM(){const name=prompt('Name:');if(!name)return;const url=prompt('URL:','https://');if(!url)return;try{new URL(url);}catch{alert('Invalid URL');return;}const bms=getBMs();bms.push({name,url});LS('bookmarks',bms);renderBMs();}
+function removeBM(i){if(!confirm('Remove this bookmark?'))return;const bms=getBMs();bms.splice(i,1);LS('bookmarks',bms);renderBMs();}
+
+/* ── TASKS & NOTES ────────────────────────────────────── */
+const getTodos=()=>LS('todos')||[];
+function addTodo(){const inp=document.getElementById('tInp'),txt=inp.value.trim();if(!txt)return;const todos=getTodos();todos.push({id:Date.now(),text:txt,done:false});LS('todos',todos);inp.value='';renderTodos();}
+function toggleTodo(id){const todos=getTodos(),t=todos.find(x=>x.id===id);if(t)t.done=!t.done;LS('todos',todos);renderTodos();}
+function deleteTodo(id){LS('todos',getTodos().filter(x=>x.id!==id));renderTodos();}
+let tFilter='all';
+function setTF(f){tFilter=f;document.querySelectorAll('.tfilter').forEach(b=>b.classList.toggle('on',b.dataset.f===f));renderTodos();}
+function renderTodos(){
+  const todos=getTodos(),filtered=todos.filter(t=>tFilter==='all'?true:tFilter==='active'?!t.done:t.done);
+  const el=document.getElementById('tList');
+  if(!filtered.length){el.innerHTML=`<div class="empty" style="padding:10px 0">${todos.length?'No matching tasks':'Add your first task above'}</div>`;}
+  else el.innerHTML=filtered.map(t=>`<div class="ti2"><div class="tcb ${t.done?'on':''}" onclick="toggleTodo(${t.id})"></div><span class="ttx ${t.done?'done':''}">${esc(t.text)}</span><button class="tdel" onclick="deleteTodo(${t.id})">&times;</button></div>`).join('');
+  document.getElementById('tCnt').textContent=`${todos.filter(t=>!t.done).length} remaining`;
+}
+let nTimeout;
+function saveNotes(){clearTimeout(nTimeout);document.getElementById('nFoot').textContent='Saving\u2026';nTimeout=setTimeout(()=>{LS('notes',document.getElementById('nArea').value);document.getElementById('nFoot').textContent='Saved';},400);}
+
+/* ── MULTI-TIMER SYSTEM ───────────────────────────────── */
+const TTYPE={focus:{label:'Focus',color:'#6C8EF5'},break:{label:'Break',color:'#3ECFB2'},countdown:{label:'Countdown',color:'#F5A623'},stopwatch:{label:'Stopwatch',color:'#8B9DC3'},deadline:{label:'Deadline',color:'#F56565'}};
+const TPRESETS={focus:[{n:'Quick',s:15*60},{n:'Pomodoro',s:25*60},{n:'Deep Work',s:50*60},{n:'Flow',s:90*60}],break:[{n:'Micro',s:2*60},{n:'Short',s:5*60},{n:'Long',s:15*60},{n:'Walk',s:20*60}],countdown:[{n:'15m',s:15*60},{n:'30m',s:30*60},{n:'1h',s:60*60}],stopwatch:[],deadline:[]};
+const TC=2*Math.PI*23;
+let timers=[],tPanel=false,tAddMode=false,tAddType='focus',tAddPreset=null,tTimerId=0,tTickIv=null;
+
+function timerById(id){return timers.find(t=>t.id===id)}
+function saveTmrs(){LS('timers2',timers.map(t=>({...t,startedAt:t.startedAt instanceof Date?t.startedAt.toISOString():t.startedAt})))}
+function loadTmrs(){
+  const saved=LS('timers2')||[];
+  timers=saved.map(t=>{
+    if(t.startedAt)t.startedAt=new Date(t.startedAt);
+    if(t.state==='running'&&t.type!=='stopwatch'&&t.type!=='deadline'&&t.startedAt){
+      const elapsed=(Date.now()-t.startedAt.getTime())/1000;
+      t.remainingSecs=Math.max(0,t.remainingSecs-elapsed);
+      if(t.remainingSecs<=0)t.state='completed';
+    }
+    if(t.type==='stopwatch'&&t.state==='running'&&t.startedAt){
+      t.elapsedSecs=(t.elapsedSecs||0)+(Date.now()-t.startedAt.getTime())/1000;
+      t.startedAt=new Date();
+    }
+    return t;
+  }).filter(t=>t.state!=='dismissed');
+}
+function startTick(){if(!tTickIv)tTickIv=setInterval(tickTimers,1000)}
+function stopTick(){if(!timers.some(t=>t.state==='running')){clearInterval(tTickIv);tTickIv=null}}
+function tickTimers(){
+  let any=false;
+  for(const t of timers){
+    if(t.state!=='running')continue;
+    any=true;
+    if(t.type==='stopwatch'){t.elapsedSecs=(t.elapsedSecs||0)+1;}
+    else if(t.type!=='deadline'){
+      t.remainingSecs--;
+      if(t.remainingSecs<=0){t.remainingSecs=0;t.state='completed';timerCompleted(t);}
+    }
+  }
+  if(any){renderTimerPanel();updateCompactRing();}
+  stopTick();
+}
+function timerCompleted(t){
+  beep();notify(t.type==='focus'?'Focus session complete!':t.type==='break'?'Break over!':'Timer done!',t.label);
+  if(t.type==='focus'){
+    const bs=t.durationSecs>=50*60?15*60:5*60,bl=t.durationSecs>=50*60?'Long Break':'Short Break';
+    setTimeout(()=>{if(!timers.some(x=>x.type==='break'&&x.state!=='completed'&&x.state!=='dismissed')){addTimerDirect('break',bl,bs);}},1800);
+  }
+  saveTmrs();
+}
+function addTimerDirect(type,label,durationSecs,targetTs){
+  const t={id:++tTimerId,type,label:label||TTYPE[type].label,state:'idle',durationSecs:durationSecs||25*60,remainingSecs:durationSecs||25*60,elapsedSecs:0,startedAt:null,targetTs:targetTs||null};
+  timers.push(t);renderTimerPanel();updateCompactRing();saveTmrs();return t;
+}
+function timerStart(id){
+  const t=timerById(id);if(!t)return;
+  if(t.type==='focus'||t.type==='break'){for(const x of timers){if((x.type==='focus'||x.type==='break')&&x.state==='running'&&x.id!==id){x.state='paused';x.startedAt=null;}}}
+  t.state='running';t.startedAt=new Date();
+  startTick();renderTimerPanel();updateCompactRing();saveTmrs();
+}
+function timerPause(id){const t=timerById(id);if(!t)return;t.state='paused';t.startedAt=null;renderTimerPanel();updateCompactRing();saveTmrs();}
+function timerReset(id){
+  const t=timerById(id);if(!t)return;
+  if(t.type==='stopwatch'){t.elapsedSecs=0;}else{t.remainingSecs=t.durationSecs;}
+  t.state='idle';t.startedAt=null;renderTimerPanel();updateCompactRing();saveTmrs();
+}
+function timerDismiss(id){timers=timers.filter(t=>t.id!==id);renderTimerPanel();updateCompactRing();saveTmrs();}
+function toggleTimerPanel(){
+  tPanel=!tPanel;
+  document.getElementById('timerPanel').classList.toggle('on',tPanel);
+  document.getElementById('tpBackdrop').classList.toggle('on',tPanel);
+  if(tPanel)renderTimerPanel();
+}
+function openAddTimer(){tAddMode=!tAddMode;renderTimerPanel();}
+function setAddType(type){tAddType=type;tAddPreset=null;renderAddForm();}
+function setAddPreset(i){tAddPreset=i;renderAddForm();}
+function fmtSecs(s){s=Math.max(0,Math.floor(s));if(s>=3600){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;}return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function fmtDeadline(ts){const diff=Math.max(0,Math.floor((new Date(ts)-Date.now())/1000));if(!diff)return'Expired';if(diff<3600)return fmtSecs(diff);if(diff<86400){return`${Math.floor(diff/3600)}h ${Math.floor((diff%3600)/60)}m`;}return`${Math.floor(diff/86400)}d ${Math.floor((diff%86400)/3600)}h`;}
+function timerDisplayTime(t){if(t.type==='stopwatch')return fmtSecs(t.elapsedSecs||0);if(t.type==='deadline')return t.targetTs?fmtDeadline(t.targetTs):'—';return fmtSecs(t.remainingSecs||0);}
+function timerSubtext(t){
+  const lbl=TTYPE[t.type].label;
+  if(t.type==='deadline'&&t.targetTs){const d=new Date(t.targetTs);return`${lbl} · due ${d.toLocaleDateString('en-CA',{month:'short',day:'numeric'})}, ${d.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`;}
+  if(t.state==='running'&&t.type!=='stopwatch'){const e=new Date(Date.now()+(t.remainingSecs||0)*1000);return`${lbl} · ends ${e.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`;}
+  if(t.type==='stopwatch')return`${lbl} · counting up`;
+  return lbl;
+}
+function renderTimerCard(t){
+  const col=TTYPE[t.type].color,run=t.state==='running',done=t.state==='completed';
+  const dt=timerDisplayTime(t),warn=(t.type!=='stopwatch'&&t.type!=='deadline'&&t.remainingSecs<=60&&run);
+  return`<div class="tcard${run?' running':''}">
+    <div class="tcard-accent" style="background:${col}"></div>
+    <div class="tcard-row1">
+      <div class="tcard-dot${run?' running':''}" style="background:${run?col:'rgba(255,255,255,.2)'}"></div>
+      <span class="tcard-lbl">${esc(t.label)}</span>
+      <span class="tcard-time${warn?' warn pulse':''}${done?' warn':''}">${esc(dt)}</span>
+      <div class="tcard-ctrls">
+        ${t.type!=='deadline'?`<button class="tcard-btn primary" onclick="event.stopPropagation();${run?`timerPause(${t.id})`:`timerStart(${t.id})`}">${run?'⏸':'▶'}</button><button class="tcard-btn" onclick="event.stopPropagation();timerReset(${t.id})" title="Reset">↺</button>`:''}
+        <button class="tcard-btn" onclick="event.stopPropagation();timerDismiss(${t.id})" title="Remove">✕</button>
+      </div>
+    </div>
+    <div class="tcard-row2">${esc(timerSubtext(t))}</div>
+  </div>`;
+}
+function renderAddForm(){
+  const el=document.getElementById('tpAddForm');if(!el)return;
+  const presets=TPRESETS[tAddType]||[],isDl=tAddType==='deadline',isSw=tAddType==='stopwatch';
+  el.innerHTML=`
+    <div class="tp-add-types">${Object.keys(TTYPE).map(k=>`<button class="tp-type-btn${tAddType===k?' on':''}" onclick="setAddType('${k}')">${TTYPE[k].label}</button>`).join('')}</div>
+    <input class="tp-inp" id="tpLbl" placeholder="${isDl?'Label (required)':'Label (optional)'}">
+    ${presets.length?`<div class="tp-presets">${presets.map((p,i)=>`<button class="tp-preset${tAddPreset===i?' on':''}" onclick="setAddPreset(${i})">${p.n}</button>`).join('')}<button class="tp-preset${tAddPreset===-1?' on':''}" onclick="setAddPreset(-1)">Custom</button></div>`:''}
+    ${tAddPreset===-1&&!isDl?`<input class="tp-inp" id="tpCustom" placeholder="e.g. 45m, 1h30">`:''}
+    ${isDl?`<input class="tp-inp" id="tpDl" type="datetime-local" min="${new Date().toISOString().slice(0,16)}">`:''}
+    ${isSw?`<p style="font-size:.63rem;color:rgba(255,255,255,.3);margin:0 0 8px">Counts up from zero until stopped.</p>`:''}
+    <button class="tp-start-btn" onclick="commitAddTimer()">&#x25B6; Start</button>`;
+}
+function renderTimerPanel(){
+  const list=document.getElementById('tpList');if(!list)return;
+  const active=timers.filter(t=>t.state!=='dismissed');
+  // Manage add form element
+  const panelEl=document.getElementById('timerPanel');
+  let addEl=document.getElementById('tpAddForm');
+  if(tAddMode&&!addEl){
+    addEl=document.createElement('div');addEl.id='tpAddForm';addEl.className='tp-add';
+    panelEl.insertBefore(addEl,list);renderAddForm();
+  }else if(!tAddMode&&addEl){addEl.remove();}
+  else if(tAddMode&&addEl){renderAddForm();}
+  // Render list
+  if(!active.length&&!tAddMode){
+    list.innerHTML=`<div class="tp-empty"><div style="font-size:1.8rem;opacity:.25">⏱</div><div>No timers running</div><button class="tp-start-btn" style="margin-top:12px;width:auto;padding:7px 20px" onclick="openAddTimer()">Add a timer</button></div>`;
+  }else{list.innerHTML=active.map(renderTimerCard).join('');}
+}
+function updateCompactRing(){
+  const running=timers.filter(t=>t.state==='running');
+  const primary=running.find(t=>t.type==='focus')||running.find(t=>t.type==='countdown')||running.find(t=>t.type==='break')||running[0]||null;
+  const timeEl=document.getElementById('tcTime'),lbEl=document.getElementById('tcLabel'),ringEl=document.getElementById('tcRing'),badgeEl=document.getElementById('tcBadge');
+  if(!ringEl)return;
+  if(!primary){
+    timeEl.textContent='';lbEl.textContent='Add Timer';
+    ringEl.style.strokeDashoffset=TC;ringEl.style.stroke='rgba(255,255,255,.12)';
+    badgeEl.style.display='none';return;
+  }
+  const col=TTYPE[primary.type].color;ringEl.style.stroke=col;
+  if(primary.type==='stopwatch'){const prog=Math.min((primary.elapsedSecs||0)/3600,1);ringEl.style.strokeDashoffset=TC*(1-prog);timeEl.textContent=fmtSecs(primary.elapsedSecs||0);}
+  else if(primary.type==='deadline'){ringEl.style.strokeDashoffset=0;timeEl.textContent=primary.targetTs?fmtDeadline(primary.targetTs):'—';}
+  else{const prog=primary.durationSecs?1-(primary.remainingSecs/primary.durationSecs):0;ringEl.style.strokeDashoffset=TC*(1-prog);timeEl.textContent=fmtSecs(primary.remainingSecs||0);}
+  lbEl.textContent=(primary.label||TTYPE[primary.type].label).slice(0,16);
+  const extra=running.length-1;
+  if(extra>0){badgeEl.style.display='flex';badgeEl.textContent='+'+extra;}else{badgeEl.style.display='none';}
+}
+function parseTimerInput(s){
+  s=(s||'').trim().toLowerCase();
+  const hm=/^(\d+)h\s*(\d*)m?$/.exec(s);if(hm)return parseInt(hm[1])*3600+(parseInt(hm[2]||0)*60);
+  const m=/^(\d+)m$/.exec(s);if(m)return parseInt(m[1])*60;
+  const h=/^(\d+)h$/.exec(s);if(h)return parseInt(h[1])*3600;
+  const n=/^(\d+)$/.exec(s);if(n)return parseInt(n[1])*60;
+  return null;
+}
+function commitAddTimer(){
+  const label=(document.getElementById('tpLbl')?.value||'').trim();
+  let durationSecs=null,targetTs=null;
+  if(tAddType==='deadline'){
+    const v=document.getElementById('tpDl')?.value;
+    if(!v){alert('Please pick a deadline date and time.');return;}
+    targetTs=new Date(v).toISOString();
+  }else if(tAddType!=='stopwatch'){
+    if(tAddPreset!=null&&tAddPreset>=0&&TPRESETS[tAddType][tAddPreset])durationSecs=TPRESETS[tAddType][tAddPreset].s;
+    else if(tAddPreset===-1){durationSecs=parseTimerInput(document.getElementById('tpCustom')?.value);if(!durationSecs){alert('Enter a duration like "45m" or "1h30".');return;}}
+    else durationSecs=TPRESETS[tAddType][0]?.s||25*60;
+  }
+  const t=addTimerDirect(tAddType,label||TTYPE[tAddType].label,durationSecs,targetTs);
+  timerStart(t.id);tAddMode=false;renderTimerPanel();
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable)return;
+  if(e.key==='t'||e.key==='T'){e.preventDefault();toggleTimerPanel();}
+});
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;o.type='sine';g.gain.setValueAtTime(0.25,a.currentTime);g.gain.exponentialRampToValueAtTime(0.01,a.currentTime+0.6);o.start();o.stop(a.currentTime+0.6);}catch(e){}}
+function notify(t,b){if(Notification.permission==='granted')new Notification(t,{body:b});}
+
+/* ── CALENDAR ─────────────────────────────────────────── */
+let cY,cM;
+function renderCal(y,m){
+  cY=y;cM=m;
+  const now=new Date(),first=new Date(y,m,1),last=new Date(y,m+1,0);
+  const label=first.toLocaleDateString('en-CA',{month:'long',year:'numeric'});
+  const py=m===0?y-1:y,pm=m===0?11:m-1,ny=m===11?y+1:y,nm=m===11?0:m+1;
+  let h=`<div class="cal-hdr"><button class="cal-nav" onclick="renderCal(${py},${pm})">&lsaquo;</button><span class="cal-title">${label}</span><button class="cal-nav" onclick="renderCal(${ny},${nm})">&rsaquo;</button></div>
+  <div class="cal-grid">${'Su Mo Tu We Th Fr Sa'.split(' ').map(d=>`<div class="cal-dow">${d}</div>`).join('')}`;
+  for(let i=0;i<first.getDay();i++)h+='<div class="cal-day faded"></div>';
+  for(let d=1;d<=last.getDate();d++){
+    const today=d===now.getDate()&&m===now.getMonth()&&y===now.getFullYear();
+    h+=`<div class="cal-day${today?' today':''}">${d}</div>`;
+  }
+  h+='</div>';
+  document.getElementById('calBody').innerHTML=h;
+}
+
+/* ── MOON ─────────────────────────────────────────────── */
+function getMoon(){
+  const known=new Date('2000-01-06T18:14:00Z'),cycle=29.53058867;
+  const phase=(((Date.now()-known)/86400000%cycle)+cycle)%cycle,pct=phase/cycle;
+  const phases=[{max:.033,e:'\uD83C\uDF11',n:'New Moon'},{max:.133,e:'\uD83C\uDF12',n:'Waxing Crescent'},{max:.233,e:'\uD83C\uDF13',n:'First Quarter'},{max:.383,e:'\uD83C\uDF14',n:'Waxing Gibbous'},{max:.533,e:'\uD83C\uDF15',n:'Full Moon'},{max:.633,e:'\uD83C\uDF16',n:'Waning Gibbous'},{max:.733,e:'\uD83C\uDF17',n:'Last Quarter'},{max:.883,e:'\uD83C\uDF18',n:'Waning Crescent'},{max:1.001,e:'\uD83C\uDF11',n:'New Moon'}];
+  return{...phases.find(x=>pct<=x.max),phase,pct};
+}
+function updateMoon(){
+  const moon=getMoon();
+  document.getElementById('sbMoonTxt').innerHTML=`<div style="font-size:.78rem;color:var(--tx)">${moon.e} ${moon.n}</div><div class="label">Moon phase</div>`;
+}
+
+/* ── IP INFO ──────────────────────────────────────────── */
+async function fetchIP(){try{const d=await fetch('https://ipapi.co/json/').then(r=>r.json());ticker.ip=d.ip;}catch(e){}}
+
+/* ── SETTINGS ─────────────────────────────────────────── */
+function openSettings(){
+  const o=document.getElementById('sOverlay');
+  o.classList.toggle('on');
+  if(o.classList.contains('on')){
+    document.getElementById('sName').value=LS('name')||'';
+    document.getElementById('sCity').value=LS('city')||'';
+    syncUnit();syncTheme();
+  }
+}
+function saveSettings(){
+  LS('name',document.getElementById('sName').value.trim()||null);
+  openSettings();
+}
+let geoT;
+function debouncedGeo(city){
+  LS('city',city);clearTimeout(geoT);if(!city)return;
+  geoT=setTimeout(async()=>{
+    try{const d=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r=>r.json());
+      if(d.results?.length){const r=d.results[0];LS('location',{lat:r.latitude,lon:r.longitude,city:r.name});fetchWeather();}
+    }catch(e){}
+  },700);
+}
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);LS('theme',t);syncTheme();}
+function syncTheme(){
+  const cur=LS('theme')||'steel';
+  document.querySelectorAll('.tdot').forEach(b=>b.classList.toggle('on',b.dataset.t===cur));
+}
+function setUnit(u){LS('tempUnit',u);syncUnit();fetchWeather();}
+function syncUnit(){const u=LS('tempUnit')||'C';document.getElementById('unitC').classList.toggle('on',u==='C');document.getElementById('unitF').classList.toggle('on',u==='F');}
+
+/* ── KEYBOARD ─────────────────────────────────────────── */
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();document.getElementById('sbar').focus();}
+  if(e.key==='Escape'){
+    const o=document.getElementById('sOverlay');
+    if(o.classList.contains('on'))openSettings();
+  }
+});
+
+/* ── INIT ─────────────────────────────────────────────── */
+(function init(){
+  const t=LS('theme');if(t)document.documentElement.setAttribute('data-theme',t);
+  syncTheme();
+  updateClock();setInterval(updateClock,1000);
+  setQuote();
+  setupSearch();
+  updateMoon();
+  renderSourcePills();
+  initTicker();
+  fetchWeather();
+  fetchAllNews();
+  fetchStocks();
+  fetchIP();
+  renderBMs();
+  renderTodos();
+  const n=LS('notes');if(n)document.getElementById('nArea').value=n;
+  loadTmrs();updateCompactRing();if(timers.some(t=>t.state==='running'))startTick();
+  if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
+  const now=new Date();renderCal(now.getFullYear(),now.getMonth());
+  setInterval(fetchWeather,15*60*1000);
+  setInterval(fetchAllNews,10*60*1000);
+  setInterval(fetchStocks,5*60*1000);
+  setInterval(fetchIP,60*60*1000);
+  setInterval(updateMoon,60*60*1000);
+})();
+</script>
+</body>
+</html>
