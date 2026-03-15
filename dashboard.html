@@ -534,7 +534,12 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 .news-reader-meta{font-size:.68rem;color:var(--ov0);display:flex;align-items:center;gap:8px}
 .news-reader-body{max-width:680px;font-size:.88rem;line-height:1.75;color:var(--sub1)}
 .news-reader-body p{margin-bottom:1em}
-.news-reader-body img{max-width:100%;border-radius:8px;margin:16px 0}
+.news-reader-body img{max-width:100%;height:auto;border-radius:8px;margin:16px 0;display:block}
+.news-reader-body figure{margin:16px 0}
+.news-reader-body figcaption{font-size:.68rem;color:var(--ov0);margin-top:4px;font-style:italic}
+.news-reader-body .wp-caption{max-width:100%;margin:16px 0}
+.news-reader-body .wp-caption img{margin-bottom:4px}
+.news-reader-body .wp-caption-text{font-size:.68rem;color:var(--ov0);font-style:italic}
 .news-reader-body blockquote{border-left:3px solid var(--ac);padding-left:16px;margin:16px 0;color:var(--sub0);font-style:italic}
 .news-reader-body a{color:var(--ac2);text-decoration:underline;text-underline-offset:2px}
 .news-reader-body h2,.news-reader-body h3{color:var(--tx);margin:20px 0 8px;font-weight:600}
@@ -707,6 +712,11 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 .cam-modal-title{flex:1;font-size:.82rem;font-weight:600}
 .cam-modal-close{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ov0);cursor:pointer;transition:all 150ms;background:none;border:none}
 .cam-modal-close:hover{background:var(--bg-hover);color:var(--tx)}
+.cam-modal-nav{width:32px;height:32px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--ov0);cursor:pointer;transition:all 150ms;background:none;border:none}
+.cam-modal-nav:hover{background:var(--bg-hover);color:var(--tx)}
+.cam-modal-refresh{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--ov0);cursor:pointer;transition:all 150ms;background:none;border:none;margin-right:4px}
+.cam-modal-refresh:hover{background:var(--bg-hover);color:var(--tx)}
+.cam-timestamp{font-size:.5rem;color:var(--ov0);opacity:.7}
 .cam-modal-img{width:100%;display:block}
 .cam-modal-views{display:flex;gap:4px;padding:10px 16px;border-top:1px solid var(--border)}
 .cam-view-btn{flex:1;padding:6px;border-radius:var(--r-sm);font-size:.65rem;font-weight:600;text-align:center;color:var(--ov0);background:none;border:1px solid var(--border);cursor:pointer;transition:all 150ms}
@@ -1329,19 +1339,19 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
         <div class="cam-grid" id="camGrid">
           <div class="cam-card featured" onclick="openCamModal(0)">
             <img class="cam-img" id="cam-0" src="" alt="401 @ Cobourg" loading="lazy">
-            <div class="cam-label"><span>401 @ Cobourg</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+            <div class="cam-label"><span>401 @ Cobourg <span class="cam-timestamp" id="cam-ts-0"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
           </div>
           <div class="cam-card" onclick="openCamModal(1)">
             <img class="cam-img" id="cam-1" src="" alt="401 @ Newcastle" loading="lazy">
-            <div class="cam-label"><span>401 @ Newcastle</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+            <div class="cam-label"><span>401 @ Newcastle <span class="cam-timestamp" id="cam-ts-1"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
           </div>
           <div class="cam-card" onclick="openCamModal(2)">
             <img class="cam-img" id="cam-2" src="" alt="401 @ Brighton" loading="lazy">
-            <div class="cam-label"><span>401 @ Brighton</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+            <div class="cam-label"><span>401 @ Brighton <span class="cam-timestamp" id="cam-ts-2"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
           </div>
           <div class="cam-card" onclick="openCamModal(3)">
             <img class="cam-img" id="cam-3" src="" alt="401 @ Trenton" loading="lazy">
-            <div class="cam-label"><span>401 @ Trenton</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+            <div class="cam-label"><span>401 @ Trenton <span class="cam-timestamp" id="cam-ts-3"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
           </div>
         </div>
         <!-- Incidents -->
@@ -1438,7 +1448,11 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 <div class="cam-modal-overlay" id="camModalOverlay" onclick="if(event.target===this)closeCamModal()">
   <div class="cam-modal">
     <div class="cam-modal-header">
+      <button class="cam-modal-nav" onclick="prevCam()" title="Previous camera">&#8249;</button>
       <span class="cam-modal-title" id="camModalTitle">--</span>
+      <button class="cam-modal-nav" onclick="nextCam()" title="Next camera">&#8250;</button>
+      <div style="flex:1"></div>
+      <button class="cam-modal-refresh" onclick="refreshModalCam()" title="Refresh image">&#8635;</button>
       <button class="cam-modal-close" onclick="closeCamModal()">&times;</button>
     </div>
     <img class="cam-modal-img" id="camModalImg" src="" alt="Camera view">
@@ -1532,7 +1546,9 @@ function parseRSSXML(xml){
       const linkEl=el.querySelector('link');
       const link=(linkEl?.textContent?.trim())||linkEl?.getAttribute('href')||
         el.querySelector('guid')?.textContent?.trim()||'';
-      return{title:g('title'),url:link,pubDate:g('pubDate'),desc:g('description')};
+      // Extract content:encoded (full article HTML from WordPress feeds)
+      const contentEncoded = el.getElementsByTagNameNS('*', 'encoded')[0]?.textContent || el.querySelector('content\\:encoded, encoded')?.textContent || '';
+      return{title:g('title'),url:link,pubDate:g('pubDate'),desc:g('description'),fullContent:contentEncoded};
     });
   }
   // Atom
@@ -1541,7 +1557,9 @@ function parseRSSXML(xml){
     const g=t=>el.querySelector(t)?.textContent?.trim()||'';
     const link=el.querySelector('link[rel="alternate"]')?.getAttribute('href')||
       el.querySelector('link')?.getAttribute('href')||g('id');
-    return{title:g('title'),url:link,pubDate:g('published')||g('updated'),desc:g('summary')||g('content')};
+    const content=g('content');
+    const summary=g('summary');
+    return{title:g('title'),url:link,pubDate:g('published')||g('updated'),desc:summary||content,fullContent:content||summary};
   });
 }
 
@@ -1550,9 +1568,11 @@ function normalizeItems(srcKey,raw){
   return raw.slice(0,15).map(item=>{
     const title=(item.title||'').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,'').trim();
     const link=item.url||item.link||'';
-    const description=stripHTML(item.desc||item.description||'').slice(0,300);
+    const rawDesc=item.desc||item.description||'';
+    const description=stripHTML(rawDesc).slice(0,300);
+    const fullContent=item.fullContent||rawDesc||'';
     const date=item.pubDate?new Date(item.pubDate):new Date(0);
-    return{title,link,description,date,source:srcDef.name,color:srcDef.dot,sourceIcon:'\uD83D\uDCF0'};
+    return{title,link,description,fullContent,date,source:srcDef.name,color:srcDef.dot,sourceIcon:'\uD83D\uDCF0'};
   }).filter(i=>i.title&&i.link);
 }
 
@@ -1572,6 +1592,7 @@ const newsSources=[
   {key:'cr2',name:'Classic Rock 107.9',dot:'#fab387',feed:'https://classicrock1079.ca/feed/'},
   {key:'gn',name:'Google News Cobourg',dot:'#cdd6f4',feed:'https://news.google.com/rss/search?q=Cobourg+Ontario&hl=en-CA&gl=CA&ceid=CA:en'},
   {key:'gn2',name:'Google News Northumberland',dot:'#a6adc8',feed:'https://news.google.com/rss/search?q=%22Cobourg%22+OR+%22Port+Hope%22+OR+%22Northumberland+County%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'opp',name:'OPP Northumberland',dot:'#f5c2e7',feed:'https://news.google.com/rss/search?q=OPP+Northumberland+OR+%22Port+Hope+Police%22&hl=en-CA&gl=CA&ceid=CA:en'},
   {key:'rd',name:'r/Cobourg',dot:'#ff6314',reddit:true},
 ];
 
@@ -2047,6 +2068,180 @@ function filterSource(source) {
   renderNewsFeed();
 }
 
+function fixArticleImages(html, baseUrl) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+
+  // Fix relative image URLs
+  tmp.querySelectorAll('img').forEach(img => {
+    const src = img.getAttribute('src') || img.getAttribute('data-src') || img.getAttribute('data-lazy-src');
+    if (src) {
+      if (src.startsWith('//')) {
+        img.src = 'https:' + src;
+      } else if (src.startsWith('/')) {
+        try {
+          const url = new URL(baseUrl);
+          img.src = url.origin + src;
+        } catch(e) {}
+      } else if (!src.startsWith('http')) {
+        try {
+          img.src = new URL(src, baseUrl).href;
+        } catch(e) {}
+      } else {
+        img.src = src;
+      }
+    }
+    // Remove srcset to avoid loading issues
+    img.removeAttribute('srcset');
+    img.removeAttribute('data-src');
+    img.removeAttribute('data-lazy-src');
+    // Add responsive styling
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+    img.style.borderRadius = '8px';
+    img.style.margin = '12px 0';
+    img.removeAttribute('width');
+    img.removeAttribute('height');
+  });
+
+  // Remove scripts, iframes, forms
+  tmp.querySelectorAll('script, iframe, form, style, noscript').forEach(el => el.remove());
+
+  // Remove WordPress-specific junk
+  tmp.querySelectorAll('.sharedaddy, .jp-relatedposts, .post-nav, .comments-area, .wp-block-buttons').forEach(el => el.remove());
+
+  return tmp.innerHTML;
+}
+
+/* ── ON-DEMAND FULL ARTICLE FETCH ──────────────────────── */
+const _articleCache = new Map();
+
+const ARTICLE_SELECTORS = [
+  'article .entry-content',
+  '.entry-content',
+  '.post-content',
+  '.article-content',
+  '[itemprop="articleBody"]',
+  '.story-content',
+  '.single-content',
+  '.page-content',
+  '.field-item',
+  '#content-area',
+  'article',
+  'main',
+];
+
+function extractContentFromHTML(html, baseUrl) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  let contentEl = null;
+  for (const sel of ARTICLE_SELECTORS) {
+    contentEl = doc.querySelector(sel);
+    if (contentEl && contentEl.textContent.trim().length > 200) break;
+    contentEl = null;
+  }
+  if (!contentEl) return null;
+
+  const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+  const clone = contentEl.cloneNode(true);
+
+  clone.querySelectorAll([
+    'script', 'style', 'noscript', 'iframe', 'form',
+    'nav', 'header', 'footer', '.sidebar', '.widget',
+    '.sharedaddy', '.jp-relatedposts', '.post-nav',
+    '.comments-area', '.wp-block-buttons', '.related-posts',
+    '.social-share', '.author-bio', '.breadcrumbs',
+    '.ad', '.advertisement', '[class*="ad-"]', '[id*="ad-"]',
+    '.newsletter-signup', '.popup', '.modal',
+  ].join(',')).forEach(el => el.remove());
+
+  clone.querySelectorAll('img').forEach(img => {
+    const realSrc = img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || img.getAttribute('data-original');
+    if (realSrc && !img.getAttribute('src')?.startsWith('http')) {
+      img.setAttribute('src', realSrc);
+    }
+    img.removeAttribute('data-src');
+    img.removeAttribute('data-lazy-src');
+    img.removeAttribute('data-original');
+    img.removeAttribute('srcset');
+    img.removeAttribute('data-srcset');
+    const src = img.getAttribute('src');
+    if (src) {
+      try { img.setAttribute('src', new URL(src, baseUrl).href); } catch(e) {}
+    }
+  });
+
+  clone.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute('href');
+    if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+      try { a.setAttribute('href', new URL(href, baseUrl).href); } catch(e) {}
+    }
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener');
+  });
+
+  let result = clone.innerHTML;
+  if (ogImage && !clone.querySelector('img')) {
+    result = `<img src="${ogImage}" style="max-width:100%;border-radius:8px;margin-bottom:16px" alt="">` + result;
+  }
+  return result;
+}
+
+async function fetchFullArticle(url) {
+  if (_articleCache.has(url)) return _articleCache.get(url);
+  const proxies = [
+    u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+    u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+  ];
+  for (const mkUrl of proxies) {
+    try {
+      const r = await fetch(mkUrl(url), { signal: AbortSignal.timeout(12000) });
+      if (!r.ok) continue;
+      let html;
+      const ct = r.headers.get('content-type') || '';
+      if (ct.includes('json')) {
+        const j = await r.json();
+        html = j.contents || '';
+      } else {
+        html = await r.text();
+      }
+      if (html.length < 500) continue;
+      const content = extractContentFromHTML(html, url);
+      if (content && stripHTML(content).length > 200) {
+        _articleCache.set(url, content);
+        return content;
+      }
+    } catch(e) { console.warn('Proxy fetch failed:', e.message); }
+  }
+  return null;
+}
+
+function hasSubstantialContent(article) {
+  if (!article.fullContent) return false;
+  const text = stripHTML(article.fullContent);
+  if (text.length <= article.description.length + 50) return false;
+  if (text.length < 400) return false;
+  return true;
+}
+
+function renderArticleBody(article) {
+  const el = id => document.getElementById(id);
+  const readTimeText = hasSubstantialContent(article) ? stripHTML(article.fullContent) : article.description;
+  el('readerMeta').textContent = `${article.date.toLocaleDateString(undefined, {weekday:'long',year:'numeric',month:'long',day:'numeric'})} \xB7 ${estimateReadTime(readTimeText)}`;
+
+  let body = '';
+  if (hasSubstantialContent(article)) {
+    body = article.fullContent;
+  } else if (article.description) {
+    body = article.description;
+    if (!body.includes('<p') && !body.includes('<div') && !body.includes('<br')) {
+      body = body.split(/\n\n+/).map(p => `<p>${p}</p>`).join('');
+    }
+  }
+  body = fixArticleImages(body, article.link);
+  body += `<p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><a href="${article.link}" target="_blank" rel="noopener">Read full article at ${article.source} \u2192</a></p>`;
+  el('readerBody').innerHTML = body;
+}
+
 function openArticle(idx) {
   activeArticleIdx = idx;
   const article = allArticles[idx];
@@ -2057,26 +2252,44 @@ function openArticle(idx) {
     el.classList.toggle('active', parseInt(el.dataset.index) === idx);
   });
 
-  // Populate reader
+  // Populate reader header
   const el = id => document.getElementById(id);
   el('newsReaderEmpty').style.display = 'none';
   el('newsReaderContent').style.display = '';
   el('newsReaderTopbar').style.display = '';
   el('readerSource').textContent = article.source;
   el('readerTitle').textContent = article.title;
-  el('readerMeta').textContent = `${article.date.toLocaleDateString(undefined, {weekday:'long',year:'numeric',month:'long',day:'numeric'})} \xB7 ${estimateReadTime(article.description)}`;
   el('newsOriginalLink').href = article.link;
 
-  // Build body content from description
-  let body = '';
-  if (article.description) {
-    body = article.description;
-    if (!body.includes('<p') && !body.includes('<div') && !body.includes('<br')) {
-      body = body.split(/\n\n+/).map(p => `<p>${p}</p>`).join('');
+  // If we already have substantial content (from RSS content:encoded), render it
+  if (hasSubstantialContent(article)) {
+    renderArticleBody(article);
+  } else {
+    // Show description + loading indicator while fetching full article
+    let preview = article.description || '';
+    if (preview && !preview.includes('<p') && !preview.includes('<div')) {
+      preview = preview.split(/\n\n+/).map(p => `<p>${p}</p>`).join('');
     }
+    el('readerMeta').textContent = `${article.date.toLocaleDateString(undefined, {weekday:'long',year:'numeric',month:'long',day:'numeric'})}`;
+    el('readerBody').innerHTML = preview +
+      `<div class="article-loading" style="text-align:center;padding:24px 0;color:var(--ov0);font-size:.8rem">` +
+      `<div style="margin-bottom:8px">Loading full article...</div>` +
+      `<div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div>` +
+      `</div>`;
+
+    // Fetch full article on demand
+    fetchFullArticle(article.link).then(content => {
+      // Only update if this article is still the active one
+      if (activeArticleIdx !== idx) return;
+      if (content) {
+        article.fullContent = content;
+      }
+      renderArticleBody(article);
+    }).catch(() => {
+      if (activeArticleIdx !== idx) return;
+      renderArticleBody(article);
+    });
   }
-  body += `<p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><a href="${article.link}" target="_blank" rel="noopener">Read full article at ${article.source} \u2192</a></p>`;
-  el('readerBody').innerHTML = body;
 
   // Scroll reader to top
   const scrollEl = document.getElementById('newsReaderScroll');
@@ -2097,7 +2310,7 @@ async function fetchRSSSource(src){
     const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(src.feed)}&count=15`,{signal:AbortSignal.timeout(10000)});
     const j=await r.json();
     if(j.status==='ok'&&j.items?.length){
-      return normalizeItems(src.key,j.items.map(i=>({title:i.title,url:i.link,pubDate:i.pubDate,desc:i.description||i.content||''})));
+      return normalizeItems(src.key,j.items.map(i=>({title:i.title,url:i.link,pubDate:i.pubDate,desc:i.description||'',fullContent:i.content||i.description||''})));
     }
   }catch(e){}
   // Strategy 2: allorigins /get — wraps response in JSON, avoids CORS
@@ -2154,7 +2367,7 @@ async function fetchAllNews(forceRefresh){
   merged.sort((a,b)=>b.date-a.date);
   if(merged.length){
     allArticles=merged;
-    LS('newsCache',allArticles.map(i=>({...i,date:i.date.toISOString()})));
+    LS('newsCache',allArticles.map(i=>{const{fullContent,...rest}=i;return{...rest,date:i.date.toISOString()}}));
   }
   const upd=document.getElementById('newsUpdated');
   if(upd)upd.textContent=`Updated ${new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`;
@@ -3006,12 +3219,17 @@ const TRAFFIC_CAMS = [
 let camRefreshTimer = null;
 let activeCamIdx = 0;
 let activeCamView = 1; // default to Overhead
+let camModalRefreshTimer = null;
 
 function refreshCameras() {
   const t = Date.now();
+  const now = new Date();
+  const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
   TRAFFIC_CAMS.forEach((cam, i) => {
     const img = document.getElementById('cam-' + i);
     if (img) img.src = 'https://511on.ca/map/Cctv/' + cam.views[1].id + '?t=' + t;
+    const tsEl = document.getElementById('cam-ts-' + i);
+    if (tsEl) tsEl.textContent = ts;
   });
 }
 
@@ -3028,6 +3246,10 @@ function openCamModal(idx) {
   ).join('');
 
   document.getElementById('camModalOverlay').classList.add('on');
+
+  // Auto-refresh modal image every 30s
+  if (camModalRefreshTimer) clearInterval(camModalRefreshTimer);
+  camModalRefreshTimer = setInterval(refreshModalCam, 30000);
 }
 
 function switchCamView(viewIdx) {
@@ -3039,76 +3261,147 @@ function switchCamView(viewIdx) {
 
 function closeCamModal() {
   document.getElementById('camModalOverlay').classList.remove('on');
+  if (camModalRefreshTimer) { clearInterval(camModalRefreshTimer); camModalRefreshTimer = null; }
+}
+
+function prevCam() {
+  activeCamIdx = (activeCamIdx - 1 + TRAFFIC_CAMS.length) % TRAFFIC_CAMS.length;
+  openCamModal(activeCamIdx);
+}
+
+function nextCam() {
+  activeCamIdx = (activeCamIdx + 1) % TRAFFIC_CAMS.length;
+  openCamModal(activeCamIdx);
+}
+
+function refreshModalCam() {
+  const cam = TRAFFIC_CAMS[activeCamIdx];
+  if (!cam) return;
+  document.getElementById('camModalImg').src = 'https://511on.ca/map/Cctv/' + cam.views[activeCamView].id + '?t=' + Date.now();
 }
 
 async function fetchTrafficEvents() {
+  const url = 'https://511on.ca/api/v2/get/event?format=json';
+  let data = null;
+
+  // Strategy 1: Direct fetch
   try {
-    const res = await fetch('https://511on.ca/api/v2/get/event?format=json');
-    const data = await res.json();
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    data = await res.json();
+  } catch(e) {}
 
-    // Filter for 401 between Oshawa and Belleville (lon -79.3 to -77.0)
-    const events401 = (data || []).filter(e =>
-      e.RoadwayName && e.RoadwayName.includes('401') &&
-      e.Longitude > -79.3 && e.Longitude < -77.0
-    );
-
-    // Update count
-    const countEl = document.getElementById('incidentCount');
-    if (countEl) countEl.textContent = events401.length;
-
-    const listEl = document.getElementById('incidentList');
-    if (!listEl) return;
-
-    if (events401.length === 0) {
-      listEl.innerHTML = '<div class="incident-empty">No active incidents on 401 near Cobourg</div>';
-      return;
-    }
-
-    listEl.innerHTML = events401.slice(0, 10).map(e => {
-      let typeCls = 'roadwork';
-      let typeLabel = 'Roadwork';
-      if (e.EventType === 'closures') { typeCls = 'closure'; typeLabel = 'Closure'; }
-      else if (e.EventType === 'accidentsAndIncidents') { typeCls = 'accident'; typeLabel = 'Incident'; }
-      const dir = e.DirectionOfTravel || '';
-      const desc = e.Description || 'No details available';
-      const lanes = e.LanesAffected ? ' — ' + e.LanesAffected : '';
-      return '<div class="incident-row"><span class="incident-type ' + typeCls + '">' + typeLabel + '</span><div class="incident-desc">' + dir + ': ' + desc + lanes + '</div></div>';
-    }).join('');
-  } catch (e) {
-    console.error('Traffic events fetch failed:', e);
+  // Strategy 2: allorigins proxy
+  if (!data) {
+    try {
+      const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+      const j = await res.json();
+      if (j.contents) data = JSON.parse(j.contents);
+    } catch(e) {}
   }
+
+  // Strategy 3: codetabs proxy
+  if (!data) {
+    try {
+      const res = await fetch('https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+      data = await res.json();
+    } catch(e) {}
+  }
+
+  const countEl = document.getElementById('incidentCount');
+  const listEl = document.getElementById('incidentList');
+
+  if (!data || !Array.isArray(data)) {
+    if (countEl) countEl.textContent = '--';
+    if (listEl) listEl.innerHTML = '<div class="incident-empty">Incident data unavailable</div>';
+    return;
+  }
+
+  // Filter for 401 between Oshawa and Belleville (lon -79.3 to -77.0)
+  const events401 = data.filter(e =>
+    e.RoadwayName && e.RoadwayName.includes('401') &&
+    e.Longitude > -79.3 && e.Longitude < -77.0
+  );
+
+  // Update count
+  if (countEl) countEl.textContent = events401.length;
+
+  if (!listEl) return;
+
+  if (events401.length === 0) {
+    listEl.innerHTML = '<div class="incident-empty">No active incidents on 401 near Cobourg</div>';
+    return;
+  }
+
+  listEl.innerHTML = events401.slice(0, 10).map(e => {
+    let typeCls = 'roadwork';
+    let typeLabel = 'Roadwork';
+    if (e.EventType === 'closures') { typeCls = 'closure'; typeLabel = 'Closure'; }
+    else if (e.EventType === 'accidentsAndIncidents') { typeCls = 'accident'; typeLabel = 'Incident'; }
+    const dir = e.DirectionOfTravel || '';
+    const desc = e.Description || 'No details available';
+    const lanes = e.LanesAffected ? ' — ' + e.LanesAffected : '';
+    return '<div class="incident-row"><span class="incident-type ' + typeCls + '">' + typeLabel + '</span><div class="incident-desc">' + dir + ': ' + desc + lanes + '</div></div>';
+  }).join('');
 }
 
 async function fetchRoadConditions() {
+  const url = 'https://511on.ca/api/v2/get/roadconditions?format=json';
+  let data = null;
+
+  // Strategy 1: Direct fetch
   try {
-    const res = await fetch('https://511on.ca/api/v2/get/roadconditions?format=json');
-    const data = await res.json();
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    data = await res.json();
+  } catch(e) {}
 
-    // Filter for 401 segments
-    const conditions = (data || []).filter(r =>
-      r.RoadwayName && r.RoadwayName.includes('401')
-    ).slice(0, 8);
-
-    const el = document.getElementById('roadConditions');
-    if (!el) return;
-
-    if (conditions.length === 0) {
-      el.innerHTML = '<div style="font-size:.7rem;color:var(--ov0)">No data available</div>';
-      return;
-    }
-
-    el.innerHTML = conditions.map(r => {
-      const cond = (r.Condition && r.Condition[0]) || 'Unknown';
-      let badgeCls = 'dry';
-      if (/wet/i.test(cond)) badgeCls = 'wet';
-      if (/snow|slush/i.test(cond)) badgeCls = 'snow';
-      if (/ice|freez/i.test(cond)) badgeCls = 'ice';
-      const loc = r.LocationDescription || r.RoadwayName;
-      return '<div class="road-segment"><span class="road-badge ' + badgeCls + '">' + cond.split(' ').slice(0, 3).join(' ') + '</span><span class="road-name">' + loc + '</span></div>';
-    }).join('');
-  } catch (e) {
-    console.error('Road conditions fetch failed:', e);
+  // Strategy 2: allorigins proxy
+  if (!data) {
+    try {
+      const res = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+      const j = await res.json();
+      if (j.contents) data = JSON.parse(j.contents);
+    } catch(e) {}
   }
+
+  // Strategy 3: codetabs proxy
+  if (!data) {
+    try {
+      const res = await fetch('https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url), { signal: AbortSignal.timeout(10000) });
+      data = await res.json();
+    } catch(e) {}
+  }
+
+  const el = document.getElementById('roadConditions');
+  if (!el) return;
+
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    el.innerHTML = '<div style="font-size:.68rem;color:var(--ov0);padding:4px 0">Road condition data unavailable</div>';
+    return;
+  }
+
+  // Filter for 401 segments near Cobourg area
+  const conditions = data.filter(r =>
+    r.RoadwayName && r.RoadwayName.includes('401') &&
+    r.Longitude && r.Longitude > -79.3 && r.Longitude < -77.0
+  );
+
+  // If no nearby segments, show any 401 segments
+  const display = conditions.length > 0 ? conditions.slice(0, 8) : data.filter(r => r.RoadwayName && r.RoadwayName.includes('401')).slice(0, 6);
+
+  if (display.length === 0) {
+    el.innerHTML = '<div style="font-size:.68rem;color:var(--ov0);padding:4px 0">No 401 conditions reported</div>';
+    return;
+  }
+
+  el.innerHTML = display.map(r => {
+    const cond = Array.isArray(r.Condition) ? r.Condition[0] : (r.Condition || 'Unknown');
+    let badgeCls = 'dry';
+    if (/wet/i.test(cond)) badgeCls = 'wet';
+    if (/snow|slush|partly.*cover/i.test(cond)) badgeCls = 'snow';
+    if (/ice|freez/i.test(cond)) badgeCls = 'ice';
+    const loc = r.LocationDescription || r.RoadwayName || 'HWY 401';
+    return '<div class="road-segment"><span class="road-badge ' + badgeCls + '">' + cond + '</span><span class="road-name">' + loc + '</span></div>';
+  }).join('');
 }
 
 async function fetchTrafficData() {
