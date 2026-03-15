@@ -645,6 +645,81 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 .notes-saved{font-size:.58rem;color:var(--green);opacity:0;transition:opacity 300ms}
 .notes-saved.show{opacity:1}
 
+/* ══ TRAFFIC PAGE ══════════════════════════════════════════ */
+.traffic-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:calc(100vh - 160px)}
+.traffic-main{display:flex;flex-direction:column;gap:16px}
+.traffic-sidebar{display:flex;flex-direction:column;gap:12px}
+
+/* Camera grid */
+.cam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cam-card{position:relative;border-radius:var(--r-md);overflow:hidden;background:var(--s0);border:1px solid var(--border);cursor:pointer;transition:border-color 200ms}
+.cam-card:hover{border-color:var(--border-hover)}
+.cam-card.featured{grid-column:1/-1}
+.cam-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--crust)}
+.cam-label{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.65rem;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.cam-live{display:inline-flex;align-items:center;gap:4px;font-size:.52rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff}
+.cam-live-dot{width:6px;height:6px;border-radius:50%;background:#CC0000;animation:live-blink 1.2s ease-in-out infinite}
+@keyframes live-blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cam-card.featured .cam-img{aspect-ratio:21/9}
+
+/* Travel time */
+.travel-panel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;text-align:center}
+.travel-title{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0);margin-bottom:10px}
+.travel-time{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:300;color:var(--tx);line-height:1;margin-bottom:4px}
+.travel-route{font-size:.68rem;color:var(--ov0);margin-bottom:8px}
+.travel-normal{font-size:.62rem;color:var(--sub0)}
+.travel-delay{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:6px}
+.travel-delay.good{background:rgba(94,201,148,.12);color:var(--green)}
+.travel-delay.slow{background:rgba(229,196,109,.12);color:var(--yellow)}
+.travel-delay.bad{background:rgba(227,96,112,.12);color:var(--red)}
+
+/* Road conditions */
+.road-panel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-md);padding:14px}
+.road-title{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0);margin-bottom:10px}
+.road-segment{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.7rem}
+.road-segment:last-child{border-bottom:none}
+.road-badge{font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:4px;flex-shrink:0;text-transform:uppercase}
+.road-badge.dry{background:rgba(94,201,148,.12);color:var(--green)}
+.road-badge.wet{background:rgba(108,180,232,.12);color:var(--sky)}
+.road-badge.snow{background:rgba(168,165,184,.15);color:var(--sub1)}
+.road-badge.ice{background:rgba(227,96,112,.12);color:var(--red)}
+.road-name{flex:1;color:var(--sub0);font-size:.65rem}
+
+/* Incidents */
+.incidents-panel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.incidents-header{padding:10px 14px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.incidents-count{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--yellow)}
+.incident-row{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.72rem;display:flex;gap:10px}
+.incident-row:last-child{border-bottom:none}
+.incident-type{flex-shrink:0;font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.incident-type.closure{background:rgba(227,96,112,.12);color:var(--red)}
+.incident-type.roadwork{background:rgba(229,196,109,.12);color:var(--yellow)}
+.incident-type.accident{background:rgba(227,96,112,.15);color:var(--red)}
+.incident-desc{flex:1;color:var(--sub0);line-height:1.4;font-size:.68rem}
+.incident-empty{padding:20px 14px;text-align:center;color:var(--ov0);font-size:.72rem}
+.traffic-updated{font-size:.55rem;color:var(--s2);text-align:center;margin-top:8px}
+
+/* Camera modal */
+.cam-modal-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
+.cam-modal-overlay.on{display:flex}
+.cam-modal{background:var(--mantle);border:1px solid var(--border);border-radius:var(--r-lg);width:min(800px,94vw);overflow:hidden;box-shadow:0 32px 64px rgba(0,0,0,.5)}
+.cam-modal-header{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+.cam-modal-title{flex:1;font-size:.82rem;font-weight:600}
+.cam-modal-close{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;color:var(--ov0);cursor:pointer;transition:all 150ms;background:none;border:none}
+.cam-modal-close:hover{background:var(--bg-hover);color:var(--tx)}
+.cam-modal-img{width:100%;display:block}
+.cam-modal-views{display:flex;gap:4px;padding:10px 16px;border-top:1px solid var(--border)}
+.cam-view-btn{flex:1;padding:6px;border-radius:var(--r-sm);font-size:.65rem;font-weight:600;text-align:center;color:var(--ov0);background:none;border:1px solid var(--border);cursor:pointer;transition:all 150ms}
+.cam-view-btn:hover{color:var(--tx);border-color:var(--border-hover)}
+.cam-view-btn.on{color:var(--ac);border-color:var(--ac);background:rgba(124,111,224,.08)}
+
+/* Mobile */
+@media(max-width:900px){
+  .traffic-layout{grid-template-columns:1fr;min-height:auto}
+  .cam-grid{grid-template-columns:1fr}
+  .cam-card.featured .cam-img{aspect-ratio:16/9}
+}
+
 /* ══ EARTHQUAKE ALERTS ═════════════════════════════════════ */
 .eq-banner{display:none;padding:12px 18px;border-radius:var(--r-md);border:1px solid rgba(210,153,34,.2);background:rgba(210,153,34,.08);margin-bottom:16px;gap:10px;align-items:center}
 .eq-banner.on{display:flex}
@@ -928,6 +1003,10 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
     <button class="nav-item" data-page="stocks" onclick="showPage('stocks')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
       Markets
+    </button>
+    <button class="nav-item" data-page="traffic" onclick="showPage('traffic')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.8-4.7A2 2 0 0 0 13.5 4h-3a2 2 0 0 0-1.7 1.3L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+      Traffic
     </button>
     <button class="nav-item" data-page="currency" onclick="showPage('currency')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
@@ -1243,6 +1322,45 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
     </div>
   </section>
 
+  <!-- ── TRAFFIC ─────────────────────────────────────────── -->
+  <section class="page" id="page-traffic">
+    <div class="traffic-layout">
+      <div class="traffic-main">
+        <div class="cam-grid" id="camGrid">
+          <div class="cam-card featured" onclick="openCamModal(0)">
+            <img class="cam-img" id="cam-0" src="" alt="401 @ Cobourg" loading="lazy">
+            <div class="cam-label"><span>401 @ Cobourg</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+          </div>
+          <div class="cam-card" onclick="openCamModal(1)">
+            <img class="cam-img" id="cam-1" src="" alt="401 @ Newcastle" loading="lazy">
+            <div class="cam-label"><span>401 @ Newcastle</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+          </div>
+          <div class="cam-card" onclick="openCamModal(2)">
+            <img class="cam-img" id="cam-2" src="" alt="401 @ Brighton" loading="lazy">
+            <div class="cam-label"><span>401 @ Brighton</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+          </div>
+          <div class="cam-card" onclick="openCamModal(3)">
+            <img class="cam-img" id="cam-3" src="" alt="401 @ Trenton" loading="lazy">
+            <div class="cam-label"><span>401 @ Trenton</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+          </div>
+        </div>
+        <!-- Incidents -->
+        <div class="incidents-panel">
+          <div class="incidents-header"><span>Highway 401 Incidents</span><span class="incidents-count" id="incidentCount">0</span></div>
+          <div id="incidentList"><div class="incident-empty">No active incidents</div></div>
+        </div>
+      </div>
+      <div class="traffic-sidebar">
+        <!-- Road Conditions -->
+        <div class="road-panel">
+          <div class="road-title">Road Conditions</div>
+          <div id="roadConditions"><div style="font-size:.7rem;color:var(--ov0)">Loading...</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="traffic-updated" id="trafficUpdated"></div>
+  </section>
+
 </main>
 
 <!-- CP24-Style News Crawl -->
@@ -1313,6 +1431,18 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
       <div class="stkm-chart-loading">Loading chart&hellip;</div>
     </div>
     <div class="stkm-stats" id="smStats"></div>
+  </div>
+</div>
+
+<!-- Camera Modal -->
+<div class="cam-modal-overlay" id="camModalOverlay" onclick="if(event.target===this)closeCamModal()">
+  <div class="cam-modal">
+    <div class="cam-modal-header">
+      <span class="cam-modal-title" id="camModalTitle">--</span>
+      <button class="cam-modal-close" onclick="closeCamModal()">&times;</button>
+    </div>
+    <img class="cam-modal-img" id="camModalImg" src="" alt="Camera view">
+    <div class="cam-modal-views" id="camModalViews"></div>
   </div>
 </div>
 
@@ -2857,6 +2987,137 @@ function openMosaicArticle(idx) { showPage('news'); openArticle(idx); }
 
 function refreshMosaic() { fetchAllNews(true); }
 
+/* ── TRAFFIC (Ontario 511) ────────────────────────────── */
+const TRAFFIC_CAMS = [
+  { label: '401 @ Cobourg', views: [
+    { id: 448, dir: 'East' }, { id: 449, dir: 'Overhead' }, { id: 450, dir: 'West' }
+  ]},
+  { label: '401 @ Newcastle', views: [
+    { id: 445, dir: 'East' }, { id: 446, dir: 'Overhead' }, { id: 447, dir: 'West' }
+  ]},
+  { label: '401 @ Brighton', views: [
+    { id: 451, dir: 'East' }, { id: 452, dir: 'Overhead' }, { id: 453, dir: 'West' }
+  ]},
+  { label: '401 @ Trenton', views: [
+    { id: 454, dir: 'East' }, { id: 455, dir: 'Overhead' }, { id: 456, dir: 'West' }
+  ]},
+];
+
+let camRefreshTimer = null;
+let activeCamIdx = 0;
+let activeCamView = 1; // default to Overhead
+
+function refreshCameras() {
+  const t = Date.now();
+  TRAFFIC_CAMS.forEach((cam, i) => {
+    const img = document.getElementById('cam-' + i);
+    if (img) img.src = 'https://511on.ca/map/Cctv/' + cam.views[1].id + '?t=' + t;
+  });
+}
+
+function openCamModal(idx) {
+  activeCamIdx = idx;
+  activeCamView = 1;
+  const cam = TRAFFIC_CAMS[idx];
+  document.getElementById('camModalTitle').textContent = cam.label;
+  document.getElementById('camModalImg').src = 'https://511on.ca/map/Cctv/' + cam.views[1].id + '?t=' + Date.now();
+
+  // Build view buttons
+  document.getElementById('camModalViews').innerHTML = cam.views.map((v, vi) =>
+    '<button class="cam-view-btn' + (vi === 1 ? ' on' : '') + '" onclick="switchCamView(' + vi + ')">' + v.dir + '</button>'
+  ).join('');
+
+  document.getElementById('camModalOverlay').classList.add('on');
+}
+
+function switchCamView(viewIdx) {
+  activeCamView = viewIdx;
+  const cam = TRAFFIC_CAMS[activeCamIdx];
+  document.getElementById('camModalImg').src = 'https://511on.ca/map/Cctv/' + cam.views[viewIdx].id + '?t=' + Date.now();
+  document.querySelectorAll('.cam-view-btn').forEach((btn, i) => btn.classList.toggle('on', i === viewIdx));
+}
+
+function closeCamModal() {
+  document.getElementById('camModalOverlay').classList.remove('on');
+}
+
+async function fetchTrafficEvents() {
+  try {
+    const res = await fetch('https://511on.ca/api/v2/get/event?format=json');
+    const data = await res.json();
+
+    // Filter for 401 between Oshawa and Belleville (lon -79.3 to -77.0)
+    const events401 = (data || []).filter(e =>
+      e.RoadwayName && e.RoadwayName.includes('401') &&
+      e.Longitude > -79.3 && e.Longitude < -77.0
+    );
+
+    // Update count
+    const countEl = document.getElementById('incidentCount');
+    if (countEl) countEl.textContent = events401.length;
+
+    const listEl = document.getElementById('incidentList');
+    if (!listEl) return;
+
+    if (events401.length === 0) {
+      listEl.innerHTML = '<div class="incident-empty">No active incidents on 401 near Cobourg</div>';
+      return;
+    }
+
+    listEl.innerHTML = events401.slice(0, 10).map(e => {
+      let typeCls = 'roadwork';
+      let typeLabel = 'Roadwork';
+      if (e.EventType === 'closures') { typeCls = 'closure'; typeLabel = 'Closure'; }
+      else if (e.EventType === 'accidentsAndIncidents') { typeCls = 'accident'; typeLabel = 'Incident'; }
+      const dir = e.DirectionOfTravel || '';
+      const desc = e.Description || 'No details available';
+      const lanes = e.LanesAffected ? ' — ' + e.LanesAffected : '';
+      return '<div class="incident-row"><span class="incident-type ' + typeCls + '">' + typeLabel + '</span><div class="incident-desc">' + dir + ': ' + desc + lanes + '</div></div>';
+    }).join('');
+  } catch (e) {
+    console.error('Traffic events fetch failed:', e);
+  }
+}
+
+async function fetchRoadConditions() {
+  try {
+    const res = await fetch('https://511on.ca/api/v2/get/roadconditions?format=json');
+    const data = await res.json();
+
+    // Filter for 401 segments
+    const conditions = (data || []).filter(r =>
+      r.RoadwayName && r.RoadwayName.includes('401')
+    ).slice(0, 8);
+
+    const el = document.getElementById('roadConditions');
+    if (!el) return;
+
+    if (conditions.length === 0) {
+      el.innerHTML = '<div style="font-size:.7rem;color:var(--ov0)">No data available</div>';
+      return;
+    }
+
+    el.innerHTML = conditions.map(r => {
+      const cond = (r.Condition && r.Condition[0]) || 'Unknown';
+      let badgeCls = 'dry';
+      if (/wet/i.test(cond)) badgeCls = 'wet';
+      if (/snow|slush/i.test(cond)) badgeCls = 'snow';
+      if (/ice|freez/i.test(cond)) badgeCls = 'ice';
+      const loc = r.LocationDescription || r.RoadwayName;
+      return '<div class="road-segment"><span class="road-badge ' + badgeCls + '">' + cond.split(' ').slice(0, 3).join(' ') + '</span><span class="road-name">' + loc + '</span></div>';
+    }).join('');
+  } catch (e) {
+    console.error('Road conditions fetch failed:', e);
+  }
+}
+
+async function fetchTrafficData() {
+  await Promise.all([fetchTrafficEvents(), fetchRoadConditions()]);
+  refreshCameras();
+  const upd = document.getElementById('trafficUpdated');
+  if (upd) upd.textContent = 'Updated ' + new Date().toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit' }) + ' · Ontario 511 · Open Government Licence';
+}
+
 /* ── INIT ─────────────────────────────────────────────── */
 (function init(){
   // Theme init
@@ -2879,6 +3140,7 @@ function refreshMosaic() { fetchAllNews(true); }
   fetchCurrency();
   renderNotesTabs();
   fetchEarthquakes();
+  fetchTrafficData();
   loadTmrs();updateCompactRing();if(timers.some(t=>t.state==='running'))startTick();
   if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
   const now=new Date();renderCal(now.getFullYear(),now.getMonth());
@@ -2889,6 +3151,8 @@ function refreshMosaic() { fetchAllNews(true); }
   setInterval(updateMoon,60*60*1000);
   setInterval(fetchCurrency,30*60*1000);
   setInterval(fetchEarthquakes,30*60*1000);
+  setInterval(refreshCameras, 30000);
+  setInterval(fetchTrafficData, 5 * 60 * 1000);
 })();
 </script>
 </body>
