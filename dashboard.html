@@ -2399,9 +2399,12 @@ async function fetchAllNews(forceRefresh){
   ];
   const results=await Promise.allSettled(fetchers);
   const merged=[];
-  for(const r of results){
-    if(r.status==='fulfilled')merged.push(...r.value);
-    else console.warn('News source failed:',r.reason?.message);
+  const sourceNames=newsSources.filter(s=>s.feed).map(s=>s.name);
+  sourceNames.push('r/Cobourg');
+  for(let i=0;i<results.length;i++){
+    const r=results[i];
+    if(r.status==='fulfilled'){merged.push(...r.value);console.log('✓ News:',sourceNames[i]||i,r.value.length,'articles');}
+    else console.warn('✗ News:',sourceNames[i]||i,r.reason?.message);
   }
   merged.sort((a,b)=>b.date-a.date);
   if(merged.length){
@@ -3621,8 +3624,9 @@ async function fetchTrafficData() {
   renderSourcePills();
   initTicker();
   fetchWeather();
+  // Bust stale cache once after feed fixes (v2)
+  if(localStorage.getItem('newsCacheVer')!=='2'){localStorage.removeItem('newsCache');localStorage.setItem('newsCacheVer','2');}
   fetchAllNews();
-  // Crawl will populate when fetchAllNews completes via renderMosaic
   fetchStocks();
   renderMarketIndices();
   startCryptoTicker();
