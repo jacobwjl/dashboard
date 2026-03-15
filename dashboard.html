@@ -607,6 +607,35 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 .stk-live-badge{display:inline-flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--green);padding:2px 6px;border-radius:4px;background:rgba(166,227,161,.1)}
 .stk-seed-badge{display:inline-flex;align-items:center;gap:4px;font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ov0);padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.05)}
 
+/* Market indices strip */
+.mkt-indices{display:flex;gap:2px;padding:12px 18px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.mkt-indices::-webkit-scrollbar{display:none}
+.mkt-idx{flex:1;min-width:120px;padding:8px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);text-align:center}
+.mkt-idx-name{font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ov0);margin-bottom:2px}
+.mkt-idx-price{font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:500;font-variant-numeric:tabular-nums;color:var(--tx)}
+.mkt-idx-chg{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;margin-top:2px}
+.mkt-idx-chg.up{color:var(--green)}.mkt-idx-chg.dn{color:var(--red)}
+.mkt-status{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:10px;align-self:center;flex-shrink:0}
+.mkt-status.open{background:rgba(94,201,148,.12);color:var(--green)}
+.mkt-status.closed{background:rgba(227,96,112,.12);color:var(--red)}
+
+/* Sparkline in crypto rows */
+.stk-sparkline{display:flex;align-items:center;justify-content:flex-end}
+
+/* Sector performance panel */
+.sector-panel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px}
+.sector-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:4px;margin-top:8px}
+.sector-cell{padding:10px 6px;border-radius:var(--r-sm);text-align:center;transition:transform 150ms}
+.sector-cell:hover{transform:scale(1.03)}
+.sector-name{font-size:.55rem;color:rgba(255,255,255,.8);margin-bottom:2px}
+.sector-pct{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;color:#fff}
+
+/* WebSocket flash animations */
+.flash-up{animation:flashGreen .5s}
+.flash-dn{animation:flashRed .5s}
+@keyframes flashGreen{0%{background:rgba(94,201,148,.2)}100%{background:transparent}}
+@keyframes flashRed{0%{background:rgba(227,96,112,.2)}100%{background:transparent}}
+
 /* ══ CURRENCY PAGE ══════════════════════════════════════════ */
 .cur-panel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
 .cur-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -1238,6 +1267,9 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
   <!-- ── MARKETS ───────────────────────────────────────────── -->
   <section class="page" id="page-stocks">
     <div class="markets-panel">
+      <div class="mkt-indices" id="mktIndices">
+        <span class="mkt-status closed" id="mktStatus">Closed</span>
+      </div>
       <div class="stk-topbar">
         <div class="stk-tabs">
           <button class="stk-tab on" data-tab="tsx" onclick="switchStockTab('tsx')">TSX</button>
@@ -1257,6 +1289,12 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
       </div>
       <div id="tsxBody" class="stk-body"><div style="padding:16px"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div><div style="height:16px"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
       <div id="cryptoBody" class="stk-body" style="display:none"><div style="padding:16px"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div><div style="height:16px"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
+    </div>
+    <div class="sector-panel" id="sectorPanel" style="margin-top:16px">
+      <div class="panel-title">Sector Performance</div>
+      <div class="sector-grid" id="sectorGrid">
+        <div style="font-size:.7rem;color:var(--ov0);padding:8px">Sector data loads when market is open</div>
+      </div>
     </div>
   </section>
 
@@ -2423,6 +2461,94 @@ function updateNewsCrawl() {
 function fmtMcap(v){if(!v)return'—';if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';if(v>=1e9)return'$'+(v/1e9).toFixed(1)+'B';if(v>=1e6)return'$'+(v/1e6).toFixed(0)+'M';return'$'+v.toFixed(0)}
 function fmtVol(v){if(!v)return'—';if(v>=1e9)return(v/1e9).toFixed(1)+'B';if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(0)+'K';return String(v)}
 
+/* ── Market Status & Indices Strip ──────────────────── */
+function getMarketStatus() {
+  const now = new Date();
+  const et = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const h = et.getHours(), m = et.getMinutes(), day = et.getDay();
+  const mins = h * 60 + m;
+  if (day === 0 || day === 6) return { label: 'Closed', cls: 'closed' };
+  if (mins >= 570 && mins < 960) return { label: 'Open', cls: 'open' };
+  if (mins >= 240 && mins < 570) return { label: 'Pre-Market', cls: 'closed' };
+  if (mins >= 960 && mins < 1200) return { label: 'After-Hours', cls: 'closed' };
+  return { label: 'Closed', cls: 'closed' };
+}
+
+const INDEX_SEED = [
+  { name: 'S&P/TSX', price: 24286.15, chg: -0.68 },
+  { name: 'S&P 500', price: 5572.07, chg: -1.39 },
+  { name: 'DOW', price: 41350.93, chg: -1.30 },
+  { name: 'NASDAQ', price: 17648.45, chg: -1.96 },
+];
+
+function renderMarketStatus() {
+  const s = getMarketStatus();
+  const el = document.getElementById('mktStatus');
+  if (el) { el.textContent = s.label; el.className = 'mkt-status ' + s.cls; }
+}
+
+function renderMarketIndices() {
+  const container = document.getElementById('mktIndices');
+  if (!container) return;
+  let html = '';
+  INDEX_SEED.forEach(idx => {
+    const up = idx.chg >= 0;
+    html += '<div class="mkt-idx">' +
+      '<div class="mkt-idx-name">' + esc(idx.name) + '</div>' +
+      '<div class="mkt-idx-price">' + idx.price.toLocaleString('en-CA', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</div>' +
+      '<div class="mkt-idx-chg ' + (up ? 'up' : 'dn') + '">' + (up ? '+' : '') + idx.chg.toFixed(2) + '%</div>' +
+    '</div>';
+  });
+  html += '<span class="mkt-status closed" id="mktStatus">Closed</span>';
+  container.innerHTML = html;
+  renderMarketStatus();
+}
+
+/* ── Sparkline SVG generator ────────────────────────── */
+function createSparkline(prices, width, height) {
+  if (!prices || prices.length < 2) return '';
+  const min = Math.min(...prices), max = Math.max(...prices);
+  const range = max - min || 1;
+  const isUp = prices[prices.length - 1] >= prices[0];
+  const color = isUp ? 'var(--green)' : 'var(--red)';
+  const pts = prices.map((p, i) => {
+    const x = (i / (prices.length - 1)) * width;
+    const y = height - ((p - min) / range) * (height - 2) - 1;
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  return '<svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" style="vertical-align:middle"><polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+}
+
+/* ── CoinCap WebSocket for real-time crypto ─────────── */
+let cryptoWs = null;
+
+function startCryptoTicker() {
+  if (cryptoWs) { try { cryptoWs.close(); } catch(e) {} }
+  try {
+    cryptoWs = new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin,ethereum,solana,ripple,dogecoin,cardano');
+    cryptoWs.onmessage = function(msg) {
+      try {
+        const prices = JSON.parse(msg.data);
+        Object.entries(prices).forEach(([id, usdPrice]) => {
+          document.querySelectorAll('.stk-row[data-type="crypto"]').forEach(row => {
+            const name = (row.dataset.coinid || '').toLowerCase();
+            if (name === id) {
+              const priceEl = row.querySelector('.stk-num');
+              if (priceEl) {
+                priceEl.classList.remove('flash-up', 'flash-dn');
+                void priceEl.offsetWidth;
+                priceEl.classList.add('flash-up');
+              }
+            }
+          });
+        });
+      } catch(e) {}
+    };
+    cryptoWs.onerror = function() { setTimeout(startCryptoTicker, 10000); };
+    cryptoWs.onclose = function() { setTimeout(startCryptoTicker, 10000); };
+  } catch(e) { console.error('WebSocket failed:', e); }
+}
+
 // Verified TSX top 29 by market cap — symbols confirmed working with Yahoo Finance
 const TSX_SYMBOLS=['RY.TO','SHOP.TO','TD.TO','ENB.TO','AEM.TO','CNQ.TO','BMO.TO','BN.TO','BNS.TO','ABX.TO','CP.TO','SU.TO','BAM.TO','WPM.TO','CNR.TO','ATD.TO','MFC.TO','L.TO','CVE.TO','TRI.TO','WCN.TO','CSU.TO','NTR.TO','FFH.TO','SLF.TO','QSR.TO','POW.TO','BCE.TO','T.TO'];
 
@@ -2468,12 +2594,14 @@ function switchStockTab(tab){
   document.getElementById('cryptoBody').style.display=tab==='crypto'?'':'none';
 }
 
-function buildStkRow(sym,name,nameHtml,price,chgPct,mcap,vol,isCrypto,img){
+function buildStkRow(sym,name,nameHtml,price,chgPct,mcap,vol,isCrypto,img,extra){
   const up=chgPct>=0;
   const pStr=price>=1?price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):price<0.01?price.toFixed(6):price.toFixed(4);
-  const da=`data-sym="${escA(sym)}" data-name="${escA(name)}" data-price="${price}" data-chg="${chgPct}" data-mcap="${mcap}" data-vol="${vol}" data-crypto="${isCrypto}"${img?` data-img="${escA(img)}"`:''}`;
+  let da=`data-sym="${escA(sym)}" data-name="${escA(name)}" data-price="${price}" data-chg="${chgPct}" data-mcap="${mcap}" data-vol="${vol}" data-crypto="${isCrypto}"${img?` data-img="${escA(img)}"`:''}`;
+  if(extra){Object.entries(extra).forEach(([k,v])=>{if(v!=null&&k!=='spark')da+=` data-${k}="${escA(String(v))}"`;})}
+  const sparkHtml=(extra&&extra.spark)?'<span class="stk-sparkline" style="margin-left:6px">'+extra.spark+'</span>':'';
   return`<div class="stk-row" onclick="openStockModal(this)" ${da}>
-    <div class="stk-col-name">${nameHtml}</div>
+    <div class="stk-col-name">${nameHtml}${sparkHtml}</div>
     <div class="stk-col-price stk-num">$${pStr}</div>
     <div class="stk-col-chg"><span class="stk-pill ${up?'up':'dn'}">${up?'+':''}${chgPct.toFixed(2)}%</span></div>
     <div class="stk-col-mcap stk-num">${fmtMcap(mcap)}</div>
@@ -2495,6 +2623,8 @@ function openStockModal(el){
   const mcap=parseFloat(el.dataset.mcap),vol=parseFloat(el.dataset.vol);
   const isCrypto=el.dataset.crypto==='true',img=el.dataset.img||'';
   const up=chg>=0;
+  const chgStr=(up?'+':'')+chg.toFixed(2)+'%';
+  const chgCls=up?'up':'dn';
   const pStr=price>=1?price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):price<0.01?price.toFixed(6):price.toFixed(4);
   // Icon
   const iconEl=document.getElementById('smIcon');
@@ -2504,14 +2634,48 @@ function openStockModal(el){
   document.getElementById('smName').textContent=name;
   document.getElementById('smPrice').textContent='$'+pStr;
   const chgEl=document.getElementById('smChg');
-  chgEl.textContent=(up?'+':'')+chg.toFixed(2)+'% today';
-  chgEl.className='stkm-chg '+(up?'up':'dn');
-  // Stats grid
-  document.getElementById('smStats').innerHTML=`
-    <div class="stkm-stat"><div class="stkm-stat-lbl">Market Cap</div><div class="stkm-stat-val">${fmtMcap(mcap)}</div></div>
-    <div class="stkm-stat"><div class="stkm-stat-lbl">Volume</div><div class="stkm-stat-val">${fmtVol(vol)}</div></div>
-    <div class="stkm-stat"><div class="stkm-stat-lbl">Exchange</div><div class="stkm-stat-val">${isCrypto?'Crypto (CAD)':'TSX (CAD)'}</div></div>
-    <div class="stkm-stat"><div class="stkm-stat-lbl">24h Change</div><div class="stkm-stat-val ${up?'up':'dn'}">${up?'+':''}${chg.toFixed(2)}%</div></div>`;
+  chgEl.textContent=chgStr+' today';
+  chgEl.className='stkm-chg '+chgCls;
+  // Build expanded stats
+  let stats;
+  if(isCrypto){
+    const ath=el.dataset.ath;
+    const supply=el.dataset.supply;
+    const maxSupply=el.dataset.maxsupply;
+    const high24=el.dataset.high24;
+    const low24=el.dataset.low24;
+    stats=[
+      {label:'Market Cap',value:fmtMcap(mcap)},
+      {label:'24h Volume',value:fmtVol(vol)},
+      {label:'24h Change',value:chgStr,cls:chgCls},
+      {label:'24h Range',value:(low24&&high24)?('$'+parseFloat(low24).toLocaleString()+' - $'+parseFloat(high24).toLocaleString()):'--'},
+      {label:'ATH',value:ath?('$'+parseFloat(ath).toLocaleString()):'--'},
+      {label:'Circulating',value:supply?fmtVol(parseFloat(supply)):'--'},
+      {label:'Max Supply',value:(maxSupply&&maxSupply!=='null')?fmtVol(parseFloat(maxSupply)):'--'},
+      {label:'Exchange',value:'Crypto (CAD)'},
+    ];
+  }else{
+    const pe=el.dataset.pe;
+    const eps=el.dataset.eps;
+    const divYield=el.dataset.divyield;
+    const dayHigh=el.dataset.dayhigh;
+    const dayLow=el.dataset.daylow;
+    const w52High=el.dataset.w52high;
+    const w52Low=el.dataset.w52low;
+    stats=[
+      {label:'Market Cap',value:fmtMcap(mcap)},
+      {label:'Volume',value:fmtVol(vol)},
+      {label:'24h Change',value:chgStr,cls:chgCls},
+      {label:'Day Range',value:(dayLow&&dayHigh)?('$'+dayLow+' - $'+dayHigh):'--'},
+      {label:'P/E Ratio',value:pe?parseFloat(pe).toFixed(2):'--'},
+      {label:'EPS',value:eps?parseFloat(eps).toFixed(2):'--'},
+      {label:'Div Yield',value:divYield?(parseFloat(divYield)*100).toFixed(2)+'%':'--'},
+      {label:'52W Range',value:(w52Low&&w52High)?('$'+w52Low+' - $'+w52High):'--'},
+    ];
+  }
+  document.getElementById('smStats').innerHTML=stats.map(s=>
+    `<div class="stkm-stat"><div class="stkm-stat-lbl">${esc(s.label)}</div><div class="stkm-stat-val${s.cls?' '+s.cls:''}">${s.value}</div></div>`
+  ).join('');
   // Chart
   const tvSym=isCrypto?getCryptoTVSym(sym):`TSX:${sym}`;
   document.getElementById('tvChart').innerHTML='<div class="stkm-chart-loading">Loading chart&hellip;</div>';
@@ -2552,7 +2716,15 @@ function createTVWidget(symbol){
 function renderTSXData(el,rows,live){
   let html=rows.map(d=>{
     const nameHtml=`<span class="stk-sym">${esc(d.sym)}</span><span class="stk-name">${esc(d.name)}</span>`;
-    return buildStkRow(d.sym,d.name,nameHtml,d.price,d.chg,d.mcap,d.vol,false,'');
+    const extra={};
+    if(d.pe)extra.pe=d.pe;
+    if(d.eps)extra.eps=d.eps;
+    if(d.divyield!=null)extra.divyield=d.divyield;
+    if(d.dayhigh)extra.dayhigh=d.dayhigh;
+    if(d.daylow)extra.daylow=d.daylow;
+    if(d.w52high)extra.w52high=d.w52high;
+    if(d.w52low)extra.w52low=d.w52low;
+    return buildStkRow(d.sym,d.name,nameHtml,d.price,d.chg,d.mcap,d.vol,false,'',Object.keys(extra).length?extra:undefined);
   }).join('');
   if(!live)html+=`<div class="stk-footnote"><span class="stk-seed-badge">Mar 12, 2026 close</span> &nbsp;Live data blocked by browser CORS — Yahoo Finance requires a backend proxy for real-time updates.</div>`;
   el.innerHTML=html;
@@ -2565,14 +2737,28 @@ async function fetchTSX(){
   document.getElementById('stkUpdated').textContent='Mar 12 close';
   // Attempt live refresh (succeeds only if browser CORS permits)
   const syms=TSX_SYMBOLS.join(',');
-  const yUrl=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms}&fields=symbol,shortName,regularMarketPrice,regularMarketChangePercent,marketCap,regularMarketVolume&formatted=false`;
+  const yUrl=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${syms}&fields=symbol,shortName,regularMarketPrice,regularMarketChangePercent,marketCap,regularMarketVolume,trailingPE,epsTrailingTwelveMonths,dividendYield,fiftyTwoWeekHigh,fiftyTwoWeekLow,regularMarketDayHigh,regularMarketDayLow&formatted=false`;
   try{
     const r=await fetch(yUrl,{credentials:'include',signal:AbortSignal.timeout(8000)});
     const j=await r.json();
     const quotes=j?.quoteResponse?.result||[];
     if(quotes.length){
       quotes.sort((a,b)=>(b.marketCap||0)-(a.marketCap||0));
-      const live=quotes.map(q=>({sym:(q.symbol||'').replace('.TO',''),name:q.shortName||q.symbol,price:q.regularMarketPrice||0,chg:q.regularMarketChangePercent||0,mcap:q.marketCap||0,vol:q.regularMarketVolume||0}));
+      const live=quotes.map(q=>({
+        sym:(q.symbol||'').replace('.TO',''),
+        name:q.shortName||q.symbol,
+        price:q.regularMarketPrice||0,
+        chg:q.regularMarketChangePercent||0,
+        mcap:q.marketCap||0,
+        vol:q.regularMarketVolume||0,
+        pe:q.trailingPE||null,
+        eps:q.epsTrailingTwelveMonths||null,
+        divyield:q.dividendYield||null,
+        dayhigh:q.regularMarketDayHigh||null,
+        daylow:q.regularMarketDayLow||null,
+        w52high:q.fiftyTwoWeekHigh||null,
+        w52low:q.fiftyTwoWeekLow||null,
+      }));
       renderTSXData(el,live,true);
       document.getElementById('stkUpdated').textContent='Live · '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
     }
@@ -2583,14 +2769,25 @@ async function fetchCryptoCAD(){
   const el=document.getElementById('cryptoBody');
   el.innerHTML='<div style="padding:16px"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div><div style="height:16px"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div>';
   try{
-    const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_desc&per_page=25&page=1&sparkline=false&price_change_percentage=24h',{signal:AbortSignal.timeout(12000)});
+    const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_desc&per_page=25&page=1&sparkline=true&price_change_percentage=24h',{signal:AbortSignal.timeout(12000)});
     const coins=await r.json();
     if(!Array.isArray(coins)||!coins.length)throw new Error('empty');
     let html='';
     for(const c of coins){
       const coinSym=(c.symbol||'').toUpperCase();
+      const spark=c.sparkline_in_7d?createSparkline(c.sparkline_in_7d.price,60,20):'';
       const nameHtml=`<img class="coin-ico" src="${escA(c.image)}" alt="" loading="lazy"><span class="stk-sym">${esc(coinSym)}</span><span class="stk-name">${esc(c.name||'')}</span>`;
-      html+=buildStkRow(coinSym,c.name||'',nameHtml,c.current_price||0,c.price_change_percentage_24h||0,c.market_cap||0,c.total_volume||0,true,c.image||'');
+      const extra={
+        type:'crypto',
+        coinid:c.id||'',
+        ath:c.ath,
+        supply:c.circulating_supply,
+        maxsupply:c.max_supply,
+        high24:c.high_24h,
+        low24:c.low_24h,
+        spark:spark
+      };
+      html+=buildStkRow(coinSym,c.name||'',nameHtml,c.current_price||0,c.price_change_percentage_24h||0,c.market_cap||0,c.total_volume||0,true,c.image||'',extra);
     }
     el.innerHTML=html||'<div class="empty">No data.</div>';
     document.getElementById('stkUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
@@ -3426,6 +3623,8 @@ async function fetchTrafficData() {
   fetchAllNews();
   // Crawl will populate when fetchAllNews completes via renderMosaic
   fetchStocks();
+  renderMarketIndices();
+  startCryptoTicker();
   fetchIP();
   renderBMs();
   renderTodos();
@@ -3446,6 +3645,7 @@ async function fetchTrafficData() {
   setInterval(fetchEarthquakes,30*60*1000);
   setInterval(refreshCameras, 30000);
   setInterval(fetchTrafficData, 5 * 60 * 1000);
+  setInterval(renderMarketStatus, 60000);
 })();
 </script>
 </body>
