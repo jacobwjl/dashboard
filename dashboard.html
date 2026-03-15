@@ -1630,7 +1630,8 @@ const newsSources=[
   {key:'cr2',name:'Classic Rock 107.9',dot:'#fab387',feed:'https://classicrock1079.ca/feed/'},
   {key:'gn',name:'Google News Cobourg',dot:'#cdd6f4',feed:'https://news.google.com/rss/search?q=Cobourg+Ontario&hl=en-CA&gl=CA&ceid=CA:en'},
   {key:'gn2',name:'Google News Northumberland',dot:'#a6adc8',feed:'https://news.google.com/rss/search?q=%22Cobourg%22+OR+%22Port+Hope%22+OR+%22Northumberland+County%22&hl=en-CA&gl=CA&ceid=CA:en'},
-  {key:'opp',name:'OPP Northumberland',dot:'#f5c2e7',feed:'https://news.google.com/rss/search?q=OPP+Northumberland+OR+%22Port+Hope+Police%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'opp',name:'OPP East Region',dot:'#f5c2e7',feed:'https://news.google.com/rss/search?q=%22OPP%22+%22Northumberland%22+OR+%22OPP%22+%22Cobourg%22+OR+%22OPP%22+%22Port+Hope%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'php',name:'Port Hope Police',dot:'#cba6f7',feed:'https://news.google.com/rss/search?q=%22Port+Hope+Police%22+OR+%22PHPS%22+%22Port+Hope%22&hl=en-CA&gl=CA&ceid=CA:en'},
   {key:'rd',name:'r/Cobourg',dot:'#ff6314',reddit:true},
 ];
 
@@ -2345,7 +2346,7 @@ function closeReader() {
 async function fetchRSSSource(src){
   // Strategy 1: rss2json — converts RSS to clean JSON, handles CORS
   try{
-    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(src.feed)}&count=15`,{signal:AbortSignal.timeout(10000)});
+    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(src.feed)}`,{signal:AbortSignal.timeout(10000)});
     const j=await r.json();
     if(j.status==='ok'&&j.items?.length){
       return normalizeItems(src.key,j.items.map(i=>({title:i.title,url:i.link,pubDate:i.pubDate,desc:i.description||'',fullContent:i.content||i.description||''})));
