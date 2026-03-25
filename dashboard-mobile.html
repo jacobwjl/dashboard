@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="dark light">
+<meta name="format-detection" content="telephone=no">
+<title>Dashboard</title>
+<!-- Fonts: load async so dashboard works in offline/HTML-viewer apps -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"></noscript>
+<style>
+/* ══ THEMES ══════════════════════════════════════════════════ */
+[data-theme="dark"]{--base:#111014;--mantle:#18171C;--crust:#141318;--s0:#1E1D24;--s1:#26252D;--s2:#2E2D36;--ov0:#4E4B5A;--ov1:#65627A;--sub0:#908DA0;--sub1:#A8A5B8;--tx:#E8E6F0;--ac:#7C6FE0;--ac2:#635ABA;--ac3:#A99DF0;--green:#5EC994;--yellow:#E5C46D;--red:#E36070;--teal:#4EC9C0;--peach:#E8A468;--sky:#6CB4E8;--m1:rgba(124,111,224,.08);--m2:rgba(94,201,148,.05);--m3:rgba(78,201,192,.04);--border:rgba(255,255,255,.08);--border-hover:rgba(255,255,255,.14);--bg-hover:rgba(255,255,255,.05);--bg-active:rgba(255,255,255,.08);--glass-bg:rgba(17,16,20,.65);--glass-border:rgba(255,255,255,.08);--tab-bg:rgba(0,0,0,.75)}
+[data-theme="light"]{--base:#FAF9FB;--mantle:#F2F1F5;--crust:#ECEAF0;--s0:#FFFFFF;--s1:#F5F4F8;--s2:#EDECF2;--ov0:#B5B2C0;--ov1:#9895A8;--sub0:#706D82;--sub1:#585470;--tx:#1C1A26;--ac:#6858D5;--ac2:#8578E0;--ac3:#EDE8FF;--green:#2F9B68;--yellow:#B8940E;--red:#D04050;--teal:#1A998E;--peach:#C47A30;--sky:#3A8FCC;--m1:rgba(104,88,213,.04);--m2:rgba(47,155,104,.03);--m3:rgba(26,153,142,.03);--border:rgba(0,0,0,.07);--border-hover:rgba(0,0,0,.13);--bg-hover:rgba(0,0,0,.03);--bg-active:rgba(0,0,0,.06);--glass-bg:rgba(255,255,255,.70);--glass-border:rgba(0,0,0,.06);--tab-bg:rgba(255,255,255,.85)}
+
+:root{--text-2xs:.5625rem;--text-xs:.625rem;--text-sm:.75rem;--text-base:.8125rem;--text-md:.9375rem;--text-lg:1.125rem;--text-xl:1.5rem;--text-2xl:2rem;--w-light:300;--w-normal:400;--w-medium:500;--w-bold:600;--lh-tight:1.2;--lh-snug:1.4;--r-sm:6px;--r-md:10px;--r-lg:14px;--ease-out:cubic-bezier(.16,1,.3,1);--dur-fast:120ms;--dur-normal:200ms;--dur-slow:300ms;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px)}
+
+/* ══ RESET ═══════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--base);color:var(--tx);min-height:100vh;min-height:100dvh;overflow-x:hidden;line-height:1.5;padding-top:max(12px,var(--safe-top));padding-bottom:calc(64px + var(--safe-bottom))}
+::-webkit-scrollbar{width:0;height:0}
+::selection{background:var(--ac);color:var(--base)}
+input,textarea,button,select{font-family:inherit;font-size:inherit;color:inherit;border:none;outline:none;background:none}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:var(--ac2);text-decoration:none}
+img{max-width:100%;height:auto}
+
+/* ══ BACKGROUND ══════════════════════════════════════════════ */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 400px 300px at 15% 38%,var(--m1),transparent),
+    radial-gradient(ellipse 350px 400px at 82% 20%,var(--m2),transparent),
+    radial-gradient(ellipse 300px 250px at 58% 78%,var(--m3),transparent)}
+
+/* ══ BOTTOM TAB BAR ══════════════════════════════════════════ */
+.tab-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  height:calc(56px + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  display:flex;align-items:center;justify-content:space-around;
+  background:var(--tab-bg);
+  backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3);
+  border-top:1px solid var(--border);
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 8px;min-width:52px;min-height:44px;
+  font-size:.56rem;font-weight:500;color:var(--ov0);
+  transition:color 150ms;border:none;background:none;
+}
+.tab.on{color:var(--ac)}
+.tab svg{width:22px;height:22px;opacity:.5;transition:opacity 150ms}
+.tab.on svg{opacity:1}
+
+/* ══ TOP HEADER ══════════════════════════════════════════════ */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;position:relative;z-index:1;
+}
+.h-time{font-size:1.4rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.h-date{font-size:.65rem;color:var(--sub0);font-weight:400}
+.h-actions{display:flex;gap:8px;align-items:center}
+.h-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--s1);color:var(--sub0);border:1px solid var(--border)}
+
+/* ══ SEARCH BAR ══════════════════════════════════════════════ */
+.search-wrap{padding:0 16px 8px;position:relative;z-index:1}
+.search-inner{display:flex;align-items:center;gap:8px;background:var(--s0);border:1px solid var(--border);border-radius:12px;padding:0 12px;height:40px}
+.search-inner svg{flex-shrink:0;color:var(--ov0)}
+.sbar{flex:1;height:100%;font-size:.82rem;background:none;color:var(--tx)}
+.sbar::placeholder{color:var(--ov0)}
+.sbadge{font-size:.55rem;font-weight:600;color:var(--ac);background:var(--s1);padding:3px 8px;border-radius:6px;white-space:nowrap}
+
+/* ══ PAGE CONTAINER ══════════════════════════════════════════ */
+.page{display:none;padding:0 16px 24px;position:relative;z-index:1}
+.page.on{display:block}
+
+/* ══ GREETING & QUOTE ════════════════════════════════════════ */
+.greeting{font-size:1.1rem;font-weight:600;margin-bottom:2px}
+.quote{font-size:.68rem;color:var(--sub0);margin-bottom:14px;font-style:italic;line-height:1.4}
+
+/* ══ WEATHER STRIP ═══════════════════════════════════════════ */
+.wx-card{
+  background:var(--s0);border:1px solid var(--border);border-radius:14px;
+  padding:14px;margin-bottom:12px;
+}
+.wx-main{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.wx-icon{font-size:2.2rem}
+.wx-temp{font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+.wx-feels{font-size:.65rem;color:var(--sub0)}
+.wx-desc{font-size:.72rem;color:var(--sub1);font-weight:500;margin-left:auto}
+.wx-quick{display:flex;gap:12px;flex-wrap:wrap}
+.wx-quick-item{font-size:.62rem;color:var(--sub0)}
+.wx-quick-item .val{color:var(--tx);font-weight:500}
+.wx-expand-btn{display:flex;align-items:center;gap:4px;font-size:.62rem;color:var(--ac);margin-top:8px;padding:4px 0}
+.wx-expand-btn .chevron{font-size:.5rem;transition:transform .2s}
+.wx-expand-btn.expanded .chevron{transform:rotate(180deg)}
+
+/* ══ WEATHER DETAIL DRAWER ═══════════════════════════════════ */
+.wx-detail{display:none;padding-top:12px;border-top:1px solid var(--border);margin-top:12px}
+.wx-detail.open{display:block}
+.wx-gauges{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+.wx-gauge{background:var(--s1);border-radius:10px;padding:10px}
+.wx-gauge-label{font-size:.55rem;color:var(--ov0);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.wx-gauge-value{font-size:.88rem;font-weight:600}
+.wx-gauge-sub{font-size:.58rem;color:var(--sub0);margin-top:2px}
+.wx-gauge-bar{height:3px;background:var(--s2);border-radius:2px;margin-top:4px;overflow:hidden}
+.wx-gauge-bar-fill{height:100%;border-radius:2px;transition:width .5s}
+
+/* Hourly scroll */
+.wx-hourly-section{margin-bottom:16px}
+.wx-hourly-title,.wx-forecast-title,.wx-precip-title{font-size:.65rem;font-weight:600;margin-bottom:8px;color:var(--sub1)}
+.wx-hourly-scroll{display:flex;gap:2px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.wx-hour{flex-shrink:0;width:52px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:10px;background:var(--s1)}
+.wx-hour.now{background:var(--ac);color:white}
+.wx-hour.now .wx-hour-time{color:rgba(255,255,255,.7)}
+.wx-hour-time{font-size:.55rem;color:var(--ov0);font-weight:500}
+.wx-hour-icon{font-size:1.1rem}
+.wx-hour-temp{font-size:.72rem;font-weight:600}
+.wx-hour-precip{width:20px;height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
+.wx-hour-precip-fill{height:100%;background:var(--sky);border-radius:2px}
+
+/* Precipitation timeline */
+.wx-precip-section{margin-bottom:16px}
+.wx-precip-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.wx-precip-summary{font-size:.6rem;color:var(--sky)}
+.wx-precip-timeline{display:flex;gap:1px;height:32px;align-items:flex-end}
+.wx-precip-bar{flex:1;background:var(--sky);border-radius:1px;min-height:2px;opacity:.7}
+.wx-precip-labels{display:flex;justify-content:space-between;font-size:.5rem;color:var(--ov0);margin-top:2px}
+
+/* Sun arc */
+.wx-sun-section{margin-bottom:16px;text-align:center}
+.wx-sun-arc svg{width:100%;max-width:200px;height:auto}
+.wx-sun-times{display:flex;justify-content:space-between;font-size:.6rem;color:var(--sub0);margin-top:4px}
+.wx-sun-times span{display:flex;flex-direction:column;align-items:center;gap:2px}
+.wx-sun-times .time{font-weight:600;font-size:.72rem;color:var(--tx)}
+
+/* 7-day forecast */
+.wx-day-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.wx-day-row:last-child{border-bottom:none}
+.wx-day-name{width:44px;font-size:.68rem;font-weight:500;flex-shrink:0}
+.wx-day-name.today{color:var(--ac);font-weight:700}
+.wx-day-icon{font-size:1rem;flex-shrink:0}
+.wx-temp-bar{flex:1;height:4px;background:var(--s2);border-radius:2px;position:relative;margin:0 4px}
+.wx-temp-bar-fill{position:absolute;top:0;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--sky),var(--peach))}
+.current-dot{position:absolute;top:50%;width:6px;height:6px;border-radius:50%;background:white;transform:translate(-50%,-50%);box-shadow:0 0 4px rgba(0,0,0,.3)}
+.wx-day-lo,.wx-day-hi{font-size:.62rem;width:28px;text-align:right}
+.wx-day-lo{color:var(--sub0)}
+.wx-day-hi{font-weight:600}
+
+/* UV label colors */
+.uv-low{color:var(--green)}.uv-moderate{color:var(--yellow)}.uv-high{color:var(--peach)}.uv-very-high{color:var(--red)}.uv-extreme{color:#E040FB}
+
+/* ══ BREAKING NEWS BANNER ════════════════════════════════════ */
+.breaking-banner{
+  display:none;background:linear-gradient(135deg,rgba(227,96,112,.12),rgba(227,96,112,.04));
+  border:1px solid rgba(227,96,112,.25);border-radius:10px;padding:10px 12px;
+  margin-bottom:12px;align-items:center;gap:8px;
+}
+.breaking-banner.on{display:flex}
+.breaking-badge{font-size:.5rem;font-weight:800;color:var(--red);background:rgba(227,96,112,.15);padding:2px 6px;border-radius:4px;flex-shrink:0;letter-spacing:.06em;animation:breakPulse 1.5s infinite}
+@keyframes breakPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.breaking-headline{font-size:.7rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.breaking-source{font-size:.55rem;color:var(--sub0);flex-shrink:0}
+.breaking-dots{display:flex;gap:4px;flex-shrink:0}
+.breaking-dot{width:5px;height:5px;border-radius:50%;background:var(--ov0)}
+.breaking-dot.active{background:var(--red)}
+
+/* ══ EARTHQUAKE BANNER ═══════════════════════════════════════ */
+.eq-banner{display:none;background:var(--s0);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px;align-items:center;gap:10px}
+.eq-banner.on{display:flex}
+.eq-icon{font-size:1.2rem;flex-shrink:0}
+.eq-info{flex:1;min-width:0}
+.eq-title{font-size:.7rem;font-weight:600}
+.eq-detail{font-size:.58rem;color:var(--sub0)}
+.eq-badge{font-size:.6rem;font-weight:700;color:var(--yellow);background:rgba(229,196,109,.12);padding:3px 8px;border-radius:6px;flex-shrink:0}
+.eq-badge.major{color:var(--red);background:rgba(227,96,112,.12)}
+
+/* ══ NEWS MOSAIC ═════════════════════════════════════════════ */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.section-title{font-size:.72rem;font-weight:700}
+.section-meta{font-size:.55rem;color:var(--ov0)}
+.refresh-btn{font-size:.6rem;color:var(--ac);background:none;border:none;padding:4px 8px}
+
+/* Source pills */
+.source-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.spill{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:8px;font-size:.6rem;font-weight:500;background:var(--s1);color:var(--sub0);border:1px solid var(--border);white-space:nowrap;flex-shrink:0;min-height:32px}
+.spill.on{background:var(--ac);color:white;border-color:var(--ac)}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.spill-count{font-size:.5rem;opacity:.6;margin-left:2px}
+
+/* Hero card */
+.mosaic-hero{
+  position:relative;border-radius:14px;overflow:hidden;height:180px;margin-bottom:12px;
+  background:var(--s0);
+}
+.mosaic-hero-bg{position:absolute;inset:0}
+.mosaic-hero-gradient{position:absolute;inset:0;opacity:.4}
+.mosaic-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.2) 50%,transparent 100%)}
+[data-theme="light"] .mosaic-hero-overlay{background:linear-gradient(to top,rgba(255,255,255,.9) 0%,rgba(255,255,255,.3) 50%,transparent 100%)}
+.mosaic-hero-content{position:absolute;bottom:0;left:0;right:0;padding:14px}
+.mosaic-hero-source{font-size:.55rem;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:4px;margin-bottom:4px}
+[data-theme="light"] .mosaic-hero-source{color:var(--sub0)}
+.mosaic-hero-title{font-size:.88rem;font-weight:700;line-height:1.25;color:white;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+[data-theme="light"] .mosaic-hero-title{color:var(--tx)}
+.mosaic-hero-desc{font-size:.62rem;color:rgba(255,255,255,.5);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4}
+[data-theme="light"] .mosaic-hero-desc{color:var(--sub0)}
+.mosaic-hero-time{font-size:.52rem;color:rgba(255,255,255,.4)}
+[data-theme="light"] .mosaic-hero-time{color:var(--ov0)}
+.mosaic-hero-pager{position:absolute;top:10px;right:10px;display:flex;gap:4px;z-index:2}
+.mosaic-hero-pip{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3)}
+.mosaic-hero-pip.active{background:white}
+.transitioning{animation:heroFade .4s ease}
+@keyframes heroFade{from{opacity:.3}to{opacity:1}}
+
+/* Mid cards */
+.mosaic-mid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.mosaic-card{background:var(--s0);border:1px solid var(--border);border-radius:10px;padding:10px;position:relative;overflow:hidden}
+.mosaic-card-accent{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:0 2px 2px 0}
+.mosaic-card-source{font-size:.52rem;color:var(--ov0);display:flex;align-items:center;gap:3px;margin-bottom:4px;padding-left:8px}
+.mosaic-card-title{font-size:.68rem;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;padding-left:8px}
+.mosaic-card-desc{display:none}
+.mosaic-card-footer{display:flex;justify-content:space-between;font-size:.5rem;color:var(--ov0);margin-top:6px;padding-left:8px}
+.mosaic-card-category{color:var(--ac);font-weight:500}
+
+/* Strip headlines */
+.mosaic-strip-header{font-size:.6rem;font-weight:600;color:var(--sub0);margin-bottom:6px}
+.mosaic-strip{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.mosaic-strip:last-child{border-bottom:none}
+.mosaic-strip-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.mosaic-strip-title{flex:1;font-size:.68rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mosaic-strip-source{font-size:.52rem;color:var(--ov0);flex-shrink:0}
+.mosaic-strip-time{font-size:.5rem;color:var(--ov0);flex-shrink:0}
+
+/* ══ WORLD CLOCKS TICKER ═════════════════════════════════════ */
+.ticker-bar{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;padding:0 0 4px}
+.ticker-track{display:flex;gap:0;white-space:nowrap}
+.ti{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;font-size:.56rem;color:var(--sub0)}
+.ti-day{color:var(--yellow)}
+.ti-night{color:var(--sky)}
+.ti .tzv{font-weight:600;font-variant-numeric:tabular-nums}
+.ti-sep{color:var(--ov0);font-size:.4rem;padding:0 2px}
+
+/* ══ CALENDAR + QUOTE PANEL ══════════════════════════════════ */
+.panel{background:var(--s0);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.panel-title{font-size:.68rem;font-weight:700;margin-bottom:10px}
+.quote-body{font-size:.72rem;font-style:italic;color:var(--sub1);line-height:1.5}
+.quote-auth{font-size:.6rem;color:var(--ov0);margin-top:6px}
+
+/* Calendar */
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cal-title{font-size:.72rem;font-weight:600}
+.cal-nav{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--s1);font-size:1rem;color:var(--sub0)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.cal-dow{font-size:.5rem;font-weight:600;color:var(--ov0);padding:4px 0}
+.cal-day{font-size:.62rem;padding:6px 2px;border-radius:6px;min-height:30px;display:flex;align-items:center;justify-content:center}
+.cal-day.today{background:var(--ac);color:white;font-weight:700;border-radius:50%;width:30px;height:30px;margin:0 auto}
+.cal-day.faded{color:var(--ov0)}
+
+/* ══ NEWS PAGE ═══════════════════════════════════════════════ */
+.news-feed{display:flex;flex-direction:column;gap:2px}
+.feed-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.feed-item.active{background:var(--bg-active);border-radius:8px;padding:12px 8px;margin:-1px -8px}
+.feed-item-img{width:36px;height:36px;border-radius:8px;background:var(--s1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.feed-item-body{flex:1;min-width:0}
+.feed-source-info{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.fsrc{font-size:.55rem;font-weight:600;color:var(--ac)}
+.ftime{font-size:.52rem;color:var(--ov0)}
+.feed-title{font-size:.72rem;font-weight:600;line-height:1.35;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.feed-desc{font-size:.6rem;color:var(--sub0);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px}
+.feed-meta-bottom{display:flex;gap:8px;font-size:.52rem}
+.feed-read-time{color:var(--ov0)}
+.feed-category{color:var(--ac);font-weight:500}
+
+/* Article reader (full screen overlay on mobile) */
+.news-reader{
+  position:fixed;inset:0;z-index:200;background:var(--base);
+  transform:translateX(100%);transition:transform .3s var(--ease-out);
+  display:flex;flex-direction:column;
+  padding-top:var(--safe-top);
+}
+.news-reader.open{transform:translateX(0)}
+.news-reader-topbar{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:8px}
+.news-mobile-back{font-size:.72rem;color:var(--ac);background:none;border:none;padding:8px 0;min-height:44px;display:flex;align-items:center}
+.news-reader-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px}
+.news-reader-header{margin-bottom:16px}
+.news-reader-source{font-size:.6rem;font-weight:600;color:var(--ac);margin-bottom:6px}
+.news-reader-title{font-size:1.1rem;font-weight:700;line-height:1.3;margin-bottom:6px}
+.news-reader-meta{font-size:.6rem;color:var(--ov0)}
+.news-reader-body{font-size:.78rem;line-height:1.7;color:var(--sub1)}
+.news-reader-body p{margin-bottom:12px}
+.news-reader-body img{border-radius:8px;margin:8px 0}
+.news-reader-body a{color:var(--ac)}
+.news-original-link{font-size:.62rem;color:var(--ac);display:flex;align-items:center;gap:4px}
+
+/* ══ MARKETS PAGE ════════════════════════════════════════════ */
+.mkt-indices{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.mkt-idx{flex-shrink:0;background:var(--s0);border:1px solid var(--border);border-radius:10px;padding:8px 12px;min-width:100px}
+.mkt-idx-name{font-size:.52rem;color:var(--ov0);font-weight:500}
+.mkt-idx-price{font-size:.72rem;font-weight:600;font-variant-numeric:tabular-nums}
+.mkt-idx-chg{font-size:.6rem;font-weight:600}
+.mkt-idx-chg.up{color:var(--green)}.mkt-idx-chg.dn{color:var(--red)}
+.mkt-status{font-size:.5rem;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;align-self:center}
+.mkt-status.open{color:var(--green);background:rgba(94,201,148,.12)}
+.mkt-status.closed{color:var(--red);background:rgba(227,96,112,.1)}
+
+.stk-tabs{display:flex;gap:4px;margin:8px 0}
+.stk-tab{padding:6px 16px;border-radius:8px;font-size:.68rem;font-weight:600;background:var(--s1);color:var(--sub0)}
+.stk-tab.on{background:var(--ac);color:white}
+.stk-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.stk-updated{font-size:.52rem;color:var(--ov0)}
+.rb{font-size:.6rem;color:var(--ac);background:none;border:none;padding:4px 8px}
+
+/* Stock rows */
+.stk-header{display:none}
+.stk-row{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  min-height:48px;
+}
+.stk-col-name{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.stk-sym{font-size:.68rem;font-weight:700}
+.stk-name{font-size:.55rem;color:var(--sub0);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+.stk-col-price{font-size:.72rem;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;flex-shrink:0}
+.stk-col-chg{flex-shrink:0;text-align:right}
+.stk-col-mcap,.stk-col-vol{display:none}
+.stk-pill{font-size:.58rem;font-weight:600;padding:2px 6px;border-radius:4px}
+.stk-pill.up{color:var(--green);background:rgba(94,201,148,.1)}
+.stk-pill.dn{color:var(--red);background:rgba(227,96,112,.1)}
+.stk-sparkline{display:none}
+.coin-ico{width:20px;height:20px;border-radius:50%}
+.stk-footnote{font-size:.55rem;color:var(--ov0);padding:12px 0}
+.stk-seed-badge{color:var(--yellow);font-weight:600}
+.flash-up{animation:flashUp .5s}
+@keyframes flashUp{from{background:rgba(94,201,148,.2)}to{background:transparent}}
+
+/* Sector panel */
+.sector-panel{background:var(--s0);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:12px}
+
+/* Stock modal */
+.stkm-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center}
+.stkm-overlay.on{display:flex}
+.stkm{width:100%;max-height:90vh;background:var(--base);border-radius:16px 16px 0 0;overflow-y:auto;padding-bottom:var(--safe-bottom)}
+.stkm-head{display:flex;align-items:center;gap:10px;padding:16px;border-bottom:1px solid var(--border)}
+.stkm-icon{width:36px;height:36px;border-radius:50%;background:var(--s1);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.stkm-icon img{width:24px;height:24px}
+.stkm-sym{font-size:.72rem;font-weight:700}
+.stkm-name{font-size:.55rem;color:var(--sub0)}
+.stkm-price-block{margin-left:auto;text-align:right}
+.stkm-price{font-size:.88rem;font-weight:700;font-variant-numeric:tabular-nums}
+.stkm-chg{font-size:.62rem;font-weight:600}
+.stkm-chg.up{color:var(--green)}.stkm-chg.dn{color:var(--red)}
+.stkm-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--sub0);flex-shrink:0}
+.stkm-chart{height:300px;padding:0 8px}
+.stkm-chart-loading{display:flex;align-items:center;justify-content:center;height:100%;font-size:.7rem;color:var(--ov0)}
+.stkm-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);margin:12px}
+.stkm-stat{background:var(--base);padding:10px}
+.stkm-stat-lbl{font-size:.52rem;color:var(--ov0);margin-bottom:2px}
+.stkm-stat-val{font-size:.72rem;font-weight:600}
+
+/* ══ TASKS PAGE ══════════════════════════════════════════════ */
+.todo-irow{display:flex;gap:8px;margin-bottom:12px}
+.todo-inp{flex:1;height:40px;padding:0 12px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.75rem;color:var(--tx)}
+.todo-inp::placeholder{color:var(--ov0)}
+.todo-add{padding:0 16px;height:40px;background:var(--ac);color:white;border-radius:10px;font-size:.72rem;font-weight:600}
+.ti2{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);min-height:44px}
+.tcb{width:22px;height:22px;border-radius:6px;border:2px solid var(--ov0);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.tcb.on{background:var(--ac);border-color:var(--ac)}
+.tcb.on::after{content:'✓';color:white;font-size:.65rem;font-weight:700}
+.ttx{flex:1;font-size:.75rem}
+.ttx.done{text-decoration:line-through;color:var(--ov0)}
+.tdel{font-size:1rem;color:var(--ov0);background:none;border:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.tfooter{display:flex;gap:6px;align-items:center;padding-top:10px}
+.tfilter{padding:5px 10px;border-radius:6px;font-size:.6rem;font-weight:500;color:var(--sub0);background:var(--s1)}
+.tfilter.on{background:var(--ac);color:white}
+.tcnt{font-size:.55rem;color:var(--ov0);margin-left:auto}
+
+/* Notes */
+.notes-area,.notes-textarea{width:100%;min-height:140px;padding:12px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.75rem;color:var(--tx);resize:vertical;line-height:1.6}
+.notes-foot,.notes-saved{font-size:.55rem;color:var(--ov0);margin-top:4px}
+.notes-tabs{display:flex;gap:4px;overflow-x:auto;margin-bottom:8px;-webkit-overflow-scrolling:touch}
+.notes-tab{padding:5px 10px;border-radius:6px;font-size:.6rem;font-weight:500;color:var(--sub0);background:var(--s1);white-space:nowrap;flex-shrink:0}
+.notes-tab.on{background:var(--ac);color:white}
+.notes-tab-add{padding:5px 10px;border-radius:6px;font-size:.75rem;color:var(--ac);background:var(--s1)}
+.notes-footer{display:flex;gap:8px;align-items:center;margin-top:6px}
+.notes-stat{font-size:.52rem;color:var(--ov0)}
+.notes-saved.show{color:var(--green)}
+.btn-ghost{font-size:.6rem;padding:4px 10px;border-radius:6px;color:var(--sub0);background:var(--s1);border:1px solid var(--border)}
+
+/* ══ BOOKMARKS ═══════════════════════════════════════════════ */
+.bm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bm{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:12px;background:var(--s0);border:1px solid var(--border);font-size:.58rem;font-weight:500;color:var(--tx);text-align:center;min-height:72px}
+.bm-ico{width:36px;height:36px;border-radius:10px;background:var(--s1);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bm-ico img{width:24px;height:24px}
+.bm-add-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:12px;border:1px dashed var(--border);font-size:.58rem;color:var(--ov0);min-height:72px;background:none}
+.bm-add-icon{width:36px;height:36px;border-radius:10px;background:var(--s1);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--ac)}
+
+/* ══ CURRENCY ════════════════════════════════════════════════ */
+.cur-base-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.cur-base-flag{font-size:1.4rem}
+.cur-base-code{font-size:.72rem;font-weight:700}
+.cur-base-name{font-size:.55rem;color:var(--sub0)}
+.cur-base-val{margin-left:auto;font-size:.82rem;font-weight:700}
+.cur-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.cur-flag{font-size:1rem;flex-shrink:0}
+.cur-code{font-size:.68rem;font-weight:600;width:36px}
+.cur-name{font-size:.55rem;color:var(--sub0);flex:1}
+.cur-rate{font-size:.72rem;font-weight:600;font-variant-numeric:tabular-nums}
+.cur-change{font-size:.55rem;font-weight:600;width:52px;text-align:right}
+.cur-change.up{color:var(--green)}.cur-change.dn{color:var(--red)}
+.cur-converter{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.cur-conv-input{width:80px;height:36px;padding:0 10px;background:var(--s1);border:1px solid var(--border);border-radius:8px;font-size:.72rem;font-variant-numeric:tabular-nums}
+.cur-conv-select{height:36px;padding:0 8px;background:var(--s1);border:1px solid var(--border);border-radius:8px;font-size:.68rem;color:var(--tx);-webkit-appearance:none}
+.cur-conv-result{font-size:.82rem;font-weight:700;color:var(--ac)}
+
+/* ══ TRAFFIC ═════════════════════════════════════════════════ */
+.cam-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.cam-card{position:relative;border-radius:10px;overflow:hidden;background:var(--s0);border:1px solid var(--border)}
+.cam-card.featured{grid-column:span 2}
+.cam-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--s1)}
+.cam-label{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:.52rem;color:white}
+.cam-live{display:flex;align-items:center;gap:3px;font-size:.45rem;font-weight:700;letter-spacing:.04em}
+.cam-live-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:livePulse 2s infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
+.cam-timestamp{font-size:.45rem;opacity:.6}
+
+/* Camera modal */
+.cam-modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;flex-direction:column}
+.cam-modal-overlay.on{display:flex}
+.cam-modal{width:100%;max-width:100%;padding:var(--safe-top) 0 var(--safe-bottom)}
+.cam-modal-header{display:flex;align-items:center;padding:10px 16px;gap:8px}
+.cam-modal-title{font-size:.82rem;font-weight:600;color:white;flex:1;text-align:center}
+.cam-modal-nav,.cam-modal-refresh,.cam-modal-close{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:rgba(255,255,255,.7);background:rgba(255,255,255,.1);border-radius:50%;border:none}
+.cam-modal-img{width:100%;max-height:60vh;object-fit:contain}
+.cam-modal-views{display:flex;justify-content:center;gap:8px;padding:12px}
+.cam-view-btn{padding:6px 14px;border-radius:8px;font-size:.62rem;font-weight:500;color:rgba(255,255,255,.5);background:rgba(255,255,255,.1);border:none}
+.cam-view-btn.on{color:white;background:var(--ac)}
+
+/* Incidents */
+.incidents-panel{background:var(--s0);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.incidents-header{display:flex;justify-content:space-between;align-items:center;font-size:.68rem;font-weight:700;margin-bottom:8px}
+.incidents-count{font-size:.55rem;background:var(--s1);padding:2px 8px;border-radius:10px;color:var(--sub0)}
+.incident-row{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.incident-row:last-child{border-bottom:none}
+.incident-type{font-size:.5rem;font-weight:700;padding:2px 6px;border-radius:4px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em}
+.incident-type.roadwork{color:var(--yellow);background:rgba(229,196,109,.12)}
+.incident-type.closure{color:var(--red);background:rgba(227,96,112,.12)}
+.incident-type.accident{color:var(--peach);background:rgba(232,164,104,.12)}
+.incident-desc{font-size:.62rem;color:var(--sub0);line-height:1.4}
+.incident-empty{font-size:.62rem;color:var(--ov0);padding:8px 0}
+
+/* Road conditions */
+.road-panel{background:var(--s0);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.road-title{font-size:.68rem;font-weight:700;margin-bottom:8px}
+.road-segment{display:flex;align-items:center;gap:8px;padding:6px 0}
+.road-badge{font-size:.5rem;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0}
+.road-badge.dry{color:var(--green);background:rgba(94,201,148,.12)}
+.road-badge.wet{color:var(--sky);background:rgba(108,180,232,.12)}
+.road-badge.snow{color:var(--teal);background:rgba(78,201,192,.12)}
+.road-badge.ice{color:var(--red);background:rgba(227,96,112,.12)}
+.road-name{font-size:.58rem;color:var(--sub0)}
+.traffic-updated{font-size:.5rem;color:var(--ov0);text-align:center;padding:4px 0}
+
+/* ══ MORE PAGE SECTIONS ══════════════════════════════════════ */
+.more-section{margin-bottom:16px}
+.more-section-title{font-size:.68rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.more-section-title svg{width:16px;height:16px;color:var(--ac)}
+
+/* ══ TIMER PANEL ═════════════════════════════════════════════ */
+.timer-panel{
+  position:fixed;bottom:calc(56px + var(--safe-bottom));left:0;right:0;z-index:90;
+  background:var(--base);border-top:1px solid var(--border);
+  max-height:50vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .3s var(--ease-out);
+  padding:12px 16px;
+}
+.timer-panel.on{transform:translateY(0)}
+.tp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.tp-title{font-size:.72rem;font-weight:700}
+.tp-hbtn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--s1);color:var(--sub0);font-size:.82rem;border:none}
+.tp-empty{text-align:center;padding:20px 0;font-size:.65rem;color:var(--ov0)}
+.tcard{background:var(--s0);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:6px;position:relative;overflow:hidden}
+.tcard-accent{position:absolute;left:0;top:0;width:3px;height:100%}
+.tcard-row1{display:flex;align-items:center;gap:8px;padding-left:8px}
+.tcard-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tcard-dot.running{animation:dotPulse 1.5s infinite}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tcard-lbl{font-size:.65rem;font-weight:500;flex:1}
+.tcard-time{font-size:.82rem;font-weight:700;font-variant-numeric:tabular-nums}
+.tcard-time.warn{color:var(--red)}
+.pulse{animation:pulseWarn 1s infinite}
+@keyframes pulseWarn{0%,100%{opacity:1}50%{opacity:.5}}
+.tcard-ctrls{display:flex;gap:4px;margin-left:8px}
+.tcard-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--s1);font-size:.62rem;border:none;color:var(--sub0)}
+.tcard-btn.primary{background:var(--ac);color:white}
+.tcard-row2{font-size:.52rem;color:var(--ov0);margin-top:4px;padding-left:8px}
+.tp-add{margin-bottom:10px}
+.tp-add-types{display:flex;gap:4px;margin-bottom:8px;overflow-x:auto}
+.tp-type-btn{padding:5px 8px;border-radius:6px;font-size:.58rem;font-weight:500;background:var(--s1);color:var(--sub0);border:none;white-space:nowrap}
+.tp-type-btn.on{background:var(--ac);color:white}
+.tp-inp{width:100%;height:36px;padding:0 10px;background:var(--s1);border:1px solid var(--border);border-radius:8px;font-size:.7rem;margin-bottom:6px}
+.tp-presets{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.tp-preset{padding:5px 10px;border-radius:6px;font-size:.58rem;background:var(--s1);color:var(--sub0);border:none}
+.tp-preset.on{background:var(--ac);color:white}
+.tp-start-btn{width:100%;height:36px;background:var(--ac);color:white;border-radius:8px;font-size:.68rem;font-weight:600;border:none}
+
+/* ══ NEWS CRAWL ══════════════════════════════════════════════ */
+.news-crawl{
+  position:fixed;bottom:calc(56px + var(--safe-bottom));left:0;right:0;z-index:80;
+  height:28px;display:flex;align-items:center;
+  background:var(--s0);border-top:1px solid var(--border);overflow:hidden;
+}
+.news-crawl-label{font-size:.5rem;font-weight:800;color:var(--red);padding:0 8px;flex-shrink:0;letter-spacing:.04em}
+.news-crawl-track{flex:1;overflow:hidden;position:relative}
+.news-crawl-content{display:flex;white-space:nowrap;animation:crawlScroll 120s linear infinite}
+@keyframes crawlScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.news-crawl-item{font-size:.58rem;color:var(--sub1);padding:0 10px;cursor:pointer}
+.news-crawl-breaking{color:var(--red);font-weight:600}
+.news-crawl-sep{color:var(--ov0);padding:0 4px;font-size:.4rem}
+
+/* ══ SETTINGS OVERLAY ════════════════════════════════════════ */
+.s-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
+.s-overlay.on{display:flex}
+.s-modal{width:100%;background:var(--base);border-radius:16px 16px 0 0;padding:20px 16px calc(20px + var(--safe-bottom));max-height:80vh;overflow-y:auto}
+.s-modal h2{font-size:.88rem;font-weight:700;margin-bottom:16px}
+.s-row{margin-bottom:14px}
+.s-row label{font-size:.62rem;font-weight:600;color:var(--sub0);display:block;margin-bottom:4px}
+.s-inp{width:100%;height:40px;padding:0 12px;background:var(--s1);border:1px solid var(--border);border-radius:10px;font-size:.75rem;color:var(--tx)}
+.s-unit-row{display:flex;gap:6px}
+.ubtn{padding:6px 16px;border-radius:8px;font-size:.68rem;font-weight:600;background:var(--s1);color:var(--sub0)}
+.ubtn.on{background:var(--ac);color:white}
+.s-btns{display:flex;gap:8px;margin-top:16px}
+.s-save{flex:1;height:40px;background:var(--ac);color:white;border-radius:10px;font-size:.72rem;font-weight:600}
+.s-close{flex:1;height:40px;background:var(--s1);color:var(--sub0);border-radius:10px;font-size:.72rem;font-weight:600}
+
+/* ══ SKELETON LOADING ════════════════════════════════════════ */
+.skeleton{background:linear-gradient(90deg,var(--s1) 25%,var(--s2) 50%,var(--s1) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
+.skeleton-text{height:12px;margin-bottom:8px;width:100%}
+.skeleton-text.medium{width:75%}
+.skeleton-text.short{width:50%}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+.empty{font-size:.68rem;color:var(--ov0);text-align:center;padding:16px 0}
+
+/* ══ HTML VIEWER APP FIXES ═══════════════════════════════════ */
+/* Ensure content isn't cut off in viewer apps that add their own chrome */
+@supports not (padding: env(safe-area-inset-bottom)) {
+  body { padding-bottom: 72px }
+  .tab-bar { height: 56px }
+  .news-crawl { bottom: 56px }
+  .timer-panel { bottom: 56px }
+}
+/* Fix for viewers that don't support dvh */
+@supports not (min-height: 100dvh) {
+  body { min-height: 100vh }
+}
+/* Ensure tap targets are at least 44px for accessibility */
+button, a, [onclick] { min-height: 44px; min-width: 44px }
+.tab, .h-btn, .spill, .stk-row, .feed-item, .mosaic-card, .mosaic-strip,
+.cam-card, .notes-tab, .tfilter, .bm, .cur-row { min-height: 44px }
+/* Fix potential overflow issues in HTML viewers */
+html { overflow-x: hidden; -webkit-text-size-adjust: 100% }
+img { -webkit-user-drag: none }
+/* Ensure modals scroll properly in webview */
+.news-reader, .stkm-overlay, .cam-modal-overlay, .s-overlay {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ══ REDUCED MOTION ══════════════════════════════════════════ */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- ══ TOP HEADER ══════════════════════════════════════════ -->
+<div class="header">
+  <div>
+    <div class="h-time" id="hTime">00:00</div>
+    <div class="h-date" id="hDate"></div>
+  </div>
+  <div class="h-actions">
+    <button class="h-btn" id="timerToggle" onclick="toggleTimerPanel()" title="Timers">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </button>
+    <button class="h-btn" onclick="toggleTheme()" title="Toggle theme">
+      <svg class="theme-toggle-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="h-btn" onclick="openSettings()" title="Settings">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="search-wrap">
+  <div class="search-inner">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="sbar" id="sbar" placeholder="Search..." autocomplete="off" spellcheck="false">
+    <button class="sbadge" id="sbadge" onclick="cycleEngine()">Google</button>
+  </div>
+</div>
+
+<!-- ══ OVERVIEW PAGE ══════════════════════════════════════ -->
+<section class="page on" id="page-overview">
+  <div class="greeting" id="greeting">Good morning</div>
+  <div class="quote" id="hQuote"></div>
+
+  <!-- Weather Card -->
+  <div class="wx-card" id="wxCard">
+    <div class="wx-main">
+      <span class="wx-icon" id="wxIcon">⛅</span>
+      <div>
+        <div class="wx-temp" id="wxTemp">--°</div>
+        <div class="wx-feels" id="wxFeels">Feels like --°</div>
+      </div>
+      <div class="wx-desc" id="wxDesc">Loading...</div>
+    </div>
+    <div class="wx-quick">
+      <span class="wx-quick-item">Wind <span class="val" id="wxWind">--</span></span>
+      <span class="wx-quick-item">💧 <span class="val" id="wxHumidity">--%</span></span>
+      <span class="wx-quick-item">UV <span class="val" id="wxUV">--</span></span>
+    </div>
+    <button class="wx-expand-btn" id="wxExpandBtn" onclick="toggleWeatherDrawer()">
+      Detail <span class="chevron">▼</span>
+    </button>
+
+    <!-- Weather Detail Drawer -->
+    <div class="wx-detail" id="wxDetail">
+      <div class="wx-gauges" id="wxGauges">
+        <div class="wx-gauge"><div class="wx-gauge-label">Wind</div><div class="wx-gauge-value"><span id="wxWindArrow" style="display:inline-block">↑</span> <span id="wxWindFull">--</span></div><div class="wx-gauge-sub" id="wxGusts">Gusts: --</div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">Humidity</div><div class="wx-gauge-value" id="wxHumFull">--%</div><div class="wx-gauge-bar"><div class="wx-gauge-bar-fill" id="wxHumBar" style="width:0%;background:var(--sky)"></div></div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">UV Index</div><div class="wx-gauge-value" id="wxUVFull">--</div><div class="wx-gauge-sub" id="wxUVLabel">--</div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">Pressure</div><div class="wx-gauge-value" id="wxPressure">-- hPa</div><div class="wx-gauge-sub" id="wxPressureTrend">--</div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">Dew Point</div><div class="wx-gauge-value" id="wxDewpoint">--°</div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">Visibility</div><div class="wx-gauge-value" id="wxVisibility">--</div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">Precipitation</div><div class="wx-gauge-value" id="wxPrecipTotal">-- mm</div><div class="wx-gauge-sub">Last 24h</div></div>
+        <div class="wx-gauge"><div class="wx-gauge-label">Air Quality</div><div class="wx-gauge-value" id="wxAQI">--</div><div class="wx-gauge-sub" id="wxAQILabel">--</div></div>
+      </div>
+      <div class="wx-precip-section" id="wxPrecipSection" style="display:none">
+        <div class="wx-precip-header"><span class="wx-precip-title">Next 60 Minutes</span><span class="wx-precip-summary" id="wxPrecipSummary"></span></div>
+        <div class="wx-precip-timeline" id="wxPrecipTimeline"></div>
+        <div class="wx-precip-labels"><span>Now</span><span>15m</span><span>30m</span><span>45m</span><span>60m</span></div>
+      </div>
+      <div class="wx-hourly-section"><div class="wx-hourly-title">Hourly Forecast</div><div class="wx-hourly-scroll" id="wxHourly"></div></div>
+      <div class="wx-sun-section">
+        <svg viewBox="0 0 200 100"><path d="M 10 95 Q 100 -20 190 95" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="2" stroke-dasharray="4,4"/><circle id="wxSunDot" cx="100" cy="40" r="6" fill="var(--yellow)"/></svg>
+        <div class="wx-sun-times"><span><span class="time" id="wxSunrise">--:--</span>Sunrise</span><span><span class="time" id="wxSunset">--:--</span>Sunset</span></div>
+      </div>
+      <div class="wx-forecast-title">7-Day Forecast</div>
+      <div id="wxForecast"></div>
+    </div>
+  </div>
+
+  <!-- Breaking News -->
+  <div class="breaking-banner" id="breakingBanner" onclick="openBreakingArticle()">
+    <span class="breaking-badge">BREAKING</span>
+    <span class="breaking-headline" id="breakingHeadline"></span>
+    <span class="breaking-source" id="breakingSource"></span>
+    <div class="breaking-dots" id="breakingDots"></div>
+  </div>
+
+  <!-- Earthquake Banner -->
+  <div class="eq-banner" id="eqBanner">
+    <span class="eq-icon">🌍</span>
+    <div class="eq-info"><div class="eq-title" id="eqTitle">Recent Earthquake</div><div class="eq-detail" id="eqDetail"></div></div>
+    <span class="eq-badge" id="eqMag"></span>
+  </div>
+
+  <!-- News Mosaic -->
+  <div>
+    <div class="section-header">
+      <span class="section-title">Local News</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="section-meta" id="mosaicUpdated"></span>
+        <button class="refresh-btn" onclick="refreshMosaic()">↻</button>
+      </div>
+    </div>
+    <div class="source-pills" id="mosaicSources"></div>
+    <div class="mosaic-hero" id="mosaicHero" onclick="openMosaicHero()">
+      <div class="mosaic-hero-bg"><div class="mosaic-hero-gradient" id="mosaicHeroGradient"></div><div class="mosaic-hero-overlay"></div></div>
+      <div class="mosaic-hero-pager" id="mosaicHeroPager"></div>
+      <div class="mosaic-hero-content" id="mosaicHeroContent">
+        <div class="mosaic-hero-source" id="mosaicHeroSource"><span class="sdot"></span><span></span></div>
+        <div class="mosaic-hero-title" id="mosaicHeroTitle">Loading headlines...</div>
+        <div class="mosaic-hero-desc" id="mosaicHeroDesc"></div>
+        <span class="mosaic-hero-time" id="mosaicHeroTime"></span>
+      </div>
+    </div>
+    <div class="mosaic-mid" id="mosaicMid"></div>
+    <div id="mosaicStrips"><div class="mosaic-strip-header">More Headlines</div></div>
+  </div>
+
+  <!-- World Clocks -->
+  <div class="ticker-bar" style="margin-top:12px">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- Calendar & Quote -->
+  <div class="panel"><div class="panel-title">Calendar</div><div id="calBody"></div></div>
+  <div class="panel"><div class="panel-title">Today's Thought</div><div class="quote-body" id="quoteBody"></div><div class="quote-auth" id="quoteAuth"></div></div>
+</section>
+
+<!-- ══ NEWS PAGE ══════════════════════════════════════════ -->
+<section class="page" id="page-news">
+  <div class="section-header">
+    <span class="section-title">News</span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="section-meta" id="newsUpdated"></span>
+      <button class="refresh-btn" onclick="fetchAllFeeds()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="source-pills" id="sourcePills"></div>
+  <div class="news-feed" id="newsFeed">
+    <div style="padding:16px 0"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div>
+  </div>
+</section>
+
+<!-- Article Reader (slides in from right) -->
+<div class="news-reader" id="newsReader">
+  <div class="news-reader-topbar">
+    <button class="news-mobile-back" onclick="closeReader()">← Back</button>
+    <div style="flex:1"></div>
+    <a class="news-original-link" id="newsOriginalLink" href="#" target="_blank" rel="noopener">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Open original
+    </a>
+  </div>
+  <div class="news-reader-scroll">
+    <div class="news-reader-header">
+      <div class="news-reader-source" id="readerSource"></div>
+      <h1 class="news-reader-title" id="readerTitle"></h1>
+      <div class="news-reader-meta" id="readerMeta"></div>
+    </div>
+    <div class="news-reader-body" id="readerBody"></div>
+  </div>
+</div>
+
+<!-- ══ MARKETS PAGE ═══════════════════════════════════════ -->
+<section class="page" id="page-stocks">
+  <div class="mkt-indices" id="mktIndices">
+    <span class="mkt-status closed" id="mktStatus">Closed</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+    <div class="stk-tabs">
+      <button class="stk-tab on" data-tab="tsx" onclick="switchStockTab('tsx')">TSX</button>
+      <button class="stk-tab" data-tab="crypto" onclick="switchStockTab('crypto')">Crypto</button>
+    </div>
+    <div class="stk-meta">
+      <span class="stk-updated" id="stkUpdated"></span>
+      <button class="rb" onclick="fetchStocks()">↻</button>
+    </div>
+  </div>
+  <div id="tsxBody" class="stk-body"><div style="padding:16px 0"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
+  <div id="cryptoBody" class="stk-body" style="display:none"><div style="padding:16px 0"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
+</section>
+
+<!-- ══ TRAFFIC PAGE ═══════════════════════════════════════ -->
+<section class="page" id="page-traffic">
+  <div class="section-header"><span class="section-title">Highway 401 Cameras</span></div>
+  <div class="cam-grid" id="camGrid">
+    <div class="cam-card featured" onclick="openCamModal(0)"><img class="cam-img" id="cam-0" src="" alt="401 @ Cobourg" loading="lazy"><div class="cam-label"><span>401 @ Cobourg <span class="cam-timestamp" id="cam-ts-0"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div></div>
+    <div class="cam-card" onclick="openCamModal(1)"><img class="cam-img" id="cam-1" src="" alt="401 @ Newcastle" loading="lazy"><div class="cam-label"><span>401 @ Newcastle <span class="cam-timestamp" id="cam-ts-1"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div></div>
+    <div class="cam-card" onclick="openCamModal(2)"><img class="cam-img" id="cam-2" src="" alt="401 @ Brighton" loading="lazy"><div class="cam-label"><span>401 @ Brighton <span class="cam-timestamp" id="cam-ts-2"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div></div>
+    <div class="cam-card" onclick="openCamModal(3)"><img class="cam-img" id="cam-3" src="" alt="401 @ Trenton" loading="lazy"><div class="cam-label"><span>401 @ Trenton <span class="cam-timestamp" id="cam-ts-3"></span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div></div>
+  </div>
+  <div class="incidents-panel">
+    <div class="incidents-header"><span>Highway 401 Incidents</span><span class="incidents-count" id="incidentCount">0</span></div>
+    <div id="incidentList"><div class="incident-empty">No active incidents</div></div>
+  </div>
+  <div class="road-panel">
+    <div class="road-title">Road Conditions</div>
+    <div id="roadConditions"><div style="font-size:.65rem;color:var(--ov0)">Loading...</div></div>
+  </div>
+  <div class="traffic-updated" id="trafficUpdated"></div>
+</section>
+
+<!-- ══ MORE PAGE ══════════════════════════════════════════ -->
+<section class="page" id="page-more">
+  <!-- Tasks -->
+  <div class="more-section">
+    <div class="panel">
+      <div class="panel-title">Tasks</div>
+      <div class="todo-irow">
+        <input class="todo-inp" id="tInp" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTodo()">
+        <button class="todo-add" onclick="addTodo()">Add</button>
+      </div>
+      <div id="tList"></div>
+      <div class="tfooter">
+        <button class="tfilter on" data-f="all" onclick="setTF('all')">All</button>
+        <button class="tfilter" data-f="active" onclick="setTF('active')">Active</button>
+        <button class="tfilter" data-f="done" onclick="setTF('done')">Done</button>
+        <span class="tcnt" id="tCnt"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="more-section">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="panel-title" style="margin-bottom:0">Notes</div>
+        <button class="btn-ghost" onclick="exportNotes()">Export</button>
+      </div>
+      <div class="notes-tabs" id="notesTabs" style="margin-top:8px"></div>
+      <textarea class="notes-textarea" id="notesArea" placeholder="Start typing..." oninput="saveNote()"></textarea>
+      <div class="notes-footer">
+        <span class="notes-stat" id="notesWordCount">0 words</span>
+        <span class="notes-stat" id="notesCharCount">0 chars</span>
+        <span class="notes-saved" id="notesSaved">Saved</span>
+        <span style="flex:1"></span>
+        <button class="btn-ghost" style="color:var(--red)" onclick="deleteNote()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookmarks -->
+  <div class="more-section">
+    <div class="panel">
+      <div class="panel-title">Bookmarks</div>
+      <div id="bmBody"></div>
+    </div>
+  </div>
+
+  <!-- Currency -->
+  <div class="more-section">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="panel-title" style="margin-bottom:0">Exchange Rates</div>
+        <span class="section-meta" id="curUpdated"></span>
+      </div>
+      <div id="curBody"></div>
+      <div class="cur-converter">
+        <input class="cur-conv-input" id="curConvAmt" type="number" value="100" oninput="convertCurrency()">
+        <select class="cur-conv-select" id="curConvFrom" onchange="convertCurrency()"></select>
+        <span style="color:var(--ov0)">→</span>
+        <select class="cur-conv-select" id="curConvTo" onchange="convertCurrency()"></select>
+        <span class="cur-conv-result" id="curConvResult"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BOTTOM TAB BAR ═════════════════════════════════════ -->
+<nav class="tab-bar">
+  <button class="tab on" data-page="overview" onclick="navTo('overview')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="tab" data-page="news" onclick="navTo('news')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><line x1="10" y1="6" x2="18" y2="6"/><line x1="10" y1="10" x2="18" y2="10"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+    <span>News</span>
+  </button>
+  <button class="tab" data-page="stocks" onclick="navTo('stocks')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Markets</span>
+  </button>
+  <button class="tab" data-page="traffic" onclick="navTo('traffic')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.8-4.7A2 2 0 0 0 13.5 4h-3a2 2 0 0 0-1.7 1.3L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+    <span>Traffic</span>
+  </button>
+  <button class="tab" data-page="more" onclick="navTo('more')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    <span>More</span>
+  </button>
+</nav>
+
+<!-- News Crawl -->
+<div class="news-crawl" id="newsCrawl">
+  <div class="news-crawl-label" id="newsCrawlLabel">LATEST</div>
+  <div class="news-crawl-track"><div class="news-crawl-content" id="newsCrawlContent"></div></div>
+</div>
+
+<!-- Timer Panel -->
+<div class="timer-panel" id="timerPanel">
+  <div class="tp-head">
+    <span class="tp-title">Timers</span>
+    <div style="display:flex;gap:4px">
+      <button class="tp-hbtn" onclick="openAddTimer()" title="Add timer">+</button>
+      <button class="tp-hbtn" onclick="toggleTimerPanel()" title="Close">✕</button>
+    </div>
+  </div>
+  <div class="tp-list" id="tpList"></div>
+</div>
+
+<!-- Stock Detail Modal -->
+<div class="stkm-overlay" id="stockModal" onclick="if(event.target===this)closeStockModal()">
+  <div class="stkm">
+    <div class="stkm-head">
+      <div class="stkm-icon" id="smIcon"></div>
+      <div><div class="stkm-sym" id="smSym"></div><div class="stkm-name" id="smName"></div></div>
+      <div class="stkm-price-block"><div class="stkm-price" id="smPrice"></div><div class="stkm-chg" id="smChg"></div></div>
+      <button class="stkm-close" onclick="closeStockModal()">✕</button>
+    </div>
+    <div class="stkm-chart" id="tvChart"><div class="stkm-chart-loading">Loading chart…</div></div>
+    <div class="stkm-stats" id="smStats"></div>
+  </div>
+</div>
+
+<!-- Camera Modal -->
+<div class="cam-modal-overlay" id="camModalOverlay" onclick="if(event.target===this)closeCamModal()">
+  <div class="cam-modal">
+    <div class="cam-modal-header">
+      <button class="cam-modal-nav" onclick="prevCam()">‹</button>
+      <span class="cam-modal-title" id="camModalTitle">--</span>
+      <button class="cam-modal-nav" onclick="nextCam()">›</button>
+      <div style="flex:1"></div>
+      <button class="cam-modal-refresh" onclick="refreshModalCam()">↻</button>
+      <button class="cam-modal-close" onclick="closeCamModal()">×</button>
+    </div>
+    <img class="cam-modal-img" id="camModalImg" src="" alt="Camera view">
+    <div class="cam-modal-views" id="camModalViews"></div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="s-overlay" id="sOverlay" onclick="if(event.target===this)openSettings()">
+  <div class="s-modal" onclick="event.stopPropagation()">
+    <h2>Settings</h2>
+    <div class="s-row"><label>Your Name</label><input class="s-inp" id="sName" placeholder="Optional"></div>
+    <div class="s-row"><label>City (overrides GPS)</label><input class="s-inp" id="sCity" placeholder="e.g. Cobourg" oninput="debouncedGeo(this.value)"></div>
+    <div class="s-row"><label>Temperature</label><div class="s-unit-row"><button class="ubtn on" id="unitC" onclick="setUnit('C')">°C</button><button class="ubtn" id="unitF" onclick="setUnit('F')">°F</button></div></div>
+    <div class="s-btns"><button class="s-save" onclick="saveSettings()">Save</button><button class="s-close" onclick="openSettings()">Cancel</button></div>
+  </div>
+</div>
+
+<script>
+/* ── HELPERS ──────────────────────────────────────────── */
+const LS=(k,v)=>v!==undefined?(v===null?localStorage.removeItem('dash-'+k):localStorage.setItem('dash-'+k,JSON.stringify(v))):JSON.parse(localStorage.getItem('dash-'+k));
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const escA=s=>s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;');
+function stripHTML(h){const d=document.createElement('div');d.innerHTML=h;return(d.textContent||'').replace(/\s+/g,' ').trim()}
+function timeAgo(d){if(!(d instanceof Date))d=new Date(d);const seconds=Math.floor((new Date()-d)/1000);if(seconds<60)return'Just now';if(seconds<3600)return`${Math.floor(seconds/60)}m ago`;if(seconds<86400)return`${Math.floor(seconds/3600)}h ago`;if(seconds<604800)return`${Math.floor(seconds/86400)}d ago`;return d.toLocaleDateString()}
+
+/* ── DATA ─────────────────────────────────────────────── */
+const defaultBMs=[{name:'Google',url:'https://google.com'},{name:'YouTube',url:'https://youtube.com'},{name:'GitHub',url:'https://github.com'},{name:'Gmail',url:'https://mail.google.com'},{name:'Reddit',url:'https://reddit.com'},{name:'X',url:'https://x.com'},{name:'ChatGPT',url:'https://chat.openai.com'},{name:'Claude',url:'https://claude.ai'}];
+const worldClocks=[{city:'Los Angeles',tz:'America/Los_Angeles'},{city:'Denver',tz:'America/Denver'},{city:'Chicago',tz:'America/Chicago'},{city:'New York',tz:'America/New_York'},{city:'Cobourg',tz:'America/Toronto'},{city:'London',tz:'Europe/London'},{city:'Paris',tz:'Europe/Paris'},{city:'Moscow',tz:'Europe/Moscow'},{city:'Dubai',tz:'Asia/Dubai'},{city:'Mumbai',tz:'Asia/Kolkata'},{city:'Bangkok',tz:'Asia/Bangkok'},{city:'Singapore',tz:'Asia/Singapore'},{city:'Tokyo',tz:'Asia/Tokyo'},{city:'Sydney',tz:'Australia/Sydney'},{city:'Auckland',tz:'Pacific/Auckland'}];
+const quotes=[{t:"The best way to predict the future is to invent it.",a:"Alan Kay"},{t:"Simplicity is the ultimate sophistication.",a:"Leonardo da Vinci"},{t:"Any sufficiently advanced technology is indistinguishable from magic.",a:"Arthur C. Clarke"},{t:"The only way to do great work is to love what you do.",a:"Steve Jobs"},{t:"Talk is cheap. Show me the code.",a:"Linus Torvalds"},{t:"Make it work, make it right, make it fast.",a:"Kent Beck"},{t:"A ship in harbour is safe, but that is not what ships are built for.",a:"John A. Shedd"},{t:"Perfection is achieved when there is nothing left to take away.",a:"Antoine de Saint-Exup\u00e9ry"},{t:"First, solve the problem. Then, write the code.",a:"John Johnson"},{t:"Done is better than perfect.",a:"Sheryl Sandberg"},{t:"Either write something worth reading or do something worth writing.",a:"Benjamin Franklin"},{t:"Imagination is more important than knowledge.",a:"Albert Einstein"}];
+const engines={Google:'https://www.google.com/search?q=',DuckDuckGo:'https://duckduckgo.com/?q=',Bing:'https://www.bing.com/search?q=',Brave:'https://search.brave.com/search?q='};
+const bangs={'!g':'https://www.google.com/search?q=','!ddg':'https://duckduckgo.com/?q=','!yt':'https://www.youtube.com/results?search_query=','!gh':'https://github.com/search?q=','!r':'https://www.reddit.com/search/?q=','!w':'https://en.wikipedia.org/w/index.php?search=','!npm':'https://www.npmjs.com/search?q=','!mdn':'https://developer.mozilla.org/search?q=','!so':'https://stackoverflow.com/search?q='};
+
+const WMO_CODES={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Foggy',48:'Rime fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',56:'Freezing drizzle',57:'Heavy freezing drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',66:'Freezing rain',67:'Heavy freezing rain',71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Light showers',81:'Showers',82:'Heavy showers',85:'Light snow showers',86:'Heavy snow showers',95:'Thunderstorm',96:'Thunderstorm w/ hail',99:'Thunderstorm w/ heavy hail'};
+const WMO_ICONS={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌧️',55:'🌧️',56:'🌨️',57:'🌨️',61:'🌦️',63:'🌧️',65:'🌧️',66:'🌨️',67:'🌨️',71:'🌨️',73:'❄️',75:'❄️',77:'❄️',80:'🌦️',81:'🌧️',82:'🌧️',85:'🌨️',86:'🌨️',95:'⛈️',96:'⛈️',99:'⛈️'};
+const WMO_NIGHT_ICONS=Object.assign({},WMO_ICONS,{0:'🌙',1:'🌙'});
+
+/* ── PAGE NAVIGATION ──────────────────────────────────── */
+function navTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.page===id));
+}
+function showPage(id){navTo(id)}
+
+/* ── CLOCK & GREETING ─────────────────────────────────── */
+function updateClock(){
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  document.getElementById('hTime').textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  document.getElementById('hDate').textContent=now.toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric'});
+  const h=now.getHours(),name=LS('name')||'';
+  let g='Good night';
+  if(h>=5&&h<12)g='Good morning';else if(h>=12&&h<17)g='Good afternoon';else if(h>=17&&h<21)g='Good evening';
+  document.getElementById('greeting').textContent=g+(name?`, ${name}`:'');
+  updateTickerTimes();
+}
+function setQuote(){
+  const now=new Date(),doy=Math.floor((now-new Date(now.getFullYear(),0,0))/86400000);
+  const q=quotes[doy%quotes.length];
+  const qh=document.getElementById('hQuote');
+  if(qh)qh.innerHTML=`\u201C${esc(q.t)}\u201D \u2014 ${esc(q.a)}`;
+  const qb=document.getElementById('quoteBody'),qa=document.getElementById('quoteAuth');
+  if(qb)qb.innerHTML=`\u201C${esc(q.t)}\u201D`;
+  if(qa)qa.textContent=`\u2014 ${q.a}`;
+}
+
+/* ── TICKER ───────────────────────────────────────────── */
+function initTicker(){
+  const row=worldClocks.map((c,i)=>`<span class="ti ti-city-${i}">${esc(c.city)}&nbsp;<strong class="tzv tzv-${i}">--:--</strong></span><span class="ti-sep">⚜</span>`).join('');
+  document.getElementById('tickerTrack').innerHTML=row;
+  updateTickerTimes();
+}
+function updateTickerTimes(){
+  const now=new Date();
+  for(let i=0;i<worldClocks.length;i++){
+    const t=now.toLocaleTimeString('en-CA',{timeZone:worldClocks[i].tz,hour:'2-digit',minute:'2-digit',hour12:false});
+    const hour=parseInt(t.split(':')[0],10);
+    const isDay=hour>=6&&hour<18;
+    document.querySelectorAll('.tzv-'+i).forEach(el=>{el.textContent=t});
+    document.querySelectorAll('.ti-city-'+i).forEach(el=>{el.classList.toggle('ti-day',isDay);el.classList.toggle('ti-night',!isDay)});
+  }
+}
+
+/* ── WEATHER ──────────────────────────────────────────── */
+function getUVLabel(uv){if(uv<=2)return{label:'Low',cls:'uv-low'};if(uv<=5)return{label:'Moderate',cls:'uv-moderate'};if(uv<=7)return{label:'High',cls:'uv-high'};if(uv<=10)return{label:'Very High',cls:'uv-very-high'};return{label:'Extreme',cls:'uv-extreme'}}
+function getAQILabel(aqi){if(aqi<=50)return{label:'Good',cls:'uv-low'};if(aqi<=100)return{label:'Moderate',cls:'uv-moderate'};return{label:'Unhealthy',cls:'uv-high'}}
+function getPressureTrend(p){if(!p||p.length<3)return'Steady';const r=p.slice(-3),d=r[r.length-1]-r[0];if(d>1)return'↑ Rising';if(d<-1)return'↓ Falling';return'→ Steady'}
+function windDirection(deg){const d=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];return d[Math.round(deg/22.5)%16]}
+
+async function getLocation(){
+  const c=LS('location');if(c)return c;
+  /* Try geolocation first, fall back to IP lookup, then default to Cobourg */
+  try{const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000,maximumAge:300000}));
+    const loc={lat:pos.coords.latitude,lon:pos.coords.longitude,city:''};
+    try{const ip=await fetch('https://ipapi.co/json/',{signal:AbortSignal.timeout(5000)}).then(r=>r.json());loc.city=ip.city||'';}catch(e){}
+    LS('location',loc);return loc;
+  }catch(e){
+    try{const ip=await fetch('https://ipapi.co/json/',{signal:AbortSignal.timeout(5000)}).then(r=>r.json());const loc={lat:ip.latitude,lon:ip.longitude,city:ip.city||''};LS('location',loc);return loc;}catch(e2){
+      /* Default to Cobourg if all location methods fail (common in HTML viewer apps) */
+      const fallback={lat:43.9593,lon:-78.1677,city:'Cobourg'};LS('location',fallback);return fallback}
+  }
+}
+
+async function fetchWeather(){
+  const loc=await getLocation();if(!loc)return;
+  try{
+    const lat=loc.lat,lon=loc.lon,units=LS('tempUnit')||'C';
+    const isF=units==='F',tempUnit=isF?'fahrenheit':'celsius',windUnit=isF?'mph':'kmh',precipUnit=isF?'inch':'mm';
+    const unitSym=isF?'°F':'°C',windUnitLabel=isF?'mph':'km/h',precipLabel=isF?'in':'mm';
+    const cityName=LS('city')||loc.city||'Cobourg, ON';
+    const params=new URLSearchParams({latitude:lat,longitude:lon,current:'temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,uv_index,visibility,precipitation',hourly:'temperature_2m,weather_code,precipitation_probability,precipitation,surface_pressure,uv_index',daily:'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,precipitation_sum,uv_index_max',minutely_15:'precipitation',temperature_unit:tempUnit,wind_speed_unit:windUnit,precipitation_unit:precipUnit,timezone:'auto',forecast_days:7,forecast_minutely_15:4});
+    const [wxRes,aqRes]=await Promise.all([fetch(`https://api.open-meteo.com/v1/forecast?${params}`),fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi&timezone=auto`)]);
+    const wx=await wxRes.json(),aq=await aqRes.json();
+    const c=wx.current,h=wx.hourly,d=wx.daily,m15=wx.minutely_15;
+    const now=new Date(),sunrise=new Date(d.sunrise[0]),sunset=new Date(d.sunset[0]);
+    const isNight=now<sunrise||now>sunset;
+    const icons=isNight?WMO_NIGHT_ICONS:WMO_ICONS;
+    const el=id=>document.getElementById(id);
+
+    // Main card
+    el('wxIcon').textContent=icons[c.weather_code]||'⛅';
+    el('wxTemp').textContent=`${Math.round(c.temperature_2m)}°`;
+    el('wxFeels').textContent=`Feels like ${Math.round(c.apparent_temperature)}°`;
+    el('wxDesc').textContent=WMO_CODES[c.weather_code]||'Unknown';
+    el('wxWind').textContent=`${Math.round(c.wind_speed_10m)} ${windUnitLabel}`;
+    el('wxHumidity').textContent=`${c.relative_humidity_2m}%`;
+    el('wxUV').textContent=Math.round(c.uv_index);
+
+    // Detail gauges
+    el('wxWindFull').textContent=`${Math.round(c.wind_speed_10m)} ${windUnitLabel} ${windDirection(c.wind_direction_10m)}`;
+    el('wxWindArrow').style.transform=`rotate(${c.wind_direction_10m+180}deg)`;
+    el('wxGusts').textContent=`Gusts: ${Math.round(c.wind_gusts_10m)} ${windUnitLabel}`;
+    el('wxHumFull').textContent=`${c.relative_humidity_2m}%`;
+    el('wxHumBar').style.width=`${c.relative_humidity_2m}%`;
+    const uvInfo=getUVLabel(c.uv_index);
+    el('wxUVFull').textContent=Math.round(c.uv_index);
+    el('wxUVFull').className=`wx-gauge-value ${uvInfo.cls}`;
+    el('wxUVLabel').textContent=uvInfo.label;
+    el('wxPressure').textContent=`${Math.round(c.surface_pressure)} hPa`;
+    const nowHourIdx=h.time.findIndex(t=>new Date(t)>=now)||0;
+    const pressureSlice=h.surface_pressure.slice(Math.max(0,nowHourIdx-6),nowHourIdx+1);
+    el('wxPressureTrend').textContent=getPressureTrend(pressureSlice);
+    const dewpoint=Math.round(c.temperature_2m-(100-c.relative_humidity_2m)/5);
+    el('wxDewpoint').textContent=`${dewpoint}°`;
+    el('wxVisibility').textContent=c.visibility>=10000?`${(c.visibility/1000).toFixed(0)} km`:`${(c.visibility/1000).toFixed(1)} km`;
+    const last24h=h.precipitation.slice(Math.max(0,nowHourIdx-24),nowHourIdx+1);
+    el('wxPrecipTotal').textContent=`${last24h.reduce((s,v)=>s+(v||0),0).toFixed(1)} ${precipLabel}`;
+    if(aq.current){const aqi=Math.round(aq.current.us_aqi);const aqiInfo=getAQILabel(aqi);el('wxAQI').textContent=aqi;el('wxAQILabel').textContent=aqiInfo.label;el('wxAQILabel').className=`wx-gauge-sub ${aqiInfo.cls}`}
+
+    // Precipitation timeline
+    if(m15&&m15.precipitation){
+      const m15Now=m15.time.findIndex(t=>new Date(t)>=now);
+      const precipData=m15.precipitation.slice(m15Now,m15Now+4);
+      const hasRain=precipData.some(v=>v>0);
+      const precipSection=el('wxPrecipSection');
+      if(precipSection){
+        if(hasRain){precipSection.style.display='';
+          const bars=[];for(let i=0;i<60;i++){const idx=Math.floor(i/15);const val=precipData[idx]||0;const maxP=Math.max(...precipData,0.1);const intensity=Math.min(val/maxP,1);bars.push(`<div class="wx-precip-bar" style="height:${Math.max(intensity*100,4)}%"></div>`)}
+          el('wxPrecipTimeline').innerHTML=bars.join('');
+          const firstRain=precipData.findIndex(v=>v>0);
+          el('wxPrecipSummary').textContent=firstRain===0?'Precipitation now':`Precipitation in ~${firstRain*15} min`;
+        }else{precipSection.style.display='none'}
+      }
+    }
+
+    // Hourly forecast
+    const hourlyC=el('wxHourly');
+    if(hourlyC){let hh='';for(let i=0;i<24;i++){const idx=nowHourIdx+i;if(idx>=h.time.length)break;const hT=new Date(h.time[idx]);const isFirst=i===0;const hI=(hT<sunrise||hT>sunset)?WMO_NIGHT_ICONS:WMO_ICONS;const pp=h.precipitation_probability[idx]||0;
+      hh+=`<div class="wx-hour${isFirst?' now':''}"><div class="wx-hour-time">${isFirst?'Now':hT.toLocaleTimeString([],{hour:'numeric'})}</div><div class="wx-hour-icon">${hI[h.weather_code[idx]]||'⛅'}</div><div class="wx-hour-temp">${Math.round(h.temperature_2m[idx])}°</div>${pp>0?`<div class="wx-hour-precip"><div class="wx-hour-precip-fill" style="width:${pp}%"></div></div>`:''}</div>`}hourlyC.innerHTML=hh}
+
+    // Sun arc
+    const totalDayMs=sunset-sunrise,elapsedMs=now-sunrise;
+    let sunProgress=Math.max(0,Math.min(1,elapsedMs/totalDayMs));if(isNight)sunProgress=now<sunrise?0:1;
+    const t=sunProgress,x=(1-t)*(1-t)*10+2*(1-t)*t*100+t*t*190,y=(1-t)*(1-t)*95+2*(1-t)*t*(-20)+t*t*95;
+    const sunDot=el('wxSunDot');if(sunDot){sunDot.setAttribute('cx',x);sunDot.setAttribute('cy',y)}
+    el('wxSunrise').textContent=sunrise.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    el('wxSunset').textContent=sunset.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+
+    // 7-day forecast
+    const fc=el('wxForecast');
+    if(fc){const allLows=d.temperature_2m_min,allHighs=d.temperature_2m_max,weekMin=Math.min(...allLows),weekMax=Math.max(...allHighs),weekRange=weekMax-weekMin||1;
+      const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let fh='';
+      for(let i=0;i<d.time.length;i++){const date=new Date(d.time[i]+'T12:00');const dayName=i===0?'Today':dayNames[date.getDay()];const lo=Math.round(d.temperature_2m_min[i]);const hi=Math.round(d.temperature_2m_max[i]);
+        const leftPct=((d.temperature_2m_min[i]-weekMin)/weekRange*100).toFixed(1);const widthPct=((d.temperature_2m_max[i]-d.temperature_2m_min[i])/weekRange*100).toFixed(1);
+        let currentDot='';if(i===0){const cp=((c.temperature_2m-d.temperature_2m_min[i])/(d.temperature_2m_max[i]-d.temperature_2m_min[i])*100).toFixed(1);currentDot=`<div class="current-dot" style="left:${cp}%"></div>`}
+        fh+=`<div class="wx-day-row"><div class="wx-day-name${i===0?' today':''}">${dayName}</div><div class="wx-day-icon">${WMO_ICONS[d.weather_code[i]]||'⛅'}</div><div class="wx-temp-bar"><div class="wx-temp-bar-fill" style="left:${leftPct}%;width:${widthPct}%">${currentDot}</div></div><div class="wx-day-lo">${lo}°</div><div class="wx-day-hi">${hi}°</div></div>`}
+      fc.innerHTML=fh}
+  }catch(err){console.error('Weather fetch failed:',err)}
+}
+
+let wxDrawerOpen=false;
+function toggleWeatherDrawer(){
+  wxDrawerOpen=!wxDrawerOpen;
+  document.getElementById('wxDetail').classList.toggle('open',wxDrawerOpen);
+  const btn=document.getElementById('wxExpandBtn');
+  btn.classList.toggle('expanded',wxDrawerOpen);
+  btn.innerHTML=wxDrawerOpen?'Collapse <span class="chevron">▲</span>':'Detail <span class="chevron">▼</span>';
+}
+
+/* ── SEARCH ───────────────────────────────────────────── */
+let curEngine=LS('searchEngine')||'Google';
+function setupSearch(){
+  document.getElementById('sbadge').textContent=curEngine;
+  document.getElementById('sbar').addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;const q=e.target.value.trim();if(!q)return;
+    for(const[b,u]of Object.entries(bangs)){if(q.startsWith(b+' ')){const url=u+encodeURIComponent(q.slice(b.length+1));try{const w=window.open(url,'_blank');if(!w)location.href=url}catch(ex){location.href=url}e.target.value='';return}}
+    const surl=engines[curEngine]+encodeURIComponent(q);try{const w=window.open(surl,'_blank');if(!w)location.href=surl}catch(ex){location.href=surl}e.target.value='';
+  });
+}
+function cycleEngine(){const keys=Object.keys(engines);curEngine=keys[(keys.indexOf(curEngine)+1)%keys.length];LS('searchEngine',curEngine);document.getElementById('sbadge').textContent=curEngine}
+
+/* ── NEWS SYSTEM ══════════════════════════════════════════ */
+let allArticles=[],activeSource='all',activeArticleIdx=-1;
+function estimateReadTime(text){if(!text)return'1 min read';return`${Math.max(1,Math.round(text.split(/\s+/).length/200))} min read`}
+function getCategoryFromSource(s){const c={'northumberland':'Local','cobourg':'Local','consider':'Local','today':'Local','cbc':'Canada','global':'Canada','ctv':'Canada','bbc':'World','reuters':'World','ars':'Tech','verge':'Tech','bloomberg':'Finance','cnbc':'Finance'};const l=s.toLowerCase();for(const[k,v]of Object.entries(c))if(l.includes(k))return v;return'News'}
+
+function renderSourcePills(){
+  const pills=document.getElementById('sourcePills');if(!pills)return;
+  const counts={};allArticles.forEach(a=>{counts[a.source]=(counts[a.source]||0)+1});
+  let html=`<button class="spill${activeSource==='all'?' on':''}" onclick="filterSource('all')">All<span class="spill-count">${allArticles.length}</span></button>`;
+  const seen=new Set();
+  allArticles.forEach(a=>{if(seen.has(a.source))return;seen.add(a.source);
+    html+=`<button class="spill${activeSource===a.source?' on':''}" onclick="filterSource('${a.source.replace(/'/g,"\\'")}')"><span class="sdot" style="background:${a.color||'var(--ac)'}"></span>${a.source}<span class="spill-count">${counts[a.source]||0}</span></button>`});
+  pills.innerHTML=html;
+}
+
+function renderNewsFeed(){
+  const feed=document.getElementById('newsFeed');if(!feed)return;
+  const filtered=activeSource==='all'?allArticles:allArticles.filter(a=>a.source===activeSource);
+  if(!filtered.length){feed.innerHTML='<div class="empty">No articles found</div>';return}
+  let html='';
+  filtered.forEach(article=>{const gi=allArticles.indexOf(article);const cat=getCategoryFromSource(article.source);
+    html+=`<div class="feed-item${gi===activeArticleIdx?' active':''}" onclick="openArticle(${gi})"><div class="feed-item-img">📰</div><div class="feed-item-body"><div class="feed-source-info"><span class="fsrc">${article.source}</span><span style="color:var(--s2)">·</span><span class="ftime">${timeAgo(article.date)}</span></div><div class="feed-title">${article.title}</div>${article.description?`<div class="feed-desc">${article.description}</div>`:''}<div class="feed-meta-bottom"><span class="feed-read-time">📖 ${estimateReadTime(article.description)}</span><span class="feed-category">${cat}</span></div></div></div>`});
+  feed.innerHTML=html;
+}
+
+function filterSource(source){activeSource=source;renderSourcePills();renderNewsFeed()}
+
+/* ── ARTICLE FETCHING ─────────────────────────────────── */
+function parseRSSXML(xml){
+  const doc=new DOMParser().parseFromString(xml,'text/xml');if(doc.querySelector('parsererror'))throw new Error('XML parse error');
+  const rssItems=doc.querySelectorAll('channel > item');
+  if(rssItems.length){return Array.from(rssItems).map(el=>{const g=t=>el.querySelector(t)?.textContent?.trim()||'';const linkEl=el.querySelector('link');const link=(linkEl?.textContent?.trim())||linkEl?.getAttribute('href')||el.querySelector('guid')?.textContent?.trim()||'';const ce=el.getElementsByTagNameNS('*','encoded')[0]?.textContent||el.querySelector('content\\:encoded, encoded')?.textContent||'';return{title:g('title'),url:link,pubDate:g('pubDate'),desc:g('description'),fullContent:ce}})}
+  const entries=doc.querySelectorAll('entry');
+  return Array.from(entries).map(el=>{const g=t=>el.querySelector(t)?.textContent?.trim()||'';const link=el.querySelector('link[rel="alternate"]')?.getAttribute('href')||el.querySelector('link')?.getAttribute('href')||g('id');const content=g('content'),summary=g('summary');return{title:g('title'),url:link,pubDate:g('published')||g('updated'),desc:summary||content,fullContent:content||summary}});
+}
+
+function normalizeItems(srcKey,raw){
+  const srcDef=newsSources.find(s=>s.key===srcKey)||{name:srcKey,dot:'#888'};
+  return raw.slice(0,15).map(item=>{const title=(item.title||'').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,'').trim();const link=item.url||item.link||'';const description=stripHTML(item.desc||item.description||'').slice(0,300);const fullContent=item.fullContent||item.desc||'';const date=item.pubDate?new Date(item.pubDate):new Date(0);return{title,link,description,fullContent,date,source:srcDef.name,color:srcDef.dot,sourceIcon:'📰'}}).filter(i=>i.title&&i.link);
+}
+
+const newsSources=[
+  {key:'all',name:'All Sources',dot:'#cba6f7'},
+  {key:'cb',name:'Cobourg Blog',dot:'#a6e3a1',feed:'https://cobourgblog.com/feed/'},
+  {key:'tn',name:"Today's Northumberland",dot:'#89b4fa',feed:'https://todaysnorthumberland.ca/feed/'},
+  {key:'ct',name:'Consider This',dot:'#fab387',feed:'https://consider-this.ca/feed/'},
+  {key:'nd',name:'Northumberland Daily',dot:'#f9e2af',feed:'https://northumberlanddaily.ca/feed/'},
+  {key:'cp',name:'Cobourg Police',dot:'#f38ba8',feed:'https://cobourgpoliceservice.com/feed/'},
+  {key:'tc',name:'Town of Cobourg',dot:'#94e2d5',feed:'https://www.cobourg.ca/news/rss/'},
+  {key:'ht',name:'Hamilton Township',dot:'#b4befe',feed:'https://www.hamiltontownship.ca/news/rss/'},
+  {key:'cr',name:'Cramahe Township',dot:'#74c7ec',feed:'https://www.cramahe.ca/news/rss/'},
+  {key:'kn',name:'kawarthaNOW',dot:'#f2cdcd',feed:'https://kawarthanow.com/feed/'},
+  {key:'k4',name:'Kawartha 411',dot:'#eba0ac',feed:'https://www.kawartha411.ca/feed/'},
+  {key:'br',name:'Burd Report',dot:'#cba6f7',feed:'https://burdreport.ca/feed/'},
+  {key:'cr2',name:'Classic Rock 107.9',dot:'#fab387',feed:'https://classicrock1079.ca/feed/'},
+  {key:'gn',name:'Google News Cobourg',dot:'#cdd6f4',feed:'https://news.google.com/rss/search?q=Cobourg+Ontario&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'gn2',name:'Google News Northumberland',dot:'#a6adc8',feed:'https://news.google.com/rss/search?q=%22Cobourg%22+OR+%22Port+Hope%22+OR+%22Northumberland+County%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'opp',name:'OPP East Region',dot:'#f5c2e7',feed:'https://news.google.com/rss/search?q=%22OPP%22+%22Northumberland%22+OR+%22OPP%22+%22Cobourg%22+OR+%22OPP%22+%22Port+Hope%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'php',name:'Port Hope Police',dot:'#cba6f7',feed:'https://news.google.com/rss/search?q=%22Port+Hope+Police%22+OR+%22PHPS%22+%22Port+Hope%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'rd',name:'r/Cobourg',dot:'#ff6314',reddit:true},
+];
+
+function fixArticleImages(html,baseUrl){
+  const tmp=document.createElement('div');tmp.innerHTML=html;
+  tmp.querySelectorAll('img').forEach(img=>{const src=img.getAttribute('src')||img.getAttribute('data-src')||img.getAttribute('data-lazy-src');if(src){if(src.startsWith('//'))img.src='https:'+src;else if(src.startsWith('/')){try{img.src=new URL(baseUrl).origin+src}catch(e){}}else if(!src.startsWith('http')){try{img.src=new URL(src,baseUrl).href}catch(e){}}else img.src=src}img.removeAttribute('srcset');img.style.maxWidth='100%';img.style.height='auto';img.style.borderRadius='8px';img.style.margin='8px 0';img.removeAttribute('width');img.removeAttribute('height')});
+  tmp.querySelectorAll('script,iframe,form,style,noscript').forEach(el=>el.remove());
+  tmp.querySelectorAll('.sharedaddy,.jp-relatedposts,.post-nav,.comments-area,.wp-block-buttons').forEach(el=>el.remove());
+  return tmp.innerHTML;
+}
+
+const _articleCache=new Map();
+const ARTICLE_SELECTORS=['article .entry-content','.entry-content','.post-content','.article-content','[itemprop="articleBody"]','.story-content','.single-content','.page-content','.field-item','#content-area','article','main'];
+
+function extractContentFromHTML(html,baseUrl){
+  const doc=new DOMParser().parseFromString(html,'text/html');let contentEl=null;
+  for(const sel of ARTICLE_SELECTORS){contentEl=doc.querySelector(sel);if(contentEl&&contentEl.textContent.trim().length>200)break;contentEl=null}
+  if(!contentEl)return null;
+  const ogImage=doc.querySelector('meta[property="og:image"]')?.getAttribute('content')||'';
+  const clone=contentEl.cloneNode(true);
+  clone.querySelectorAll('script,style,noscript,iframe,form,nav,header,footer,.sidebar,.widget,.sharedaddy,.jp-relatedposts,.post-nav,.comments-area,.wp-block-buttons,.related-posts,.social-share,.author-bio,.breadcrumbs,.ad,.advertisement,[class*="ad-"],[id*="ad-"],.newsletter-signup,.popup,.modal').forEach(el=>el.remove());
+  clone.querySelectorAll('img').forEach(img=>{const rs=img.getAttribute('data-src')||img.getAttribute('data-lazy-src')||img.getAttribute('data-original');if(rs&&!img.getAttribute('src')?.startsWith('http'))img.setAttribute('src',rs);img.removeAttribute('data-src');img.removeAttribute('srcset');const src=img.getAttribute('src');if(src){try{img.setAttribute('src',new URL(src,baseUrl).href)}catch(e){}}});
+  clone.querySelectorAll('a[href]').forEach(a=>{const href=a.getAttribute('href');if(href&&!href.startsWith('http')&&!href.startsWith('#')&&!href.startsWith('mailto:')){try{a.setAttribute('href',new URL(href,baseUrl).href)}catch(e){}}a.setAttribute('target','_blank');a.setAttribute('rel','noopener')});
+  let result=clone.innerHTML;if(ogImage&&!clone.querySelector('img'))result=`<img src="${ogImage}" style="max-width:100%;border-radius:8px;margin-bottom:16px" alt="">`+result;
+  return result;
+}
+
+async function fetchFullArticle(url){
+  if(_articleCache.has(url))return _articleCache.get(url);
+  const proxies=[u=>`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`];
+  for(const mkUrl of proxies){try{const r=await fetch(mkUrl(url),{signal:AbortSignal.timeout(12000)});if(!r.ok)continue;let html;const ct=r.headers.get('content-type')||'';if(ct.includes('json')){const j=await r.json();html=j.contents||''}else html=await r.text();if(html.length<500)continue;const content=extractContentFromHTML(html,url);if(content&&stripHTML(content).length>200){_articleCache.set(url,content);return content}}catch(e){}}
+  return null;
+}
+
+function hasSubstantialContent(a){if(!a.fullContent)return false;const t=stripHTML(a.fullContent);return t.length>a.description.length+50&&t.length>=400}
+
+function openArticle(idx){
+  activeArticleIdx=idx;const article=allArticles[idx];if(!article)return;
+  document.querySelectorAll('.feed-item').forEach((el,i)=>el.classList.toggle('active',parseInt(el.dataset?.index)===idx));
+  const el=id=>document.getElementById(id);
+  el('readerSource').textContent=article.source;
+  el('readerTitle').textContent=article.title;
+  el('newsOriginalLink').href=article.link;
+  if(hasSubstantialContent(article)){
+    const readTimeText=stripHTML(article.fullContent);
+    el('readerMeta').textContent=`${article.date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${estimateReadTime(readTimeText)}`;
+    let body=fixArticleImages(article.fullContent,article.link);
+    body+=`<p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><a href="${article.link}" target="_blank" rel="noopener">Read full article at ${article.source} →</a></p>`;
+    el('readerBody').innerHTML=body;
+  }else{
+    el('readerMeta').textContent=article.date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    let preview=article.description||'';if(preview&&!preview.includes('<p'))preview=preview.split(/\n\n+/).map(p=>`<p>${p}</p>`).join('');
+    el('readerBody').innerHTML=preview+`<div style="text-align:center;padding:24px 0;color:var(--ov0);font-size:.75rem"><div>Loading full article...</div><div class="skeleton skeleton-text" style="margin-top:8px"></div><div class="skeleton skeleton-text medium"></div></div>`;
+    fetchFullArticle(article.link).then(content=>{if(activeArticleIdx!==idx)return;if(content)article.fullContent=content;
+      let body=hasSubstantialContent(article)?fixArticleImages(article.fullContent,article.link):(article.description||'');
+      body+=`<p style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><a href="${article.link}" target="_blank" rel="noopener">Read full article at ${article.source} →</a></p>`;
+      el('readerBody').innerHTML=body;el('readerMeta').textContent=`${article.date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${estimateReadTime(stripHTML(body))}`
+    }).catch(()=>{});
+  }
+  el('newsReader').classList.add('open');
+  document.querySelector('.news-reader-scroll').scrollTop=0;
+}
+function closeReader(){document.getElementById('newsReader').classList.remove('open')}
+
+async function fetchRSSSource(src){
+  try{const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(src.feed)}`,{signal:AbortSignal.timeout(10000)});const j=await r.json();if(j.status==='ok'&&j.items?.length)return normalizeItems(src.key,j.items.map(i=>({title:i.title,url:i.link,pubDate:i.pubDate,desc:i.description||'',fullContent:i.content||i.description||''})))}catch(e){}
+  try{const r=await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(src.feed)}`,{signal:AbortSignal.timeout(10000)});const j=await r.json();let xml=j.contents||'';if(xml.startsWith('data:'))xml=atob(xml.split(',')[1]);if(xml.length>200)return normalizeItems(src.key,parseRSSXML(xml))}catch(e){}
+  try{const r=await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(src.feed)}`,{signal:AbortSignal.timeout(10000)});if(r.ok){const txt=await r.text();if(txt.length>200)return normalizeItems(src.key,parseRSSXML(txt))}}catch(e){}
+  throw new Error('All strategies failed: '+src.feed);
+}
+
+async function fetchCobourgReddit(){
+  const srcDef=newsSources.find(s=>s.key==='rd')||{name:'r/Cobourg',dot:'#ff6314'};
+  const data=await fetch('https://www.reddit.com/r/Cobourg/new.json?limit=15',{headers:{'Accept':'application/json'}}).then(r=>r.json());
+  return(data?.data?.children||[]).map(c=>c.data).filter(p=>p.title).map(p=>({title:p.title,link:`https://reddit.com${p.permalink}`,description:p.selftext?p.selftext.slice(0,300):'',date:new Date(p.created_utc*1000),source:srcDef.name,color:srcDef.dot,sourceIcon:'📰'}));
+}
+
+async function fetchAllNews(forceRefresh){
+  if(!forceRefresh){const cached=LS('newsCache');if(cached&&cached.length){allArticles=cached.map(i=>({...i,date:new Date(i.date)}));renderSourcePills();renderNewsFeed();renderMosaicSources();renderMosaic()}}
+  const fetchers=[...newsSources.filter(s=>s.feed).map(s=>fetchRSSSource(s)),fetchCobourgReddit()];
+  const results=await Promise.allSettled(fetchers);
+  const merged=[];
+  for(let i=0;i<results.length;i++){if(results[i].status==='fulfilled')merged.push(...results[i].value)}
+  merged.sort((a,b)=>b.date-a.date);
+  if(merged.length){allArticles=merged;LS('newsCache',allArticles.map(i=>{const{fullContent,...rest}=i;return{...rest,date:i.date.toISOString()}}))}
+  const upd=document.getElementById('newsUpdated');if(upd)upd.textContent=`Updated ${new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`;
+  if(allArticles.length){renderSourcePills();renderNewsFeed();renderMosaicSources();renderMosaic()}
+}
+function fetchAllFeeds(){fetchAllNews(true)}
+
+/* ── NEWS CRAWL ───────────────────────────────────────── */
+function updateNewsCrawl(){
+  const container=document.getElementById('newsCrawlContent');if(!container||!allArticles.length)return;
+  const now=new Date(),twoHoursAgo=new Date(now-2*60*60*1000);
+  const breakingKw=/breaking|urgent|emergency|alert|fatal|shooting|fire|evacuat|missing|amber|road clos|lockdown/i;
+  const hasBreaking=allArticles.some(a=>a.date>twoHoursAgo&&(a.source==='Cobourg Police'||breakingKw.test(a.title)));
+  const label=document.getElementById('newsCrawlLabel');if(label)label.textContent=hasBreaking?'BREAKING':'LATEST';
+  const items=allArticles.slice(0,25).map(a=>{const gi=allArticles.indexOf(a);const isB=a.date>twoHoursAgo&&(a.source==='Cobourg Police'||breakingKw.test(a.title));return`<span class="${isB?'news-crawl-item news-crawl-breaking':'news-crawl-item'}" onclick="navTo('news');openArticle(${gi})">${a.title}</span><span class="news-crawl-sep">•</span>`}).join('');
+  container.innerHTML=items+items;
+  requestAnimationFrame(()=>{const w=container.scrollWidth/2;container.style.animation=`crawlScroll ${w/60}s linear infinite`});
+}
+
+/* ── BREAKING NEWS ────────────────────────────────────── */
+let breakingStories=[],breakingIdx=0,breakingTimer=null;
+function detectBreakingNews(){
+  if(!allArticles.length)return;const now=new Date(),twoHoursAgo=new Date(now-2*60*60*1000);
+  const kw=/breaking|urgent|emergency|alert|fatal|shooting|stabbing|fire|evacuat|missing|amber|road clos|lockdown|collision|crash/i;
+  breakingStories=allArticles.filter(a=>a.date>twoHoursAgo&&(a.source==='Cobourg Police'||kw.test(a.title))).slice(0,5);
+  const banner=document.getElementById('breakingBanner');if(!banner)return;
+  if(!breakingStories.length){banner.classList.remove('on');if(breakingTimer)clearInterval(breakingTimer);return}
+  banner.classList.add('on');breakingIdx=0;showBreakingStory();
+  const dots=document.getElementById('breakingDots');
+  if(dots&&breakingStories.length>1)dots.innerHTML=breakingStories.map((_,i)=>'<span class="breaking-dot'+(i===0?' active':'')+'"></span>').join('');
+  else if(dots)dots.innerHTML='';
+  if(breakingTimer)clearInterval(breakingTimer);
+  if(breakingStories.length>1)breakingTimer=setInterval(()=>{breakingIdx=(breakingIdx+1)%breakingStories.length;showBreakingStory()},6000);
+}
+function showBreakingStory(){const s=breakingStories[breakingIdx];if(!s)return;document.getElementById('breakingHeadline').textContent=s.title;document.getElementById('breakingSource').textContent=s.source;document.querySelectorAll('.breaking-dot').forEach((d,i)=>d.classList.toggle('active',i===breakingIdx))}
+function openBreakingArticle(){const s=breakingStories[breakingIdx];if(!s)return;const idx=allArticles.indexOf(s);if(idx>=0){navTo('news');openArticle(idx)}}
+
+/* ── NEWS MOSAIC ──────────────────────────────────────── */
+let mosaicHeroIdx=0,mosaicHeroTimer=null,mosaicFilter='all';
+function renderMosaicSources(){
+  const c=document.getElementById('mosaicSources');if(!c)return;
+  const counts={};allArticles.forEach(a=>{counts[a.source]=(counts[a.source]||0)+1});
+  let html='<button class="spill'+(mosaicFilter==='all'?' on':'')+'" onclick="filterMosaic(\'all\')">All</button>';
+  const seen=new Set();allArticles.forEach(a=>{if(seen.has(a.source))return;seen.add(a.source);html+='<button class="spill'+(mosaicFilter===a.source?' on':'')+'" onclick="filterMosaic(\''+a.source.replace(/'/g,"\\'")+'\')"><span class="sdot" style="background:'+(a.color||'var(--ac)')+'"></span>'+a.source+'</button>'});
+  c.innerHTML=html;
+}
+function filterMosaic(src){mosaicFilter=src;renderMosaicSources();renderMosaic()}
+function renderMosaic(){
+  const articles=mosaicFilter==='all'?allArticles:allArticles.filter(a=>a.source===mosaicFilter);if(!articles.length)return;
+  const upd=document.getElementById('mosaicUpdated');if(upd)upd.textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const heroes=articles.slice(0,4);mosaicHeroIdx=0;showMosaicHero(heroes);
+  const pager=document.getElementById('mosaicHeroPager');if(pager&&heroes.length>1)pager.innerHTML=heroes.map((_,i)=>'<span class="mosaic-hero-pip'+(i===0?' active':'')+'" onclick="event.stopPropagation();jumpHero('+i+')"></span>').join('');
+  if(mosaicHeroTimer)clearInterval(mosaicHeroTimer);if(heroes.length>1)mosaicHeroTimer=setInterval(()=>{mosaicHeroIdx=(mosaicHeroIdx+1)%heroes.length;showMosaicHero(heroes,true)},30000);
+  const mids=articles.slice(4,8),midEl=document.getElementById('mosaicMid');
+  if(midEl)midEl.innerHTML=mids.map(a=>{const gi=allArticles.indexOf(a);const cat=getCategoryFromSource(a.source);return'<div class="mosaic-card" onclick="openMosaicArticle('+gi+')"><div class="mosaic-card-accent" style="background:'+(a.color||'var(--ac)')+'"></div><div class="mosaic-card-source"><span class="sdot" style="background:'+(a.color||'var(--ac)')+'"></span>'+a.source+'</div><div class="mosaic-card-title">'+a.title+'</div><div class="mosaic-card-footer"><span class="mosaic-card-time">'+timeAgo(a.date)+'</span><span class="mosaic-card-category">'+cat+'</span></div></div>'}).join('');
+  const strips=articles.slice(8,18),stripEl=document.getElementById('mosaicStrips');
+  if(stripEl){let sh='<div class="mosaic-strip-header">More Headlines</div>';strips.forEach(a=>{const gi=allArticles.indexOf(a);sh+='<div class="mosaic-strip" onclick="openMosaicArticle('+gi+')"><span class="mosaic-strip-dot" style="background:'+(a.color||'var(--ac)')+'"></span><span class="mosaic-strip-title">'+a.title+'</span><span class="mosaic-strip-time">'+timeAgo(a.date)+'</span></div>'});stripEl.innerHTML=sh}
+  detectBreakingNews();updateNewsCrawl();
+}
+function showMosaicHero(heroes,animate){
+  const a=heroes[mosaicHeroIdx];if(!a)return;
+  document.getElementById('mosaicHeroGradient').style.background='radial-gradient(ellipse at 30% 50%,'+(a.color||'var(--ac)')+',transparent 70%)';
+  document.getElementById('mosaicHeroSource').innerHTML='<span class="sdot" style="background:'+(a.color||'var(--ac)')+'"></span><span>'+a.source+'</span>';
+  document.getElementById('mosaicHeroTitle').textContent=a.title;
+  document.getElementById('mosaicHeroDesc').textContent=(a.description||'').replace(/<[^>]+>/g,'').slice(0,200);
+  document.getElementById('mosaicHeroTime').textContent=timeAgo(a.date);
+  if(animate){const c=document.getElementById('mosaicHeroContent');c.classList.remove('transitioning');void c.offsetWidth;c.classList.add('transitioning')}
+  document.querySelectorAll('.mosaic-hero-pip').forEach((p,i)=>p.classList.toggle('active',i===mosaicHeroIdx));
+}
+function jumpHero(i){const articles=mosaicFilter==='all'?allArticles:allArticles.filter(a=>a.source===mosaicFilter);mosaicHeroIdx=i;showMosaicHero(articles.slice(0,4),true);if(mosaicHeroTimer)clearInterval(mosaicHeroTimer);const heroes=articles.slice(0,4);if(heroes.length>1)mosaicHeroTimer=setInterval(()=>{mosaicHeroIdx=(mosaicHeroIdx+1)%heroes.length;showMosaicHero(heroes,true)},30000)}
+function openMosaicHero(){const articles=mosaicFilter==='all'?allArticles:allArticles.filter(a=>a.source===mosaicFilter);const a=articles[mosaicHeroIdx];if(a)openMosaicArticle(allArticles.indexOf(a))}
+function openMosaicArticle(idx){navTo('news');openArticle(idx)}
+function refreshMosaic(){fetchAllNews(true)}
+
+/* ── MARKETS ──────────────────────────────────────────── */
+function fmtMcap(v){if(!v)return'—';if(v>=1e12)return'$'+(v/1e12).toFixed(2)+'T';if(v>=1e9)return'$'+(v/1e9).toFixed(1)+'B';if(v>=1e6)return'$'+(v/1e6).toFixed(0)+'M';return'$'+v.toFixed(0)}
+function fmtVol(v){if(!v)return'—';if(v>=1e9)return(v/1e9).toFixed(1)+'B';if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(0)+'K';return String(v)}
+function getMarketStatus(){const now=new Date(),et=new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'})),h=et.getHours(),m=et.getMinutes(),day=et.getDay(),mins=h*60+m;if(day===0||day===6)return{label:'Closed',cls:'closed'};if(mins>=570&&mins<960)return{label:'Open',cls:'open'};if(mins>=240&&mins<570)return{label:'Pre-Market',cls:'closed'};if(mins>=960&&mins<1200)return{label:'After-Hours',cls:'closed'};return{label:'Closed',cls:'closed'}}
+const INDEX_SEED=[{name:'S&P/TSX',price:24286.15,chg:-0.68},{name:'S&P 500',price:5572.07,chg:-1.39},{name:'DOW',price:41350.93,chg:-1.30},{name:'NASDAQ',price:17648.45,chg:-1.96}];
+function renderMarketStatus(){const s=getMarketStatus();const el=document.getElementById('mktStatus');if(el){el.textContent=s.label;el.className='mkt-status '+s.cls}}
+function renderMarketIndices(){const c=document.getElementById('mktIndices');if(!c)return;let html='';INDEX_SEED.forEach(idx=>{const up=idx.chg>=0;html+='<div class="mkt-idx"><div class="mkt-idx-name">'+esc(idx.name)+'</div><div class="mkt-idx-price">'+idx.price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2})+'</div><div class="mkt-idx-chg '+(up?'up':'dn')+'">'+(up?'+':'')+idx.chg.toFixed(2)+'%</div></div>'});
+  html+='<span class="mkt-status closed" id="mktStatus">Closed</span>';c.innerHTML=html;renderMarketStatus()}
+
+let stkTab='tsx';
+function switchStockTab(tab){stkTab=tab;document.querySelectorAll('.stk-tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));document.getElementById('tsxBody').style.display=tab==='tsx'?'':'none';document.getElementById('cryptoBody').style.display=tab==='crypto'?'':'none'}
+
+function buildStkRow(sym,name,nameHtml,price,chgPct,mcap,vol,isCrypto,img,extra){
+  const up=chgPct>=0;const pStr=price>=1?price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):price<0.01?price.toFixed(6):price.toFixed(4);
+  let da=`data-sym="${escA(sym)}" data-name="${escA(name)}" data-price="${price}" data-chg="${chgPct}" data-mcap="${mcap}" data-vol="${vol}" data-crypto="${isCrypto}"${img?` data-img="${escA(img)}"`:''}`;
+  if(extra)Object.entries(extra).forEach(([k,v])=>{if(v!=null&&k!=='spark')da+=` data-${k}="${escA(String(v))}"`});
+  return`<div class="stk-row" onclick="openStockModal(this)" ${da}><div class="stk-col-name">${nameHtml}</div><div class="stk-col-price stk-num">$${pStr}</div><div class="stk-col-chg"><span class="stk-pill ${up?'up':'dn'}">${up?'+':''}${chgPct.toFixed(2)}%</span></div></div>`;
+}
+
+/* Stock modal */
+let tvScriptLoaded=false;
+function getCryptoTVSym(sym){const m={BTC:'BINANCE:BTCUSDT',ETH:'BINANCE:ETHUSDT',SOL:'BINANCE:SOLUSDT',XRP:'BINANCE:XRPUSDT',DOGE:'BINANCE:DOGEUSDT',ADA:'BINANCE:ADAUSDT',AVAX:'BINANCE:AVAXUSDT',LINK:'BINANCE:LINKUSDT',LTC:'BINANCE:LTCUSDT'};return m[sym]||`BINANCE:${sym}USDT`}
+function openStockModal(el){
+  const sym=el.dataset.sym,name=el.dataset.name,price=parseFloat(el.dataset.price),chg=parseFloat(el.dataset.chg),mcap=parseFloat(el.dataset.mcap),vol=parseFloat(el.dataset.vol),isCrypto=el.dataset.crypto==='true',img=el.dataset.img||'';
+  const up=chg>=0,chgStr=(up?'+':'')+chg.toFixed(2)+'%',pStr=price>=1?price.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2}):price<0.01?price.toFixed(6):price.toFixed(4);
+  const iconEl=document.getElementById('smIcon');iconEl.innerHTML=img?`<img src="${escA(img)}" alt="">`:`<span style="font-size:.65rem;font-weight:800;color:var(--ac)">${esc(sym.slice(0,3))}</span>`;
+  document.getElementById('smSym').textContent=sym;document.getElementById('smName').textContent=name;document.getElementById('smPrice').textContent='$'+pStr;
+  const chgEl=document.getElementById('smChg');chgEl.textContent=chgStr+' today';chgEl.className='stkm-chg '+(up?'up':'dn');
+  let stats;
+  if(isCrypto){stats=[{label:'Market Cap',value:fmtMcap(mcap)},{label:'24h Volume',value:fmtVol(vol)},{label:'24h Change',value:chgStr,cls:up?'up':'dn'},{label:'24h Range',value:(el.dataset.low24&&el.dataset.high24)?'$'+parseFloat(el.dataset.low24).toLocaleString()+' - $'+parseFloat(el.dataset.high24).toLocaleString():'--'},{label:'ATH',value:el.dataset.ath?'$'+parseFloat(el.dataset.ath).toLocaleString():'--'},{label:'Circulating',value:el.dataset.supply?fmtVol(parseFloat(el.dataset.supply)):'--'}]}
+  else{stats=[{label:'Market Cap',value:fmtMcap(mcap)},{label:'Volume',value:fmtVol(vol)},{label:'24h Change',value:chgStr,cls:up?'up':'dn'},{label:'Day Range',value:(el.dataset.daylow&&el.dataset.dayhigh)?'$'+el.dataset.daylow+' - $'+el.dataset.dayhigh:'--'},{label:'P/E Ratio',value:el.dataset.pe?parseFloat(el.dataset.pe).toFixed(2):'--'},{label:'Div Yield',value:el.dataset.divyield?(parseFloat(el.dataset.divyield)*100).toFixed(2)+'%':'--'}]}
+  document.getElementById('smStats').innerHTML=stats.map(s=>`<div class="stkm-stat"><div class="stkm-stat-lbl">${esc(s.label)}</div><div class="stkm-stat-val${s.cls?' '+s.cls:''}">${s.value}</div></div>`).join('');
+  const tvSym=isCrypto?getCryptoTVSym(sym):`TSX:${sym}`;
+  document.getElementById('tvChart').innerHTML='<div class="stkm-chart-loading">Loading chart…</div>';
+  loadTVWidget(tvSym);document.getElementById('stockModal').classList.add('on');
+}
+function closeStockModal(){document.getElementById('stockModal').classList.remove('on');document.getElementById('tvChart').innerHTML='<div class="stkm-chart-loading">Loading chart…</div>'}
+function loadTVWidget(symbol){if(window.TradingView){createTVWidget(symbol);return}if(!document.getElementById('tvScript')){const s=document.createElement('script');s.id='tvScript';s.src='https://s3.tradingview.com/tv.js';s.onload=()=>{tvScriptLoaded=true;createTVWidget(symbol)};s.onerror=()=>{const wrap=document.getElementById('tvChart');if(wrap)wrap.innerHTML='<div class="stkm-chart-loading" style="flex-direction:column;gap:8px"><div>Chart unavailable</div><div style="font-size:.55rem;color:var(--ov0)">TradingView could not load in this viewer</div></div>'};document.head.appendChild(s)}}
+function createTVWidget(symbol){try{const wrap=document.getElementById('tvChart');wrap.innerHTML='';const d=document.createElement('div');d.id='tvInner'+Date.now();wrap.appendChild(d);const theme=document.documentElement.getAttribute('data-theme')||'dark';new TradingView.widget({container_id:d.id,symbol,interval:'D',theme:theme,style:'1',locale:'en',timezone:'America/Toronto',toolbar_bg:theme==='dark'?'#1a1a2e':'#f5f4f8',enable_publishing:false,hide_side_toolbar:true,allow_symbol_change:true,hide_legend:false,width:'100%',height:280,save_to_cloud:false,autosize:false})}catch(e){const wrap=document.getElementById('tvChart');if(wrap)wrap.innerHTML='<div class="stkm-chart-loading">Chart unavailable in this viewer</div>'}}
+
+const TSX_SYMBOLS=['RY.TO','SHOP.TO','TD.TO','ENB.TO','AEM.TO','CNQ.TO','BMO.TO','BN.TO','BNS.TO','ABX.TO','CP.TO','SU.TO','BAM.TO','WPM.TO','CNR.TO','ATD.TO','MFC.TO','L.TO','CVE.TO','TRI.TO','WCN.TO','CSU.TO','NTR.TO','FFH.TO','SLF.TO','QSR.TO','POW.TO','BCE.TO','T.TO'];
+const TSX_SEED=[{sym:'RY',name:'Royal Bank of Canada',price:222.11,chg:-0.93,mcap:311.0e9,vol:2676343},{sym:'SHOP',name:'Shopify Inc',price:171.94,chg:-2.29,mcap:225.3e9,vol:2214888},{sym:'TD',name:'Toronto-Dominion Bank',price:128.24,chg:-1.59,mcap:214.3e9,vol:3587032},{sym:'ENB',name:'Enbridge Inc',price:73.12,chg:+0.36,mcap:159.6e9,vol:5893776},{sym:'AEM',name:'Agnico Eagle Mines',price:297.69,chg:-1.59,mcap:148.9e9,vol:819693},{sym:'CNQ',name:'Canadian Natural Resources',price:66.17,chg:+3.10,mcap:138.0e9,vol:28217886},{sym:'BMO',name:'Bank of Montreal',price:189.43,chg:-1.84,mcap:133.8e9,vol:1955846},{sym:'BN',name:'Brookfield Corporation',price:52.81,chg:-4.12,mcap:118.6e9,vol:4338872},{sym:'BNS',name:'Bank of Nova Scotia',price:95.36,chg:-1.63,mcap:117.9e9,vol:3773601},{sym:'ABX',name:'Barrick Mining',price:60.64,chg:-1.77,mcap:101.6e9,vol:5879477},{sym:'CP',name:'Canadian Pacific Kansas City',price:110.64,chg:-2.00,mcap:99.4e9,vol:1477912},{sym:'SU',name:'Suncor Energy',price:81.46,chg:+2.98,mcap:96.9e9,vol:9070933},{sym:'BAM',name:'Brookfield Asset Management',price:58.76,chg:-3.16,mcap:96.3e9,vol:2308560},{sym:'WPM',name:'Wheaton Precious Metals',price:198.85,chg:-1.59,mcap:90.3e9,vol:573792},{sym:'CNR',name:'Canadian National Railway',price:141.50,chg:-1.87,mcap:86.5e9,vol:4534566},{sym:'ATD',name:'Alimentation Couche-Tard',price:81.60,chg:+0.99,mcap:76.8e9,vol:1171407},{sym:'MFC',name:'Manulife Financial',price:45.69,chg:-0.39,mcap:76.6e9,vol:2537035},{sym:'L',name:'Loblaw Companies',price:62.08,chg:-0.02,mcap:72.8e9,vol:1508667},{sym:'CVE',name:'Cenovus Energy',price:32.20,chg:+0.06,mcap:60.7e9,vol:12381499},{sym:'TRI',name:'Thomson Reuters',price:135.35,chg:-3.36,mcap:60.2e9,vol:919888},{sym:'WCN',name:'Waste Connections',price:227.51,chg:+0.51,mcap:58.4e9,vol:579840},{sym:'CSU',name:'Constellation Software',price:2619.09,chg:-3.00,mcap:55.5e9,vol:114388},{sym:'NTR',name:'Nutrien Ltd',price:114.41,chg:+6.23,mcap:55.3e9,vol:2889513},{sym:'FFH',name:'Fairfax Financial Holdings',price:2262.93,chg:-0.43,mcap:50.1e9,vol:76598},{sym:'SLF',name:'Sun Life Financial',price:85.68,chg:-0.81,mcap:47.5e9,vol:2009672},{sym:'QSR',name:'Restaurant Brands Intl',price:98.26,chg:+0.49,mcap:44.8e9,vol:637737},{sym:'POW',name:'Power Corporation of Canada',price:64.64,chg:-0.54,mcap:41.0e9,vol:1827559},{sym:'BCE',name:'BCE Inc',price:35.03,chg:-0.45,mcap:32.7e9,vol:2428623},{sym:'T',name:'Telus Corporation',price:18.00,chg:-0.22,mcap:28.1e9,vol:8142676}];
+
+function renderTSXData(el,rows,live){
+  let html=rows.map(d=>{const nameHtml=`<span class="stk-sym">${esc(d.sym)}</span><span class="stk-name">${esc(d.name)}</span>`;const extra={};if(d.pe)extra.pe=d.pe;if(d.eps)extra.eps=d.eps;if(d.divyield!=null)extra.divyield=d.divyield;if(d.dayhigh)extra.dayhigh=d.dayhigh;if(d.daylow)extra.daylow=d.daylow;if(d.w52high)extra.w52high=d.w52high;if(d.w52low)extra.w52low=d.w52low;return buildStkRow(d.sym,d.name,nameHtml,d.price,d.chg,d.mcap,d.vol,false,'',Object.keys(extra).length?extra:undefined)}).join('');
+  if(!live)html+='<div class="stk-footnote"><span class="stk-seed-badge">Mar 12, 2026 close</span> Live data blocked by browser CORS</div>';
+  el.innerHTML=html;
+}
+
+async function fetchTSX(){
+  const el=document.getElementById('tsxBody');renderTSXData(el,TSX_SEED,false);document.getElementById('stkUpdated').textContent='Mar 12 close';
+  try{const r=await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${TSX_SYMBOLS.join(',')}&fields=symbol,shortName,regularMarketPrice,regularMarketChangePercent,marketCap,regularMarketVolume,trailingPE,epsTrailingTwelveMonths,dividendYield,fiftyTwoWeekHigh,fiftyTwoWeekLow,regularMarketDayHigh,regularMarketDayLow&formatted=false`,{credentials:'include',signal:AbortSignal.timeout(8000)});
+    const j=await r.json();const quotes=j?.quoteResponse?.result||[];
+    if(quotes.length){quotes.sort((a,b)=>(b.marketCap||0)-(a.marketCap||0));const live=quotes.map(q=>({sym:(q.symbol||'').replace('.TO',''),name:q.shortName||q.symbol,price:q.regularMarketPrice||0,chg:q.regularMarketChangePercent||0,mcap:q.marketCap||0,vol:q.regularMarketVolume||0,pe:q.trailingPE||null,eps:q.epsTrailingTwelveMonths||null,divyield:q.dividendYield||null,dayhigh:q.regularMarketDayHigh||null,daylow:q.regularMarketDayLow||null,w52high:q.fiftyTwoWeekHigh||null,w52low:q.fiftyTwoWeekLow||null}));renderTSXData(el,live,true);document.getElementById('stkUpdated').textContent='Live · '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}}catch(e){}
+}
+
+async function fetchCryptoCAD(){
+  const el=document.getElementById('cryptoBody');
+  el.innerHTML='<div style="padding:16px 0"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div></div>';
+  try{const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_desc&per_page=25&page=1&sparkline=false&price_change_percentage=24h',{signal:AbortSignal.timeout(12000)});
+    const coins=await r.json();if(!Array.isArray(coins)||!coins.length)throw new Error('empty');
+    let html='';for(const c of coins){const sym=(c.symbol||'').toUpperCase();const nameHtml=`<img class="coin-ico" src="${escA(c.image)}" alt="" loading="lazy"><span class="stk-sym">${esc(sym)}</span><span class="stk-name">${esc(c.name||'')}</span>`;
+      const extra={type:'crypto',coinid:c.id||'',ath:c.ath,supply:c.circulating_supply,maxsupply:c.max_supply,high24:c.high_24h,low24:c.low_24h};
+      html+=buildStkRow(sym,c.name||'',nameHtml,c.current_price||0,c.price_change_percentage_24h||0,c.market_cap||0,c.total_volume||0,true,c.image||'',extra)}
+    el.innerHTML=html||'<div class="empty">No data.</div>';document.getElementById('stkUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})
+  }catch(e){el.innerHTML='<div class="empty">Crypto data unavailable.</div>'}
+}
+
+let cryptoWs=null,cryptoWsRetries=0;
+function startCryptoTicker(){
+  if(cryptoWsRetries>5)return; /* Stop retrying after 5 failures (HTML viewer may not support WebSocket) */
+  if(cryptoWs)try{cryptoWs.close()}catch(e){}
+  try{cryptoWs=new WebSocket('wss://ws.coincap.io/prices?assets=bitcoin,ethereum,solana,ripple,dogecoin,cardano');
+    cryptoWs.onopen=function(){cryptoWsRetries=0};
+    cryptoWs.onmessage=function(msg){try{const prices=JSON.parse(msg.data);Object.entries(prices).forEach(([id])=>{document.querySelectorAll('.stk-row[data-type="crypto"]').forEach(row=>{if((row.dataset.coinid||'').toLowerCase()===id){const p=row.querySelector('.stk-num');if(p){p.classList.remove('flash-up');void p.offsetWidth;p.classList.add('flash-up')}}})})}catch(e){}};
+    cryptoWs.onerror=function(){cryptoWsRetries++;setTimeout(startCryptoTicker,Math.min(30000,10000*cryptoWsRetries))};cryptoWs.onclose=function(){cryptoWsRetries++;setTimeout(startCryptoTicker,Math.min(30000,10000*cryptoWsRetries))}}catch(e){}
+}
+function fetchStocks(){fetchTSX();fetchCryptoCAD()}
+
+/* ── BOOKMARKS ────────────────────────────────────────── */
+const getBMs=()=>LS('bookmarks')||defaultBMs;
+function renderBMs(){
+  const bms=getBMs();let html='<div class="bm-grid">';
+  html+=bms.map((b,i)=>{let dom='';try{dom=new URL(b.url).hostname}catch(e){}return`<a class="bm" href="${escA(b.url)}" target="_blank" rel="noopener" oncontextmenu="event.preventDefault();removeBM(${i})" title="${escA(b.name)}""><div class="bm-ico"><img src="https://www.google.com/s2/favicons?domain=${escA(dom)}&sz=64" alt="" loading="lazy"></div>${esc(b.name)}</a>`}).join('');
+  html+=`<button class="bm-add-btn" onclick="addBM()"><div class="bm-add-icon">+</div>Add</button></div>`;
+  document.getElementById('bmBody').innerHTML=html;
+}
+function addBM(){const name=prompt('Name:');if(!name)return;const url=prompt('URL:','https://');if(!url)return;try{new URL(url)}catch{alert('Invalid URL');return}const bms=getBMs();bms.push({name,url});LS('bookmarks',bms);renderBMs()}
+function removeBM(i){if(!confirm('Remove this bookmark?'))return;const bms=getBMs();bms.splice(i,1);LS('bookmarks',bms);renderBMs()}
+
+/* ── TASKS ────────────────────────────────────────────── */
+const getTodos=()=>LS('todos')||[];
+function addTodo(){const inp=document.getElementById('tInp'),txt=inp.value.trim();if(!txt)return;const todos=getTodos();todos.push({id:Date.now(),text:txt,done:false});LS('todos',todos);inp.value='';renderTodos()}
+function toggleTodo(id){const todos=getTodos(),t=todos.find(x=>x.id===id);if(t)t.done=!t.done;LS('todos',todos);renderTodos()}
+function deleteTodo(id){LS('todos',getTodos().filter(x=>x.id!==id));renderTodos()}
+let tFilter='all';
+function setTF(f){tFilter=f;document.querySelectorAll('.tfilter').forEach(b=>b.classList.toggle('on',b.dataset.f===f));renderTodos()}
+function renderTodos(){const todos=getTodos(),filtered=todos.filter(t=>tFilter==='all'?true:tFilter==='active'?!t.done:t.done);const el=document.getElementById('tList');if(!filtered.length)el.innerHTML=`<div class="empty">${todos.length?'No matching tasks':'Add your first task above'}</div>`;else el.innerHTML=filtered.map(t=>`<div class="ti2"><div class="tcb ${t.done?'on':''}" onclick="toggleTodo(${t.id})"></div><span class="ttx ${t.done?'done':''}">${esc(t.text)}</span><button class="tdel" onclick="deleteTodo(${t.id})">×</button></div>`).join('');document.getElementById('tCnt').textContent=`${todos.filter(t=>!t.done).length} remaining`}
+
+/* ── MULTI-TIMER ──────────────────────────────────────── */
+const TTYPE={focus:{label:'Focus',color:'#6C8EF5'},break:{label:'Break',color:'#3ECFB2'},countdown:{label:'Countdown',color:'#F5A623'},stopwatch:{label:'Stopwatch',color:'#8B9DC3'},deadline:{label:'Deadline',color:'#F56565'}};
+const TPRESETS={focus:[{n:'Quick',s:15*60},{n:'Pomodoro',s:25*60},{n:'Deep Work',s:50*60},{n:'Flow',s:90*60}],break:[{n:'Micro',s:2*60},{n:'Short',s:5*60},{n:'Long',s:15*60}],countdown:[{n:'15m',s:15*60},{n:'30m',s:30*60},{n:'1h',s:60*60}],stopwatch:[],deadline:[]};
+let timers=[],tPanel=false,tAddMode=false,tAddType='focus',tAddPreset=null,tTimerId=0,tTickIv=null;
+function timerById(id){return timers.find(t=>t.id===id)}
+function saveTmrs(){LS('timers2',timers.map(t=>({...t,startedAt:t.startedAt instanceof Date?t.startedAt.toISOString():t.startedAt})))}
+function loadTmrs(){const saved=LS('timers2')||[];timers=saved.map(t=>{if(t.startedAt)t.startedAt=new Date(t.startedAt);if(t.state==='running'&&t.type!=='stopwatch'&&t.type!=='deadline'&&t.startedAt){const elapsed=(Date.now()-t.startedAt.getTime())/1000;t.remainingSecs=Math.max(0,t.remainingSecs-elapsed);if(t.remainingSecs<=0)t.state='completed'}if(t.type==='stopwatch'&&t.state==='running'&&t.startedAt){t.elapsedSecs=(t.elapsedSecs||0)+(Date.now()-t.startedAt.getTime())/1000;t.startedAt=new Date()}return t}).filter(t=>t.state!=='dismissed')}
+function startTick(){if(!tTickIv)tTickIv=setInterval(tickTimers,1000)}
+function stopTick(){if(!timers.some(t=>t.state==='running')){clearInterval(tTickIv);tTickIv=null}}
+function tickTimers(){let any=false;for(const t of timers){if(t.state!=='running')continue;any=true;if(t.type==='stopwatch')t.elapsedSecs=(t.elapsedSecs||0)+1;else if(t.type!=='deadline'){t.remainingSecs--;if(t.remainingSecs<=0){t.remainingSecs=0;t.state='completed';timerCompleted(t)}}}if(any)renderTimerPanel();stopTick()}
+function timerCompleted(t){beep();notify(t.type==='focus'?'Focus session complete!':t.type==='break'?'Break over!':'Timer done!',t.label);saveTmrs()}
+function addTimerDirect(type,label,dur,targetTs){const t={id:++tTimerId,type,label:label||TTYPE[type].label,state:'idle',durationSecs:dur||25*60,remainingSecs:dur||25*60,elapsedSecs:0,startedAt:null,targetTs:targetTs||null};timers.push(t);renderTimerPanel();saveTmrs();return t}
+function timerStart(id){const t=timerById(id);if(!t)return;if(t.type==='focus'||t.type==='break')for(const x of timers)if((x.type==='focus'||x.type==='break')&&x.state==='running'&&x.id!==id){x.state='paused';x.startedAt=null}t.state='running';t.startedAt=new Date();startTick();renderTimerPanel();saveTmrs()}
+function timerPause(id){const t=timerById(id);if(!t)return;t.state='paused';t.startedAt=null;renderTimerPanel();saveTmrs()}
+function timerReset(id){const t=timerById(id);if(!t)return;if(t.type==='stopwatch')t.elapsedSecs=0;else t.remainingSecs=t.durationSecs;t.state='idle';t.startedAt=null;renderTimerPanel();saveTmrs()}
+function timerDismiss(id){timers=timers.filter(t=>t.id!==id);renderTimerPanel();saveTmrs()}
+function toggleTimerPanel(){tPanel=!tPanel;document.getElementById('timerPanel').classList.toggle('on',tPanel);if(tPanel)renderTimerPanel()}
+function openAddTimer(){tAddMode=!tAddMode;renderTimerPanel()}
+function setAddType(type){tAddType=type;tAddPreset=null;renderAddForm()}
+function setAddPreset(i){tAddPreset=i;renderAddForm()}
+function fmtSecs(s){s=Math.max(0,Math.floor(s));if(s>=3600){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return`${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`}return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function fmtDeadline(ts){const diff=Math.max(0,Math.floor((new Date(ts)-Date.now())/1000));if(!diff)return'Expired';if(diff<3600)return fmtSecs(diff);if(diff<86400)return`${Math.floor(diff/3600)}h ${Math.floor((diff%3600)/60)}m`;return`${Math.floor(diff/86400)}d ${Math.floor((diff%86400)/3600)}h`}
+function timerDisplayTime(t){if(t.type==='stopwatch')return fmtSecs(t.elapsedSecs||0);if(t.type==='deadline')return t.targetTs?fmtDeadline(t.targetTs):'—';return fmtSecs(t.remainingSecs||0)}
+function timerSubtext(t){const lbl=TTYPE[t.type].label;if(t.type==='deadline'&&t.targetTs){const d=new Date(t.targetTs);return`${lbl} · due ${d.toLocaleDateString('en-CA',{month:'short',day:'numeric'})}`}if(t.state==='running'&&t.type!=='stopwatch'){const e=new Date(Date.now()+(t.remainingSecs||0)*1000);return`${lbl} · ends ${e.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`}return lbl}
+function renderTimerCard(t){const col=TTYPE[t.type].color,run=t.state==='running',done=t.state==='completed',dt=timerDisplayTime(t),warn=(t.type!=='stopwatch'&&t.type!=='deadline'&&t.remainingSecs<=60&&run);return`<div class="tcard${run?' running':''}"><div class="tcard-accent" style="background:${col}"></div><div class="tcard-row1"><div class="tcard-dot${run?' running':''}" style="background:${run?col:'rgba(255,255,255,.2)'}"></div><span class="tcard-lbl">${esc(t.label)}</span><span class="tcard-time${warn?' warn pulse':''}${done?' warn':''}">${esc(dt)}</span><div class="tcard-ctrls">${t.type!=='deadline'?`<button class="tcard-btn primary" onclick="event.stopPropagation();${run?`timerPause(${t.id})`:`timerStart(${t.id})`}">${run?'⏸':'▶'}</button><button class="tcard-btn" onclick="event.stopPropagation();timerReset(${t.id})">↺</button>`:''}<button class="tcard-btn" onclick="event.stopPropagation();timerDismiss(${t.id})">✕</button></div></div><div class="tcard-row2">${esc(timerSubtext(t))}</div></div>`}
+function renderAddForm(){const el=document.getElementById('tpAddForm');if(!el)return;const presets=TPRESETS[tAddType]||[],isDl=tAddType==='deadline',isSw=tAddType==='stopwatch';el.innerHTML=`<div class="tp-add-types">${Object.keys(TTYPE).map(k=>`<button class="tp-type-btn${tAddType===k?' on':''}" onclick="setAddType('${k}')">${TTYPE[k].label}</button>`).join('')}</div><input class="tp-inp" id="tpLbl" placeholder="${isDl?'Label (required)':'Label (optional)'}">${presets.length?`<div class="tp-presets">${presets.map((p,i)=>`<button class="tp-preset${tAddPreset===i?' on':''}" onclick="setAddPreset(${i})">${p.n}</button>`).join('')}<button class="tp-preset${tAddPreset===-1?' on':''}" onclick="setAddPreset(-1)">Custom</button></div>`:''}${tAddPreset===-1&&!isDl?'<input class="tp-inp" id="tpCustom" placeholder="e.g. 45m, 1h30">':''}${isDl?`<input class="tp-inp" id="tpDl" type="datetime-local" min="${new Date().toISOString().slice(0,16)}">`:''}${isSw?'<p style="font-size:.6rem;color:var(--ov0);margin:0 0 8px">Counts up from zero.</p>':''}<button class="tp-start-btn" onclick="commitAddTimer()">▶ Start</button>`}
+function renderTimerPanel(){const list=document.getElementById('tpList');if(!list)return;const active=timers.filter(t=>t.state!=='dismissed');const panelEl=document.getElementById('timerPanel');let addEl=document.getElementById('tpAddForm');if(tAddMode&&!addEl){addEl=document.createElement('div');addEl.id='tpAddForm';addEl.className='tp-add';panelEl.insertBefore(addEl,list);renderAddForm()}else if(!tAddMode&&addEl)addEl.remove();else if(tAddMode&&addEl)renderAddForm();if(!active.length&&!tAddMode)list.innerHTML='<div class="tp-empty"><div style="font-size:1.5rem;opacity:.25">⏱</div><div>No timers</div><button class="tp-start-btn" style="margin-top:10px;width:auto;padding:6px 20px" onclick="openAddTimer()">Add a timer</button></div>';else list.innerHTML=active.map(renderTimerCard).join('')}
+function parseTimerInput(s){s=(s||'').trim().toLowerCase();const hm=/^(\d+)h\s*(\d*)m?$/.exec(s);if(hm)return parseInt(hm[1])*3600+(parseInt(hm[2]||0)*60);const m=/^(\d+)m$/.exec(s);if(m)return parseInt(m[1])*60;const h=/^(\d+)h$/.exec(s);if(h)return parseInt(h[1])*3600;const n=/^(\d+)$/.exec(s);if(n)return parseInt(n[1])*60;return null}
+function commitAddTimer(){const label=(document.getElementById('tpLbl')?.value||'').trim();let dur=null,targetTs=null;if(tAddType==='deadline'){const v=document.getElementById('tpDl')?.value;if(!v){alert('Pick a date/time.');return}targetTs=new Date(v).toISOString()}else if(tAddType!=='stopwatch'){if(tAddPreset!=null&&tAddPreset>=0&&TPRESETS[tAddType][tAddPreset])dur=TPRESETS[tAddType][tAddPreset].s;else if(tAddPreset===-1){dur=parseTimerInput(document.getElementById('tpCustom')?.value);if(!dur){alert('Enter duration like "45m" or "1h30".');return}}else dur=TPRESETS[tAddType][0]?.s||25*60}const t=addTimerDirect(tAddType,label||TTYPE[tAddType].label,dur,targetTs);timerStart(t.id);tAddMode=false;renderTimerPanel()}
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;o.type='sine';g.gain.setValueAtTime(.25,a.currentTime);g.gain.exponentialRampToValueAtTime(.01,a.currentTime+.6);o.start();o.stop(a.currentTime+.6)}catch(e){}}
+function notify(t,b){if(Notification.permission==='granted')new Notification(t,{body:b})}
+
+/* ── CALENDAR ─────────────────────────────────────────── */
+let cY,cM;
+function renderCal(y,m){cY=y;cM=m;const now=new Date(),first=new Date(y,m,1),last=new Date(y,m+1,0);const label=first.toLocaleDateString('en-CA',{month:'long',year:'numeric'});const py=m===0?y-1:y,pm=m===0?11:m-1,ny=m===11?y+1:y,nm=m===11?0:m+1;let h=`<div class="cal-hdr"><button class="cal-nav" onclick="renderCal(${py},${pm})">‹</button><span class="cal-title">${label}</span><button class="cal-nav" onclick="renderCal(${ny},${nm})">›</button></div><div class="cal-grid">${'Su Mo Tu We Th Fr Sa'.split(' ').map(d=>`<div class="cal-dow">${d}</div>`).join('')}`;for(let i=0;i<first.getDay();i++)h+='<div class="cal-day faded"></div>';for(let d=1;d<=last.getDate();d++){const today=d===now.getDate()&&m===now.getMonth()&&y===now.getFullYear();h+=`<div class="cal-day${today?' today':''}">${d}</div>`}h+='</div>';document.getElementById('calBody').innerHTML=h}
+
+/* ── MOON ─────────────────────────────────────────────── */
+function getMoon(){const known=new Date('2000-01-06T18:14:00Z'),cycle=29.53058867;const phase=(((Date.now()-known)/86400000%cycle)+cycle)%cycle,pct=phase/cycle;const phases=[{max:.033,e:'🌑',n:'New Moon'},{max:.133,e:'🌒',n:'Waxing Crescent'},{max:.233,e:'🌓',n:'First Quarter'},{max:.383,e:'🌔',n:'Waxing Gibbous'},{max:.533,e:'🌕',n:'Full Moon'},{max:.633,e:'🌖',n:'Waning Gibbous'},{max:.733,e:'🌗',n:'Last Quarter'},{max:.883,e:'🌘',n:'Waning Crescent'},{max:1.001,e:'🌑',n:'New Moon'}];return{...phases.find(x=>pct<=x.max),phase,pct}}
+
+/* ── CURRENCY ─────────────────────────────────────────── */
+const currencyPairs=[{code:'USD',name:'US Dollar',flag:'🇺🇸'},{code:'EUR',name:'Euro',flag:'🇪🇺'},{code:'GBP',name:'British Pound',flag:'🇬🇧'},{code:'JPY',name:'Japanese Yen',flag:'🇯🇵'},{code:'AUD',name:'Australian Dollar',flag:'🇦🇺'},{code:'CHF',name:'Swiss Franc',flag:'🇨🇭'},{code:'MXN',name:'Mexican Peso',flag:'🇲🇽'},{code:'CNY',name:'Chinese Yuan',flag:'🇨🇳'}];
+let curRates={},curYesterday={};
+async function fetchCurrency(){try{const[todayRes,yesterdayRes]=await Promise.all([fetch('https://api.frankfurter.dev/v1/latest?base=CAD'),fetch(`https://api.frankfurter.dev/v1/${new Date(Date.now()-86400000).toISOString().split('T')[0]}?base=CAD`)]);curRates=(await todayRes.json()).rates||{};curYesterday=(await yesterdayRes.json()).rates||{};renderCurrency();populateCurrencySelects()}catch(e){}}
+function renderCurrency(){const body=document.getElementById('curBody');if(!body)return;let html='<div class="cur-base-row"><span class="cur-base-flag">🇨🇦</span><div><div class="cur-base-code">CAD</div><div class="cur-base-name">Canadian Dollar</div></div><div class="cur-base-val">1.00</div></div>';for(const pair of currencyPairs){const rate=curRates[pair.code],prevRate=curYesterday[pair.code];if(!rate)continue;const change=prevRate?((rate-prevRate)/prevRate*100):0;const changeStr=change>=0?`+${change.toFixed(2)}%`:`${change.toFixed(2)}%`;html+=`<div class="cur-row"><span class="cur-flag">${pair.flag}</span><span class="cur-code">${pair.code}</span><span class="cur-name">${pair.name}</span><span class="cur-rate">${rate.toFixed(4)}</span><span class="cur-change ${change>=0?'up':'dn'}">${changeStr}</span></div>`}body.innerHTML=html;const upd=document.getElementById('curUpdated');if(upd)upd.textContent='Updated '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}
+function populateCurrencySelects(){const allCodes=['CAD',...currencyPairs.map(p=>p.code)];const fromSel=document.getElementById('curConvFrom'),toSel=document.getElementById('curConvTo');if(!fromSel||!toSel)return;const opts=allCodes.map(c=>`<option value="${c}">${c}</option>`).join('');fromSel.innerHTML=opts;toSel.innerHTML=opts;fromSel.value='CAD';toSel.value='USD';convertCurrency()}
+function convertCurrency(){const amt=parseFloat(document.getElementById('curConvAmt')?.value)||0;const from=document.getElementById('curConvFrom')?.value||'CAD';const to=document.getElementById('curConvTo')?.value||'USD';const result=document.getElementById('curConvResult');if(!result)return;let converted=amt;if(from==='CAD'&&curRates[to])converted=amt*curRates[to];else if(to==='CAD'&&curRates[from])converted=amt/curRates[from];else if(curRates[from]&&curRates[to])converted=amt/curRates[from]*curRates[to];result.textContent=converted.toFixed(2)+' '+to}
+
+/* ── NOTES ────────────────────────────────────────────── */
+let notesData=JSON.parse(localStorage.getItem('dashboard_notes')||'{"tabs":["General"],"contents":{"General":""},"active":"General"}');
+let notesSaveTimer=null;
+function renderNotesTabs(){const tabs=document.getElementById('notesTabs');if(!tabs)return;let html='';notesData.tabs.forEach(t=>{html+=`<button class="notes-tab${t===notesData.active?' on':''}" onclick="switchNote('${t.replace(/'/g,"\\'")}')">${t}</button>`});html+='<button class="notes-tab-add" onclick="addNote()">+</button>';tabs.innerHTML=html;const area=document.getElementById('notesArea');if(area)area.value=notesData.contents[notesData.active]||'';updateNoteStats()}
+function switchNote(name){notesData.active=name;persistNotes();renderNotesTabs()}
+function addNote(){const name=prompt('Note name:');if(!name||notesData.tabs.includes(name))return;notesData.tabs.push(name);notesData.contents[name]='';notesData.active=name;persistNotes();renderNotesTabs()}
+function deleteNote(){if(notesData.tabs.length<=1)return;if(!confirm('Delete "'+notesData.active+'"?'))return;const idx=notesData.tabs.indexOf(notesData.active);notesData.tabs.splice(idx,1);delete notesData.contents[notesData.active];notesData.active=notesData.tabs[0];persistNotes();renderNotesTabs()}
+function saveNote(){const area=document.getElementById('notesArea');if(!area)return;notesData.contents[notesData.active]=area.value;updateNoteStats();clearTimeout(notesSaveTimer);notesSaveTimer=setTimeout(()=>{persistNotes();const saved=document.getElementById('notesSaved');if(saved){saved.classList.add('show');setTimeout(()=>saved.classList.remove('show'),1500)}},500)}
+function persistNotes(){localStorage.setItem('dashboard_notes',JSON.stringify(notesData))}
+function updateNoteStats(){const area=document.getElementById('notesArea');if(!area)return;const text=area.value;const words=text.trim()?text.trim().split(/\s+/).length:0;const wc=document.getElementById('notesWordCount'),cc=document.getElementById('notesCharCount');if(wc)wc.textContent=words+' word'+(words!==1?'s':'');if(cc)cc.textContent=text.length+' char'+(text.length!==1?'s':'')}
+function exportNotes(){const blob=new Blob([JSON.stringify(notesData,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dashboard-notes.json';a.click()}
+
+/* ── EARTHQUAKE ───────────────────────────────────────── */
+async function fetchEarthquakes(){try{const res=await fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=42&maxlatitude=47&minlongitude=-83&maxlongitude=-74&minmagnitude=2&orderby=time&limit=5');const data=await res.json();const quakes=data.features||[];const banner=document.getElementById('eqBanner');if(!banner)return;if(!quakes.length){banner.classList.remove('on');return}const q=quakes[0];const mag=q.properties.mag,place=q.properties.place,time=new Date(q.properties.time);const daysAgo=Math.floor((Date.now()-time)/86400000);const timeStr=daysAgo===0?'Today':daysAgo===1?'Yesterday':daysAgo+' days ago';banner.classList.add('on');document.getElementById('eqTitle').textContent='M'+mag.toFixed(1)+' — '+place;document.getElementById('eqDetail').textContent=timeStr;const badge=document.getElementById('eqMag');badge.textContent='M'+mag.toFixed(1);badge.className='eq-badge'+(mag>=4?' major':'')}catch(e){}}
+
+/* ── TRAFFIC ──────────────────────────────────────────── */
+const TRAFFIC_CAMS=[{label:'401 @ Cobourg',views:[{id:448,dir:'East'},{id:449,dir:'Overhead'},{id:450,dir:'West'}]},{label:'401 @ Newcastle',views:[{id:445,dir:'East'},{id:446,dir:'Overhead'},{id:447,dir:'West'}]},{label:'401 @ Brighton',views:[{id:451,dir:'East'},{id:452,dir:'Overhead'},{id:453,dir:'West'}]},{label:'401 @ Trenton',views:[{id:454,dir:'East'},{id:455,dir:'Overhead'},{id:456,dir:'West'}]}];
+let camRefreshTimer=null,activeCamIdx=0,activeCamView=1,camModalRefreshTimer=null;
+function refreshCameras(){const t=Date.now(),now=new Date(),ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');TRAFFIC_CAMS.forEach((cam,i)=>{const img=document.getElementById('cam-'+i);if(img)img.src='https://511on.ca/map/Cctv/'+cam.views[1].id+'?t='+t;const tsEl=document.getElementById('cam-ts-'+i);if(tsEl)tsEl.textContent=ts})}
+function openCamModal(idx){activeCamIdx=idx;activeCamView=1;const cam=TRAFFIC_CAMS[idx];document.getElementById('camModalTitle').textContent=cam.label;document.getElementById('camModalImg').src='https://511on.ca/map/Cctv/'+cam.views[1].id+'?t='+Date.now();document.getElementById('camModalViews').innerHTML=cam.views.map((v,vi)=>'<button class="cam-view-btn'+(vi===1?' on':'')+'" onclick="switchCamView('+vi+')">'+v.dir+'</button>').join('');document.getElementById('camModalOverlay').classList.add('on');if(camModalRefreshTimer)clearInterval(camModalRefreshTimer);camModalRefreshTimer=setInterval(refreshModalCam,30000)}
+function switchCamView(viewIdx){activeCamView=viewIdx;const cam=TRAFFIC_CAMS[activeCamIdx];document.getElementById('camModalImg').src='https://511on.ca/map/Cctv/'+cam.views[viewIdx].id+'?t='+Date.now();document.querySelectorAll('.cam-view-btn').forEach((btn,i)=>btn.classList.toggle('on',i===viewIdx))}
+function closeCamModal(){document.getElementById('camModalOverlay').classList.remove('on');if(camModalRefreshTimer){clearInterval(camModalRefreshTimer);camModalRefreshTimer=null}}
+function prevCam(){activeCamIdx=(activeCamIdx-1+TRAFFIC_CAMS.length)%TRAFFIC_CAMS.length;openCamModal(activeCamIdx)}
+function nextCam(){activeCamIdx=(activeCamIdx+1)%TRAFFIC_CAMS.length;openCamModal(activeCamIdx)}
+function refreshModalCam(){const cam=TRAFFIC_CAMS[activeCamIdx];if(!cam)return;document.getElementById('camModalImg').src='https://511on.ca/map/Cctv/'+cam.views[activeCamView].id+'?t='+Date.now()}
+async function fetchTrafficEvents(){const url='https://511on.ca/api/v2/get/event?format=json';let data=null;try{data=await(await fetch(url,{signal:AbortSignal.timeout(8000)})).json()}catch(e){}if(!data)try{const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(10000)});const j=await r.json();if(j.contents)data=JSON.parse(j.contents)}catch(e){}if(!data)try{data=await(await fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),{signal:AbortSignal.timeout(10000)})).json()}catch(e){}const countEl=document.getElementById('incidentCount'),listEl=document.getElementById('incidentList');if(!data||!Array.isArray(data)){if(countEl)countEl.textContent='--';if(listEl)listEl.innerHTML='<div class="incident-empty">Data unavailable</div>';return}const events401=data.filter(e=>e.RoadwayName&&e.RoadwayName.includes('401')&&e.Longitude>-79.3&&e.Longitude<-77.0);if(countEl)countEl.textContent=events401.length;if(!listEl)return;if(!events401.length){listEl.innerHTML='<div class="incident-empty">No active incidents on 401 near Cobourg</div>';return}listEl.innerHTML=events401.slice(0,10).map(e=>{let typeCls='roadwork',typeLabel='Roadwork';if(e.EventType==='closures'){typeCls='closure';typeLabel='Closure'}else if(e.EventType==='accidentsAndIncidents'){typeCls='accident';typeLabel='Incident'}return'<div class="incident-row"><span class="incident-type '+typeCls+'">'+typeLabel+'</span><div class="incident-desc">'+(e.DirectionOfTravel||'')+': '+(e.Description||'No details')+(e.LanesAffected?' — '+e.LanesAffected:'')+'</div></div>'}).join('')}
+async function fetchRoadConditions(){const url='https://511on.ca/api/v2/get/roadconditions?format=json';let data=null;try{data=await(await fetch(url,{signal:AbortSignal.timeout(8000)})).json()}catch(e){}if(!data)try{const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(10000)});const j=await r.json();if(j.contents)data=JSON.parse(j.contents)}catch(e){}if(!data)try{data=await(await fetch('https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(url),{signal:AbortSignal.timeout(10000)})).json()}catch(e){}const el=document.getElementById('roadConditions');if(!el)return;if(!data||!Array.isArray(data)||!data.length){el.innerHTML='<div style="font-size:.62rem;color:var(--ov0)">Road condition data unavailable</div>';return}const conditions=data.filter(r=>r.RoadwayName&&r.RoadwayName.includes('401')&&r.Longitude&&r.Longitude>-79.3&&r.Longitude<-77.0);const display=conditions.length>0?conditions.slice(0,8):data.filter(r=>r.RoadwayName&&r.RoadwayName.includes('401')).slice(0,6);if(!display.length){el.innerHTML='<div style="font-size:.62rem;color:var(--ov0)">No 401 conditions reported</div>';return}el.innerHTML=display.map(r=>{const cond=Array.isArray(r.Condition)?r.Condition[0]:(r.Condition||'Unknown');let badgeCls='dry';if(/wet/i.test(cond))badgeCls='wet';if(/snow|slush|partly.*cover/i.test(cond))badgeCls='snow';if(/ice|freez/i.test(cond))badgeCls='ice';return'<div class="road-segment"><span class="road-badge '+badgeCls+'">'+cond+'</span><span class="road-name">'+(r.LocationDescription||r.RoadwayName||'HWY 401')+'</span></div>'}).join('')}
+async function fetchTrafficData(){await Promise.all([fetchTrafficEvents(),fetchRoadConditions()]);refreshCameras();const upd=document.getElementById('trafficUpdated');if(upd)upd.textContent='Updated '+new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})+' · Ontario 511'}
+
+/* ── SETTINGS ─────────────────────────────────────────── */
+function openSettings(){const o=document.getElementById('sOverlay');o.classList.toggle('on');if(o.classList.contains('on')){document.getElementById('sName').value=LS('name')||'';document.getElementById('sCity').value=LS('city')||'';syncUnit()}}
+function saveSettings(){LS('name',document.getElementById('sName').value.trim()||null);openSettings()}
+let geoT;
+function debouncedGeo(city){LS('city',city);clearTimeout(geoT);if(!city)return;geoT=setTimeout(async()=>{try{const d=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r=>r.json());if(d.results?.length){const r=d.results[0];LS('location',{lat:r.latitude,lon:r.longitude,city:r.name});fetchWeather()}}catch(e){}},700)}
+function toggleTheme(){const current=document.documentElement.getAttribute('data-theme');const next=current==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('theme-preference',next)}
+function setUnit(u){LS('tempUnit',u);syncUnit();fetchWeather()}
+function syncUnit(){const u=LS('tempUnit')||'C';document.getElementById('unitC').classList.toggle('on',u==='C');document.getElementById('unitF').classList.toggle('on',u==='F')}
+
+/* ── INIT ─────────────────────────────────────────────── */
+(function init(){
+  const savedTheme=localStorage.getItem('theme-preference')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');
+  document.documentElement.setAttribute('data-theme',savedTheme);
+  updateClock();setInterval(updateClock,1000);
+  setQuote();setupSearch();initTicker();
+  fetchWeather();
+  if(localStorage.getItem('newsCacheVer')!=='2'){localStorage.removeItem('newsCache');localStorage.setItem('newsCacheVer','2')}
+  fetchAllNews();fetchStocks();renderMarketIndices();startCryptoTicker();
+  renderBMs();renderTodos();fetchCurrency();renderNotesTabs();
+  fetchEarthquakes();fetchTrafficData();
+  loadTmrs();if(timers.some(t=>t.state==='running'))startTick();
+  try{if('Notification'in window&&Notification.permission==='default')Notification.requestPermission()}catch(e){}
+  const now=new Date();renderCal(now.getFullYear(),now.getMonth());
+  setInterval(fetchWeather,15*60*1000);setInterval(fetchAllNews,10*60*1000);
+  setInterval(fetchStocks,5*60*1000);setInterval(fetchCurrency,30*60*1000);
+  setInterval(fetchEarthquakes,30*60*1000);setInterval(refreshCameras,30000);
+  setInterval(fetchTrafficData,5*60*1000);setInterval(renderMarketStatus,60000);
+})();
+</script>
+</body>
+</html>

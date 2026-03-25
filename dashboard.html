@@ -236,7 +236,7 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 @keyframes crawlScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* Adjust main content + mobile tabs for crawl */
-.main{padding-bottom:82px}
+.main{padding-bottom:110px}
 @media(max-width:900px){
   .news-crawl{bottom:calc(56px + env(safe-area-inset-bottom));height:30px}
   .news-crawl-label{font-size:.55rem;padding:0 10px}
@@ -733,6 +733,34 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 .incident-empty{padding:20px 14px;text-align:center;color:var(--ov0);font-size:.72rem}
 .traffic-updated{font-size:.55rem;color:var(--s2);text-align:center;margin-top:8px}
 
+/* Highway map */
+.traffic-map-wrap{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-bottom:4px}
+.traffic-map-header{padding:8px 14px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.traffic-map-header svg{width:12px;height:12px;fill:none;stroke:var(--ov0);stroke-width:2}
+.traffic-map-svg{width:100%;height:200px;display:block}
+.traffic-map-svg .hwy-line{stroke:var(--ov0);stroke-width:1.5;fill:none;opacity:.5;stroke-linecap:round}
+.traffic-map-svg .hwy-line.hwy-401{stroke:var(--ac);opacity:.7;stroke-width:2}
+.traffic-map-svg .hwy-line.hwy-qew{stroke:var(--teal);opacity:.6}
+.traffic-map-svg .hwy-line.hwy-400{stroke:var(--peach);opacity:.6}
+.traffic-map-svg .hwy-line.hwy-403{stroke:var(--yellow);opacity:.6}
+.traffic-map-svg .hwy-line.hwy-404{stroke:var(--sky);opacity:.6}
+.traffic-map-svg .hwy-label{font-family:'JetBrains Mono',monospace;font-size:7px;font-weight:700;fill:var(--ov0);pointer-events:none}
+.traffic-map-svg .city-dot{r:3;fill:var(--s0);stroke:var(--sub0);stroke-width:1.5}
+.traffic-map-svg .city-label{font-family:'Inter',sans-serif;font-size:7.5px;font-weight:600;fill:var(--sub0);pointer-events:none}
+.traffic-map-svg .city-label.city-primary{font-size:8.5px;fill:var(--tx);font-weight:700}
+.traffic-map-svg .cam-dot{r:3.5;fill:#CC0000;stroke:rgba(204,0,0,.3);stroke-width:3;cursor:pointer;transition:all 150ms}
+.traffic-map-svg .cam-dot:hover{r:5;stroke-width:5;filter:drop-shadow(0 0 4px rgba(204,0,0,.5))}
+.traffic-map-svg .cam-dot-pulse{r:3.5;fill:none;stroke:#CC0000;stroke-width:1;opacity:0;animation:cam-pulse 2s ease-out infinite}
+@keyframes cam-pulse{0%{r:3.5;opacity:.6}100%{r:10;opacity:0}}
+.traffic-map-svg .lake{fill:var(--ac);opacity:.04;stroke:var(--ac);stroke-width:.5;stroke-opacity:.1}
+
+/* Region filter buttons */
+.traffic-region-bar{display:flex;gap:6px;flex-wrap:wrap;padding:0;margin-bottom:8px}
+.traffic-region-btn{padding:5px 12px;font-size:.62rem;font-weight:600;border-radius:6px;color:var(--ov0);background:rgba(255,255,255,.04);border:1px solid var(--border);cursor:pointer;transition:all 150ms;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.traffic-region-btn:hover{color:var(--tx);border-color:var(--border-hover);background:rgba(255,255,255,.08)}
+.traffic-region-btn.on{color:var(--ac);border-color:rgba(124,111,224,.3);background:rgba(124,111,224,.08)}
+.traffic-region-btn .region-count{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--ov0);opacity:.6}
+
 /* Camera modal */
 .cam-modal-overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
 .cam-modal-overlay.on{display:flex}
@@ -757,6 +785,9 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
   .traffic-layout{grid-template-columns:1fr;min-height:auto}
   .cam-grid{grid-template-columns:1fr}
   .cam-card.featured .cam-img{aspect-ratio:16/9}
+  .traffic-map-svg{height:150px}
+  .traffic-region-bar{gap:4px}
+  .traffic-region-btn{padding:4px 8px;font-size:.56rem}
 }
 
 /* ══ EARTHQUAKE ALERTS ═════════════════════════════════════ */
@@ -990,6 +1021,162 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
     transition-duration:0.01ms !important;
   }
 }
+
+/* ══ CP24-STYLE OVERVIEW LAYOUT ══════════════════════════ */
+.cp24-grid{display:grid;grid-template-columns:1fr 340px;gap:0;min-height:calc(100vh - 200px)}
+.cp24-main{padding-right:20px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:16px}
+.cp24-sidebar{display:flex;flex-direction:column;gap:12px;padding-left:20px;overflow-y:auto;max-height:calc(100vh - 200px)}
+
+/* CP24 Top Bar */
+.cp24-topbar{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:2px solid #CC0000;margin-bottom:12px}
+.cp24-logo{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:#CC0000;padding:4px 10px;background:rgba(204,0,0,.08);border-radius:4px}
+.cp24-datetime{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ov0);margin-left:auto}
+.cp24-live-dot{width:8px;height:8px;border-radius:50%;background:#CC0000;animation:live-blink 1.2s ease-in-out infinite;flex-shrink:0}
+
+/* TOP STORIES section */
+.cp24-top-label{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.cp24-top-label span{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:#CC0000}
+.cp24-top-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(204,0,0,.3),transparent)}
+.cp24-hero{position:relative;border-radius:var(--r-md);overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:border-color 200ms,transform 200ms;min-height:180px;margin-bottom:12px}
+.cp24-hero:hover{border-color:rgba(204,0,0,.4);transform:translateY(-1px)}
+.cp24-hero-bg{position:absolute;inset:0;z-index:0}
+.cp24-hero-gradient{position:absolute;inset:0;opacity:.2}
+.cp24-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.35) 50%,transparent 100%)}
+.cp24-hero-content{position:relative;z-index:1;padding:20px 22px;display:flex;flex-direction:column;justify-content:flex-end;min-height:180px}
+.cp24-hero-badge{display:inline-flex;align-items:center;gap:5px;font-size:.52rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#fff;background:#CC0000;padding:3px 8px;border-radius:3px;width:fit-content;margin-bottom:8px}
+.cp24-hero-title{font-size:1.2rem;font-weight:700;line-height:1.3;color:#fff;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cp24-hero:hover .cp24-hero-title{color:#f0c0c0}
+.cp24-hero-meta{font-size:.58rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px}
+.cp24-hero-pager{position:absolute;top:10px;right:10px;z-index:2;display:flex;gap:4px}
+.cp24-hero-pip{width:16px;height:3px;border-radius:2px;background:rgba(255,255,255,.25);transition:all 300ms;cursor:pointer}
+.cp24-hero-pip.active{background:#CC0000;width:24px}
+
+/* Story cards grid */
+.cp24-stories-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cp24-story-card{padding:14px;border-radius:var(--r-sm);background:rgba(255,255,255,.03);border:1px solid var(--border);cursor:pointer;transition:all 200ms;display:flex;flex-direction:column;gap:6px;position:relative}
+.cp24-story-card:hover{background:rgba(204,0,0,.04);border-color:rgba(204,0,0,.2);transform:translateY(-1px)}
+.cp24-story-card-accent{position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:#CC0000}
+.cp24-story-card-source{font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ov0);padding-left:8px;display:flex;align-items:center;gap:5px}
+.cp24-story-card-title{font-size:.78rem;font-weight:500;line-height:1.4;color:var(--tx);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-left:8px}
+.cp24-story-card:hover .cp24-story-card-title{color:#CC0000}
+.cp24-story-card-time{font-size:.5rem;color:var(--s2);padding-left:8px;margin-top:auto}
+
+/* More headlines */
+.cp24-more-headlines{border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;background:rgba(255,255,255,.02)}
+.cp24-more-header{padding:7px 12px;font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#CC0000;border-bottom:1px solid var(--border);background:rgba(204,0,0,.04);display:flex;align-items:center;gap:6px}
+.cp24-more-header::before{content:'';width:6px;height:6px;border-radius:50%;background:#CC0000}
+.cp24-headline-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background 150ms;font-size:.72rem}
+.cp24-headline-row:last-child{border-bottom:none}
+.cp24-headline-row:hover{background:rgba(204,0,0,.04)}
+.cp24-headline-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.cp24-headline-title{flex:1;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-weight:500}
+.cp24-headline-row:hover .cp24-headline-title{color:#CC0000}
+.cp24-headline-source{font-size:.48rem;color:var(--ov0);flex-shrink:0;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.cp24-headline-time{font-size:.48rem;color:var(--s2);flex-shrink:0;white-space:nowrap}
+
+/* Sidebar weather compact */
+.cp24-wx{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden}
+.cp24-wx-header{padding:7px 12px;font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ov0);border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;align-items:center;gap:6px}
+.cp24-wx-current{display:flex;align-items:center;gap:12px;padding:12px}
+.cp24-wx-icon{font-size:2rem;line-height:1}
+.cp24-wx-temp{font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:300}
+.cp24-wx-info{flex:1}
+.cp24-wx-desc{font-size:.72rem;color:var(--sub0)}
+.cp24-wx-detail{font-size:.6rem;color:var(--ov0);margin-top:2px}
+.cp24-wx-forecast{display:flex;gap:2px;padding:0 8px 10px;overflow-x:auto;scrollbar-width:none}
+.cp24-wx-forecast::-webkit-scrollbar{display:none}
+.cp24-wx-fday{flex:1;min-width:44px;text-align:center;padding:6px 2px;border-radius:6px;transition:background 150ms}
+.cp24-wx-fday:hover{background:var(--bg-hover)}
+.cp24-wx-fday-name{font-size:.5rem;color:var(--ov0);font-weight:600}
+.cp24-wx-fday-icon{font-size:.9rem;margin:2px 0}
+.cp24-wx-fday-temps{font-family:'JetBrains Mono',monospace;font-size:.55rem}
+.cp24-wx-fday-hi{color:var(--tx);font-weight:500}
+.cp24-wx-fday-lo{color:var(--ov0)}
+.cp24-wx-expand-btn{display:block;width:100%;padding:6px;text-align:center;font-size:.58rem;font-weight:600;color:var(--ov0);border-top:1px solid var(--border);cursor:pointer;transition:all 150ms;background:none;border-left:none;border-right:none;border-bottom:none}
+.cp24-wx-expand-btn:hover{background:var(--bg-hover);color:var(--tx)}
+
+/* Sidebar camera preview */
+.cp24-cam{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden}
+.cp24-cam-header{padding:7px 12px;font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--ov0);border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;align-items:center;gap:6px;position:relative}
+.cp24-cam-header .cam-live{margin-left:auto}
+.cp24-cam-preview{position:relative;cursor:pointer;overflow:hidden}
+.cp24-cam-preview img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.cp24-cam-preview-label{position:absolute;bottom:0;left:0;right:0;padding:4px 10px;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.6rem;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+/* Camera region picker */
+.cp24-cam-regions{display:flex;gap:3px;padding:6px 8px;flex-wrap:wrap}
+.cp24-cam-region{padding:3px 8px;font-size:.52rem;font-weight:600;border-radius:4px;color:var(--ov0);background:rgba(255,255,255,.04);border:1px solid var(--border);cursor:pointer;transition:all 150ms;white-space:nowrap}
+.cp24-cam-region:hover{color:var(--tx);border-color:var(--border-hover);background:rgba(255,255,255,.08)}
+.cp24-cam-region.on{color:#CC0000;border-color:rgba(204,0,0,.3);background:rgba(204,0,0,.06)}
+.cp24-cam-selector{display:flex;gap:3px;padding:4px 8px 6px;overflow-x:auto;scrollbar-width:none}
+.cp24-cam-selector::-webkit-scrollbar{display:none}
+.cp24-cam-loc{padding:3px 7px;font-size:.5rem;font-weight:600;border-radius:4px;color:var(--ov0);background:none;border:1px solid transparent;cursor:pointer;transition:all 150ms;white-space:nowrap}
+.cp24-cam-loc:hover{color:var(--tx);background:rgba(255,255,255,.05)}
+.cp24-cam-loc.on{color:var(--tx);border-color:var(--border);background:rgba(255,255,255,.06)}
+.cp24-cam-viewall{display:block;width:100%;padding:5px;text-align:center;font-size:.55rem;font-weight:600;color:var(--ov0);border-top:1px solid var(--border);cursor:pointer;transition:all 150ms;background:none;border-left:none;border-right:none;border-bottom:none}
+.cp24-cam-viewall:hover{background:var(--bg-hover);color:var(--tx)}
+
+/* TSX Stock Crawler */
+.tsx-crawler{position:fixed;bottom:34px;left:0;right:0;height:28px;background:linear-gradient(90deg,#1a1a2e,#16213e);display:flex;align-items:center;overflow:hidden;z-index:44;border-top:1px solid rgba(204,0,0,.3)}
+.tsx-crawler-label{background:#CC0000;color:#fff;font-size:.52rem;font-weight:900;padding:0 12px;height:100%;display:flex;align-items:center;white-space:nowrap;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;z-index:1}
+.tsx-crawler-track{flex:1;overflow:hidden;position:relative;-webkit-mask:linear-gradient(90deg,transparent,#fff 3%,#fff 97%,transparent);mask:linear-gradient(90deg,transparent,#fff 3%,#fff 97%,transparent)}
+.tsx-crawler-content{display:flex;align-items:center;white-space:nowrap;will-change:transform}
+.tsx-crawler-item{display:inline-flex;align-items:center;gap:4px;padding:0 10px;font-size:.68rem;color:rgba(255,255,255,.7);font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.tsx-crawler-sym{font-weight:700;color:#fff;font-size:.62rem}
+.tsx-crawler-price{color:rgba(255,255,255,.6)}
+.tsx-crawler-chg{font-weight:600;font-size:.6rem}
+.tsx-crawler-chg.up{color:#4ade80}
+.tsx-crawler-chg.dn{color:#f87171}
+.tsx-crawler-sep{color:rgba(255,255,255,.15);padding:0 4px;font-size:.6rem}
+@keyframes tsxScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* Adjust bottom spacing for dual crawlers */
+.news-crawl{bottom:0;z-index:45}
+@media(max-width:900px){
+  .tsx-crawler{bottom:calc(56px + env(safe-area-inset-bottom) + 30px);height:24px}
+  .tsx-crawler-label{font-size:.48rem;padding:0 8px}
+  .tsx-crawler-item{font-size:.58rem;padding:0 6px}
+  .news-crawl{bottom:calc(56px + env(safe-area-inset-bottom));height:30px}
+  .main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+}
+
+/* ══ GLOBAL EXCHANGES TAB ═══════════════════════════════ */
+.exchanges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;padding:16px}
+.exchange-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;transition:all 150ms;cursor:default}
+.exchange-card:hover{background:rgba(255,255,255,.06);border-color:var(--border-hover)}
+.exchange-card-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.exchange-card-flag{font-size:1.1rem}
+.exchange-card-name{font-size:.68rem;font-weight:700;color:var(--tx)}
+.exchange-card-market{font-size:.5rem;color:var(--ov0);text-transform:uppercase;letter-spacing:.04em}
+.exchange-card-price{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--tx);margin-bottom:4px;font-variant-numeric:tabular-nums}
+.exchange-card-footer{display:flex;align-items:center;gap:8px}
+.exchange-card-chg{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600}
+.exchange-card-chg.up{color:var(--green)}
+.exchange-card-chg.dn{color:var(--red)}
+.exchange-card-pts{font-size:.58rem;color:var(--ov0)}
+.exchange-card-status{margin-left:auto;font-size:.48rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 6px;border-radius:3px}
+.exchange-card-status.open{background:rgba(94,201,148,.12);color:var(--green)}
+.exchange-card-status.closed{background:rgba(227,96,112,.12);color:var(--red)}
+
+/* CP24 Overview mobile */
+@media(max-width:900px){
+  .cp24-grid{grid-template-columns:1fr;gap:20px}
+  .cp24-main{padding-right:0;border-right:none}
+  .cp24-sidebar{padding-left:0;max-height:none}
+  .cp24-stories-grid{grid-template-columns:1fr}
+  .cp24-hero-content{min-height:140px;padding:16px}
+  .cp24-hero-title{font-size:1rem}
+}
+
+/* ══ CP24 LIGHT MODE ══════════════════════════════════════ */
+[data-theme="light"] .cp24-hero-overlay{background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.2) 50%,transparent 100%)}
+[data-theme="light"] .cp24-story-card:hover{background:rgba(204,0,0,.03)}
+[data-theme="light"] .tsx-crawler{background:linear-gradient(90deg,#f0f0f5,#e8e8f0);border-top-color:rgba(204,0,0,.2)}
+[data-theme="light"] .tsx-crawler-item{color:rgba(0,0,0,.6)}
+[data-theme="light"] .tsx-crawler-sym{color:var(--tx)}
+[data-theme="light"] .tsx-crawler-price{color:rgba(0,0,0,.5)}
+[data-theme="light"] .tsx-crawler-chg.up{color:#16a34a}
+[data-theme="light"] .tsx-crawler-chg.dn{color:#dc2626}
+[data-theme="light"] .tsx-crawler-sep{color:rgba(0,0,0,.1)}
 </style>
 </head>
 <body>
@@ -1055,10 +1242,6 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
       Tasks &amp; Notes
     </button>
-    <button class="nav-item" data-page="notes" onclick="showPage('notes')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      Notes
-    </button>
     <button class="nav-item" data-page="bookmarks" onclick="showPage('bookmarks')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
       Bookmarks
@@ -1123,56 +1306,10 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
     </div>
   </div>
 
-  <!-- ── OVERVIEW ──────────────────────────────────────────── -->
+  <!-- ── OVERVIEW (CP24-STYLE) ────────────────────────────── -->
   <section class="page on" id="page-overview">
     <div class="ov-greeting" id="greeting">Good morning</div>
     <div class="ov-quote" id="hQuote"></div>
-
-    <!-- Compact Weather Strip -->
-    <div class="wx-strip" id="wxStrip">
-      <div class="wx-strip-main">
-        <span class="wx-strip-icon" id="wxStripIcon">⛅</span>
-        <span class="wx-strip-temp" id="wxStripTemp">--°</span>
-        <span class="wx-strip-desc" id="wxStripDesc">Loading...</span>
-      </div>
-      <span class="wx-strip-sep"></span>
-      <div class="wx-strip-details">
-        <span class="wx-strip-detail">Feels <span class="val" id="wxStripFeels">--°</span></span>
-        <span class="wx-strip-detail">Wind <span class="val" id="wxStripWind">--</span></span>
-        <span class="wx-strip-detail">💧 <span class="val" id="wxStripHumidity">--%</span></span>
-      </div>
-      <button class="wx-strip-expand" id="wxStripExpand" onclick="toggleWeatherDrawer()">Detail <span class="chevron">&#9660;</span></button>
-    </div>
-
-    <!-- Weather Detail Drawer -->
-    <div class="wx-detail-drawer" id="wxDetailDrawer">
-      <div class="wx-panel" id="wxPanel">
-        <div class="wx-hero">
-          <div class="wx-hero-left">
-            <div class="wx-temp-big" id="wxTemp">--°</div>
-            <div class="wx-feels" id="wxFeels">Feels like --°</div>
-            <div class="wx-desc" id="wxDesc">Loading...</div>
-            <div class="wx-loc" id="wxLoc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="wxCity">--</span></div>
-          </div>
-          <div class="wx-hero-right"><div class="wx-icon-wrap" id="wxIconWrap"><span id="wxIcon">⛅</span></div></div>
-        </div>
-        <div class="wx-alert-banner" id="wxAlert"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span id="wxAlertText"></span></div>
-        <div class="wx-precip-section" id="wxPrecipSection" style="display:none"><div class="wx-precip-header"><span class="wx-precip-title">Next 60 Minutes</span><span class="wx-precip-summary" id="wxPrecipSummary"></span></div><div class="wx-precip-timeline" id="wxPrecipTimeline"></div><div class="wx-precip-labels"><span>Now</span><span>15m</span><span>30m</span><span>45m</span><span>60m</span></div></div>
-        <div class="wx-hourly-section"><div class="wx-hourly-title">Hourly Forecast</div><div class="wx-hourly-scroll" id="wxHourly"></div></div>
-        <div class="wx-gauges" id="wxGauges">
-          <div class="wx-gauge"><div class="wx-gauge-label">Wind</div><div class="wx-gauge-value"><span class="wx-wind-arrow" id="wxWindArrow">↑</span> <span id="wxWind">--</span></div><div class="wx-gauge-sub" id="wxGusts">Gusts: --</div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">Humidity</div><div class="wx-gauge-value" id="wxHumidity">--%</div><div class="wx-gauge-bar"><div class="wx-gauge-bar-fill" id="wxHumBar" style="width:0%;background:var(--sky)"></div></div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">UV Index</div><div class="wx-gauge-value" id="wxUV">--</div><div class="wx-gauge-sub" id="wxUVLabel">--</div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">Pressure</div><div class="wx-gauge-value" id="wxPressure">-- hPa</div><div class="wx-gauge-sub" id="wxPressureTrend">--</div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">Dew Point</div><div class="wx-gauge-value" id="wxDewpoint">--°</div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">Visibility</div><div class="wx-gauge-value" id="wxVisibility">--</div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">Precipitation</div><div class="wx-gauge-value" id="wxPrecipTotal">-- mm</div><div class="wx-gauge-sub">Last 24h</div></div>
-          <div class="wx-gauge"><div class="wx-gauge-label">Air Quality</div><div class="wx-gauge-value" id="wxAQI">--</div><div class="wx-gauge-sub" id="wxAQILabel">--</div></div>
-        </div>
-        <div class="wx-sun-section"><div class="wx-sun-arc" id="wxSunArc"><svg viewBox="0 0 200 100"><path d="M 10 95 Q 100 -20 190 95" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="2" stroke-dasharray="4,4"/><circle id="wxSunDot" cx="100" cy="40" r="6" fill="var(--yellow)"/></svg></div><div class="wx-sun-times"><span><span class="time" id="wxSunrise">--:--</span>Sunrise</span><span><span class="time" id="wxSunset">--:--</span>Sunset</span></div></div>
-        <div class="wx-forecast-section"><div class="wx-forecast-title">7-Day Forecast</div><div id="wxForecast"></div></div>
-      </div>
-    </div>
 
     <!-- Breaking News Banner -->
     <div class="breaking-banner" id="breakingBanner" onclick="openBreakingArticle()">
@@ -1189,34 +1326,117 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
       <span class="eq-badge" id="eqMag"></span>
     </div>
 
-    <!-- News Mosaic -->
-    <div class="news-mosaic" id="newsMosaic">
-      <div class="mosaic-header">
-        <span class="mosaic-title">Local News</span>
-        <div class="mosaic-meta">
-          <span class="mosaic-updated" id="mosaicUpdated"></span>
-          <button class="mosaic-refresh" onclick="refreshMosaic()">↻ Refresh</button>
+    <!-- CP24-STYLE GRID -->
+    <div class="cp24-grid">
+      <!-- ═══ MAIN CONTENT (LEFT) ═══ -->
+      <div class="cp24-main">
+        <!-- CP24 Top Bar -->
+        <div class="cp24-topbar">
+          <span class="cp24-logo">Top Stories</span>
+          <span class="cp24-live-dot"></span>
+          <span style="font-size:.58rem;font-weight:700;color:#CC0000">LIVE</span>
+          <span class="cp24-datetime" id="cp24DateTime"></span>
+        </div>
+
+        <!-- Hero Story -->
+        <div class="cp24-hero" id="cp24Hero" onclick="openCP24Hero()">
+          <div class="cp24-hero-bg"><div class="cp24-hero-gradient" id="cp24HeroGradient"></div><div class="cp24-hero-overlay"></div></div>
+          <div class="cp24-hero-pager" id="cp24HeroPager"></div>
+          <div class="cp24-hero-content" id="cp24HeroContent">
+            <span class="cp24-hero-badge" id="cp24HeroBadge">TOP STORY</span>
+            <div class="cp24-hero-title" id="cp24HeroTitle">Loading headlines...</div>
+            <div class="cp24-hero-meta"><span id="cp24HeroSource"></span><span>·</span><span id="cp24HeroTime"></span></div>
+          </div>
+        </div>
+
+        <!-- Story Cards Grid -->
+        <div class="cp24-stories-grid" id="cp24StoriesGrid"></div>
+
+        <!-- More Headlines -->
+        <div class="cp24-more-headlines" id="cp24MoreHeadlines">
+          <div class="cp24-more-header">More Headlines</div>
         </div>
       </div>
-      <div class="mosaic-sources" id="mosaicSources"></div>
-      <div class="mosaic-hero" id="mosaicHero" onclick="openMosaicHero()">
-        <div class="mosaic-hero-bg"><div class="mosaic-hero-gradient" id="mosaicHeroGradient"></div><div class="mosaic-hero-overlay"></div></div>
-        <div class="mosaic-hero-pager" id="mosaicHeroPager"></div>
-        <div class="mosaic-hero-content" id="mosaicHeroContent">
-          <div class="mosaic-hero-source" id="mosaicHeroSource"><span class="sdot"></span><span></span></div>
-          <div class="mosaic-hero-title" id="mosaicHeroTitle">Loading headlines...</div>
-          <div class="mosaic-hero-desc" id="mosaicHeroDesc"></div>
-          <div class="mosaic-hero-footer"><span class="mosaic-hero-time" id="mosaicHeroTime"></span></div>
+
+      <!-- ═══ SIDEBAR (RIGHT) ═══ -->
+      <div class="cp24-sidebar">
+        <!-- Weather -->
+        <div class="cp24-wx">
+          <div class="cp24-wx-header">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="5"/></svg>
+            Weather
+          </div>
+          <div class="cp24-wx-current">
+            <span class="cp24-wx-icon" id="cp24WxIcon">⛅</span>
+            <span class="cp24-wx-temp" id="cp24WxTemp">--°</span>
+            <div class="cp24-wx-info">
+              <div class="cp24-wx-desc" id="cp24WxDesc">Loading...</div>
+              <div class="cp24-wx-detail" id="cp24WxDetail">Feels --° · Wind --</div>
+            </div>
+          </div>
+          <div class="cp24-wx-forecast" id="cp24WxForecast"></div>
+          <button class="cp24-wx-expand-btn" onclick="toggleWeatherDrawer()">Full Forecast ▾</button>
         </div>
+
+        <!-- Weather Detail Drawer (hidden by default) -->
+        <div class="wx-detail-drawer" id="wxDetailDrawer">
+          <div class="wx-panel" id="wxPanel">
+            <div class="wx-hero">
+              <div class="wx-hero-left">
+                <div class="wx-temp-big" id="wxTemp">--°</div>
+                <div class="wx-feels" id="wxFeels">Feels like --°</div>
+                <div class="wx-desc" id="wxDesc">Loading...</div>
+                <div class="wx-loc" id="wxLoc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="wxCity">--</span></div>
+              </div>
+              <div class="wx-hero-right"><div class="wx-icon-wrap" id="wxIconWrap"><span id="wxIcon">⛅</span></div></div>
+            </div>
+            <div class="wx-alert-banner" id="wxAlert"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span id="wxAlertText"></span></div>
+            <div class="wx-precip-section" id="wxPrecipSection" style="display:none"><div class="wx-precip-header"><span class="wx-precip-title">Next 60 Minutes</span><span class="wx-precip-summary" id="wxPrecipSummary"></span></div><div class="wx-precip-timeline" id="wxPrecipTimeline"></div><div class="wx-precip-labels"><span>Now</span><span>15m</span><span>30m</span><span>45m</span><span>60m</span></div></div>
+            <div class="wx-hourly-section"><div class="wx-hourly-title">Hourly Forecast</div><div class="wx-hourly-scroll" id="wxHourly"></div></div>
+            <div class="wx-gauges" id="wxGauges">
+              <div class="wx-gauge"><div class="wx-gauge-label">Wind</div><div class="wx-gauge-value"><span class="wx-wind-arrow" id="wxWindArrow">↑</span> <span id="wxWind">--</span></div><div class="wx-gauge-sub" id="wxGusts">Gusts: --</div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">Humidity</div><div class="wx-gauge-value" id="wxHumidity">--%</div><div class="wx-gauge-bar"><div class="wx-gauge-bar-fill" id="wxHumBar" style="width:0%;background:var(--sky)"></div></div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">UV Index</div><div class="wx-gauge-value" id="wxUV">--</div><div class="wx-gauge-sub" id="wxUVLabel">--</div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">Pressure</div><div class="wx-gauge-value" id="wxPressure">-- hPa</div><div class="wx-gauge-sub" id="wxPressureTrend">--</div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">Dew Point</div><div class="wx-gauge-value" id="wxDewpoint">--°</div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">Visibility</div><div class="wx-gauge-value" id="wxVisibility">--</div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">Precipitation</div><div class="wx-gauge-value" id="wxPrecipTotal">-- mm</div><div class="wx-gauge-sub">Last 24h</div></div>
+              <div class="wx-gauge"><div class="wx-gauge-label">Air Quality</div><div class="wx-gauge-value" id="wxAQI">--</div><div class="wx-gauge-sub" id="wxAQILabel">--</div></div>
+            </div>
+            <div class="wx-sun-section"><div class="wx-sun-arc" id="wxSunArc"><svg viewBox="0 0 200 100"><path d="M 10 95 Q 100 -20 190 95" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="2" stroke-dasharray="4,4"/><circle id="wxSunDot" cx="100" cy="40" r="6" fill="var(--yellow)"/></svg></div><div class="wx-sun-times"><span><span class="time" id="wxSunrise">--:--</span>Sunrise</span><span><span class="time" id="wxSunset">--:--</span>Sunset</span></div></div>
+            <div class="wx-forecast-section"><div class="wx-forecast-title">7-Day Forecast</div><div id="wxForecast"></div></div>
+          </div>
+        </div>
+
+        <!-- Traffic Cameras -->
+        <div class="cp24-cam">
+          <div class="cp24-cam-header">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Traffic Cams
+            <span class="cam-live" style="margin-left:auto"><span class="cam-live-dot"></span>LIVE</span>
+          </div>
+          <div class="cp24-cam-regions" id="cp24CamRegions"></div>
+          <div class="cp24-cam-selector" id="cp24CamSelector"></div>
+          <div class="cp24-cam-preview" id="cp24CamPreview" onclick="openCamModalFromPreview()">
+            <img id="cp24CamImg" src="" alt="Traffic Camera" loading="lazy">
+            <div class="cp24-cam-preview-label"><span id="cp24CamLabel">Loading...</span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>
+          </div>
+          <button class="cp24-cam-viewall" onclick="showPage('traffic')">View All Cameras →</button>
+        </div>
+
+        <!-- Calendar -->
+        <div class="panel" style="padding:14px"><div class="panel-title">Calendar</div><div id="calBody"></div></div>
+
+        <!-- Quote -->
+        <div class="panel" style="padding:14px;display:flex;flex-direction:column;justify-content:center"><div class="panel-title">Today's Thought</div><div class="quote-body" id="quoteBody"></div><div class="quote-auth" id="quoteAuth"></div></div>
       </div>
-      <div class="mosaic-mid" id="mosaicMid"></div>
-      <div class="mosaic-strips" id="mosaicStrips"><div class="mosaic-strip-header">More Headlines</div></div>
     </div>
 
-    <!-- Calendar + Quote -->
-    <div class="ov-bottom" style="margin-top:20px">
-      <div class="panel"><div class="panel-title">Calendar</div><div id="calBody"></div></div>
-      <div class="panel" style="display:flex;flex-direction:column;justify-content:center"><div class="panel-title">Today's Thought</div><div class="quote-body" id="quoteBody"></div><div class="quote-auth" id="quoteAuth"></div></div>
+    <!-- Hidden elements needed by existing weather code -->
+    <div style="display:none">
+      <span id="wxStripIcon"></span><span id="wxStripTemp"></span><span id="wxStripDesc"></span>
+      <span id="wxStripFeels"></span><span id="wxStripWind"></span><span id="wxStripHumidity"></span>
+      <span id="wxStripExpand"></span>
     </div>
   </section>
 
@@ -1274,6 +1494,7 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
         <div class="stk-tabs">
           <button class="stk-tab on" data-tab="tsx" onclick="switchStockTab('tsx')">TSX</button>
           <button class="stk-tab" data-tab="crypto" onclick="switchStockTab('crypto')">Crypto</button>
+          <button class="stk-tab" data-tab="exchanges" onclick="switchStockTab('exchanges')">Global Exchanges</button>
         </div>
         <div class="stk-meta">
           <span class="stk-updated" id="stkUpdated"></span>
@@ -1289,6 +1510,7 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
       </div>
       <div id="tsxBody" class="stk-body"><div style="padding:16px"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div><div style="height:16px"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
       <div id="cryptoBody" class="stk-body" style="display:none"><div style="padding:16px"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div><div style="height:16px"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
+      <div id="exchangesBody" style="display:none"><div class="exchanges-grid" id="exchangesGrid"><div style="padding:16px"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div></div>
     </div>
     <div class="sector-panel" id="sectorPanel" style="margin-top:16px">
       <div class="panel-title">Sector Performance</div>
@@ -1320,14 +1542,15 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
 
   <!-- ── TASKS & NOTES ─────────────────────────────────────── -->
   <section class="page" id="page-tasks">
-    <div class="tasks-layout">
-      <div class="panel">
-        <div class="panel-title">Tasks</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;height:calc(100vh - 120px)">
+      <!-- Tasks Column -->
+      <div class="panel" style="display:flex;flex-direction:column;overflow:hidden">
+        <div class="panel-title" style="color:var(--ac)">Tasks</div>
         <div class="todo-irow">
           <input class="todo-inp" id="tInp" placeholder="Add a task&hellip;" onkeydown="if(event.key==='Enter')addTodo()">
           <button class="todo-add" onclick="addTodo()">Add</button>
         </div>
-        <div class="tlist" id="tList"></div>
+        <div class="tlist" id="tList" style="flex:1;max-height:none"></div>
         <div class="tfooter">
           <button class="tfilter on" data-f="all" onclick="setTF('all')">All</button>
           <button class="tfilter" data-f="active" onclick="setTF('active')">Active</button>
@@ -1335,10 +1558,28 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
           <span class="tcnt" id="tCnt"></span>
         </div>
       </div>
-      <div class="panel">
-        <div class="panel-title">Notes</div>
-        <textarea class="notes-area" id="nArea" placeholder="Your scratchpad&hellip;" oninput="saveNotes()"></textarea>
-        <div class="notes-foot" id="nFoot">Saved</div>
+      <!-- Notes Column -->
+      <div class="panel" style="display:flex;flex-direction:column;overflow:hidden;padding:0">
+        <div style="padding:14px 20px 0;display:flex;align-items:center;gap:8px">
+          <span style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ac);flex:1">Notes</span>
+          <button class="btn-ghost" style="font-size:.6rem;padding:3px 8px" onclick="exportNotes()">Export</button>
+        </div>
+        <div class="notes-tabs" id="notesTabs"></div>
+        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+          <textarea class="notes-textarea" id="notesArea" placeholder="Start typing..." oninput="saveNote()" style="flex:1"></textarea>
+        </div>
+        <div class="notes-footer" style="padding:6px 14px">
+          <span class="notes-stat" id="notesWordCount">0 words</span>
+          <span class="notes-stat" id="notesCharCount">0 chars</span>
+          <span class="notes-saved" id="notesSaved">Saved</span>
+          <span style="flex:1"></span>
+          <button class="btn-ghost" style="font-size:.55rem;padding:2px 6px;color:var(--red)" onclick="deleteNote()">Delete</button>
+        </div>
+        <!-- Quick scratchpad -->
+        <div style="border-top:1px solid var(--border);padding:10px 14px">
+          <div style="font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ov0);margin-bottom:6px">Quick Scratchpad</div>
+          <textarea class="notes-area" id="nArea" placeholder="Quick notes&hellip;" oninput="saveNotes()" style="min-height:80px;max-height:120px;font-size:.75rem"></textarea>
+        </div>
       </div>
     </div>
   </section>
@@ -1349,29 +1590,101 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
     <div class="bm-grid" id="bmBody"></div>
   </section>
 
-  <!-- ── NOTES (SCRATCHPAD) ─────────────────────────────── -->
-  <section class="page" id="page-notes">
-    <div class="notes-panel">
-      <div class="notes-header">
-        <span class="notes-title">Notes</span>
-        <button class="btn-ghost" style="font-size:.65rem;padding:4px 10px" onclick="exportNotes()">Export</button>
-      </div>
-      <div class="notes-tabs" id="notesTabs"></div>
-      <div class="notes-editor">
-        <textarea class="notes-textarea" id="notesArea" placeholder="Start typing..." oninput="saveNote()"></textarea>
-      </div>
-      <div class="notes-footer">
-        <span class="notes-stat" id="notesWordCount">0 words</span>
-        <span class="notes-stat" id="notesCharCount">0 chars</span>
-        <span class="notes-saved" id="notesSaved">Saved</span>
-        <span style="flex:1"></span>
-        <button class="btn-ghost" style="font-size:.6rem;padding:3px 8px;color:var(--red)" onclick="deleteNote()">Delete note</button>
-      </div>
-    </div>
-  </section>
-
   <!-- ── TRAFFIC ─────────────────────────────────────────── -->
   <section class="page" id="page-traffic">
+    <!-- Highway Map -->
+    <div class="traffic-map-wrap">
+      <div class="traffic-map-header">
+        <svg viewBox="0 0 16 16"><path d="M1 6l5-4 4 3 5-4v11l-5 3-4-3-5 4z"/></svg>
+        Southern Ontario Highway Network
+      </div>
+      <svg class="traffic-map-svg" viewBox="0 0 900 200" preserveAspectRatio="xMidYMid meet">
+        <!-- Lake Ontario -->
+        <path class="lake" d="M140,185 C180,170 240,158 320,155 C400,150 460,148 520,152 C560,154 600,162 640,172 C680,180 700,190 720,195 L900,200 L0,200 L0,195 Z"/>
+
+        <!-- Highway 401 - main east-west corridor -->
+        <path class="hwy-line hwy-401" d="M40,120 C100,118 180,112 280,108 C380,104 460,100 540,98 C620,96 700,100 780,108 C830,112 870,118 890,122"/>
+        <text class="hwy-label" x="460" y="92" text-anchor="middle">401</text>
+
+        <!-- QEW - Niagara to Toronto -->
+        <path class="hwy-line hwy-qew" d="M60,168 C100,158 140,148 180,138 C220,128 260,118 310,112"/>
+        <text class="hwy-label" x="130" y="138" text-anchor="middle">QEW</text>
+
+        <!-- Highway 403 - Hamilton spur -->
+        <path class="hwy-line hwy-403" d="M160,150 C190,138 220,126 260,118"/>
+        <text class="hwy-label" x="192" y="128" text-anchor="middle">403</text>
+
+        <!-- Highway 400 - north from Toronto -->
+        <path class="hwy-line hwy-400" d="M380,105 C375,85 368,60 362,40 C358,28 355,18 352,10"/>
+        <text class="hwy-label" x="345" y="52" text-anchor="end">400</text>
+
+        <!-- Highway 404/DVP - north from Toronto -->
+        <path class="hwy-line hwy-404" d="M420,105 C422,85 425,65 428,50 C430,40 432,30 435,20"/>
+        <text class="hwy-label" x="445" y="52" text-anchor="start">404</text>
+
+        <!-- City dots and labels -->
+        <!-- Toronto -->
+        <circle class="city-dot" cx="390" cy="108" r="4" style="fill:var(--ac);stroke:var(--ac3)"/>
+        <text class="city-label city-primary" x="390" y="126" text-anchor="middle">Toronto</text>
+
+        <!-- Hamilton -->
+        <circle class="city-dot" cx="260" cy="118"/>
+        <text class="city-label" x="248" y="132" text-anchor="end">Hamilton</text>
+
+        <!-- Cobourg -->
+        <circle class="city-dot" cx="620" cy="96" r="4" style="fill:var(--green);stroke:rgba(94,201,148,.4)"/>
+        <text class="city-label city-primary" x="620" y="86" text-anchor="middle">Cobourg</text>
+
+        <!-- Kingston -->
+        <circle class="city-dot" cx="810" cy="110"/>
+        <text class="city-label" x="810" y="125" text-anchor="middle">Kingston</text>
+
+        <!-- Barrie -->
+        <circle class="city-dot" cx="355" cy="18"/>
+        <text class="city-label" x="340" y="16" text-anchor="end">Barrie</text>
+
+        <!-- Oshawa -->
+        <circle class="city-dot" cx="480" cy="100"/>
+        <text class="city-label" x="480" y="92" text-anchor="middle">Oshawa</text>
+
+        <!-- St Catharines -->
+        <circle class="city-dot" cx="100" cy="162"/>
+        <text class="city-label" x="100" y="175" text-anchor="middle">St Catharines</text>
+
+        <!-- Camera location dots with pulse -->
+        <!-- Cobourg area cameras -->
+        <circle class="cam-dot-pulse" cx="620" cy="96"/>
+        <circle class="cam-dot" cx="620" cy="96" onclick="filterTrafficRegion('Cobourg')" data-region="Cobourg"><title>Cobourg cameras</title></circle>
+
+        <!-- GTA East cameras (Oshawa area) -->
+        <circle class="cam-dot-pulse" cx="480" cy="100"/>
+        <circle class="cam-dot" cx="480" cy="100" onclick="filterTrafficRegion('GTA East')" data-region="GTA East"><title>GTA East cameras</title></circle>
+
+        <!-- Toronto cameras -->
+        <circle class="cam-dot-pulse" cx="400" cy="106"/>
+        <circle class="cam-dot" cx="400" cy="106" onclick="filterTrafficRegion('Toronto')" data-region="Toronto"><title>Toronto cameras</title></circle>
+
+        <!-- GTA West / QEW cameras -->
+        <circle class="cam-dot-pulse" cx="200" cy="142"/>
+        <circle class="cam-dot" cx="200" cy="142" onclick="filterTrafficRegion('GTA West')" data-region="GTA West"><title>GTA West cameras</title></circle>
+
+        <!-- North / Barrie cameras -->
+        <circle class="cam-dot-pulse" cx="362" cy="40"/>
+        <circle class="cam-dot" cx="362" cy="40" onclick="filterTrafficRegion('North')" data-region="North"><title>North cameras</title></circle>
+
+        <!-- East / Kingston cameras -->
+        <circle class="cam-dot-pulse" cx="760" cy="106"/>
+        <circle class="cam-dot" cx="760" cy="106" onclick="filterTrafficRegion('East')" data-region="East"><title>East cameras</title></circle>
+
+        <!-- Southwest cameras (London/Windsor corridor) -->
+        <circle class="cam-dot-pulse" cx="120" cy="112"/>
+        <circle class="cam-dot" cx="120" cy="112" onclick="filterTrafficRegion('Southwest')" data-region="Southwest"><title>Southwest cameras</title></circle>
+      </svg>
+    </div>
+
+    <!-- Region filter buttons -->
+    <div class="traffic-region-bar" id="trafficRegionBar"></div>
+
     <div class="traffic-layout">
       <div class="traffic-main">
         <div class="cam-grid" id="camGrid">
@@ -1410,6 +1723,14 @@ button{cursor:pointer}a{color:var(--ac2);text-decoration:none}a:hover{color:var(
   </section>
 
 </main>
+
+<!-- TSX Stock Crawler -->
+<div class="tsx-crawler" id="tsxCrawler">
+  <div class="tsx-crawler-label">TSX</div>
+  <div class="tsx-crawler-track">
+    <div class="tsx-crawler-content" id="tsxCrawlContent"></div>
+  </div>
+</div>
 
 <!-- CP24-Style News Crawl -->
 <div class="news-crawl" id="newsCrawl">
@@ -1603,7 +1924,7 @@ function parseRSSXML(xml){
 
 function normalizeItems(srcKey,raw){
   const srcDef=newsSources.find(s=>s.key===srcKey)||{name:srcKey,dot:'#888'};
-  return raw.slice(0,15).map(item=>{
+  return raw.map(item=>{
     const title=(item.title||'').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,'').trim();
     const link=item.url||item.link||'';
     const rawDesc=item.desc||item.description||'';
@@ -1989,6 +2310,7 @@ async function fetchWeather() {
     if (sidebarTemp) sidebarTemp.textContent = `${Math.round(c.temperature_2m)}\u00B0 ${WMO_CODES[c.weather_code]}`;
 
     updateWeatherStrip(c, icons, windUnitLabel);
+    updateCP24Weather(c, icons, d, windUnitLabel);
 
   } catch (err) {
     console.error('Weather fetch failed:', err);
@@ -2596,6 +2918,11 @@ function switchStockTab(tab){
   document.querySelectorAll('.stk-tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
   document.getElementById('tsxBody').style.display=tab==='tsx'?'':'none';
   document.getElementById('cryptoBody').style.display=tab==='crypto'?'':'none';
+  document.getElementById('exchangesBody').style.display=tab==='exchanges'?'':'none';
+  // Hide/show column headers for exchanges (it uses cards not table)
+  const stkHeader = document.querySelector('.stk-header');
+  if (stkHeader) stkHeader.style.display = tab === 'exchanges' ? 'none' : '';
+  if (tab === 'exchanges') renderExchanges();
 }
 
 function buildStkRow(sym,name,nameHtml,price,chgPct,mcap,vol,isCrypto,img,extra){
@@ -3252,10 +3579,16 @@ let wxDrawerOpen = false;
 function toggleWeatherDrawer() {
   wxDrawerOpen = !wxDrawerOpen;
   document.getElementById('wxDetailDrawer').classList.toggle('open', wxDrawerOpen);
-  document.getElementById('wxStrip').classList.toggle('strip-open', wxDrawerOpen);
+  const strip = document.getElementById('wxStrip');
+  if (strip) strip.classList.toggle('strip-open', wxDrawerOpen);
   const btn = document.getElementById('wxStripExpand');
-  btn.classList.toggle('expanded', wxDrawerOpen);
-  btn.innerHTML = wxDrawerOpen ? 'Collapse <span class="chevron">&#9660;</span>' : 'Detail <span class="chevron">&#9660;</span>';
+  if (btn) {
+    btn.classList.toggle('expanded', wxDrawerOpen);
+    btn.innerHTML = wxDrawerOpen ? 'Collapse <span class="chevron">&#9660;</span>' : 'Detail <span class="chevron">&#9660;</span>';
+  }
+  // Update the CP24 sidebar button text
+  const cp24Btn = document.querySelector('.cp24-wx-expand-btn');
+  if (cp24Btn) cp24Btn.textContent = wxDrawerOpen ? 'Collapse Forecast ▴' : 'Full Forecast ▾';
 }
 
 function updateWeatherStrip(c, icons, windUnitLabel) {
@@ -3368,6 +3701,7 @@ function renderMosaic() {
 
   detectBreakingNews();
   updateNewsCrawl();
+  renderCP24Overview();
 }
 
 function showMosaicHero(heroes, animate) {
@@ -3401,6 +3735,379 @@ function openMosaicArticle(idx) { showPage('news'); openArticle(idx); }
 
 function refreshMosaic() { fetchAllNews(true); }
 
+/* ══ CP24 OVERVIEW SYSTEM ════════════════════════════════ */
+
+/* ── TOP STORIES ALGORITHM ───────────────────────────── */
+function getTopStories() {
+  if (!allArticles.length) return [];
+  const now = new Date();
+  const scored = allArticles.map((a, idx) => {
+    let score = 0;
+    const ageMs = now - a.date;
+    const ageHours = ageMs / (1000 * 60 * 60);
+    // Recency: newer = higher (max 50 points, decays over 24h)
+    score += Math.max(0, 50 - (ageHours * 2));
+    // Breaking keywords boost (+30)
+    const breakingKw = /breaking|urgent|emergency|alert|fatal|shooting|stabbing|fire|evacuat|missing|amber|lockdown|collision|crash|homicide|arrest|flood|tornado|severe/i;
+    if (breakingKw.test(a.title)) score += 30;
+    // Police/emergency sources boost (+15)
+    if (/police|opp|emergency/i.test(a.source)) score += 15;
+    // Local primary sources boost (+10)
+    if (/cobourg blog|today.*northumberland|consider this|northumberland daily/i.test(a.source)) score += 10;
+    // Title length engagement proxy (longer = more detail = +5)
+    if (a.title.length > 60) score += 5;
+    // Has description (+3)
+    if (a.description && a.description.length > 50) score += 3;
+    return { article: a, globalIdx: idx, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  // Ensure source diversity: no more than 3 from same source in top 12
+  const result = [];
+  const sourceCounts = {};
+  for (const item of scored) {
+    const src = item.article.source;
+    sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+    if (sourceCounts[src] <= 3) result.push(item);
+    if (result.length >= 20) break;
+  }
+  return result;
+}
+
+/* ── CP24 OVERVIEW RENDERER ──────────────────────────── */
+let cp24HeroIdx = 0;
+let cp24HeroTimer = null;
+
+function renderCP24Overview() {
+  const topStories = getTopStories();
+  if (!topStories.length) return;
+
+  // Update datetime
+  const dtEl = document.getElementById('cp24DateTime');
+  if (dtEl) dtEl.textContent = new Date().toLocaleString('en-CA', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  // Hero stories (top 4 rotate)
+  const heroes = topStories.slice(0, 4);
+  cp24HeroIdx = 0;
+  showCP24Hero(heroes);
+  const pager = document.getElementById('cp24HeroPager');
+  if (pager && heroes.length > 1) {
+    pager.innerHTML = heroes.map((_, i) => '<span class="cp24-hero-pip' + (i === 0 ? ' active' : '') + '" onclick="event.stopPropagation();jumpCP24Hero(' + i + ')"></span>').join('');
+  }
+  if (cp24HeroTimer) clearInterval(cp24HeroTimer);
+  if (heroes.length > 1) cp24HeroTimer = setInterval(() => { cp24HeroIdx = (cp24HeroIdx + 1) % heroes.length; showCP24Hero(heroes, true); }, 8000);
+
+  // Story cards (next 4)
+  const cards = topStories.slice(4, 8);
+  const gridEl = document.getElementById('cp24StoriesGrid');
+  if (gridEl) {
+    gridEl.innerHTML = cards.map(item => {
+      const a = item.article;
+      return '<div class="cp24-story-card" onclick="openMosaicArticle(' + item.globalIdx + ')">' +
+        '<div class="cp24-story-card-accent"></div>' +
+        '<div class="cp24-story-card-source"><span class="sdot" style="background:' + (a.color || '#CC0000') + '"></span>' + a.source + '</div>' +
+        '<div class="cp24-story-card-title">' + a.title + '</div>' +
+        '<div class="cp24-story-card-time">' + timeAgo(a.date) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // More headlines (next 12)
+  const moreItems = topStories.slice(8, 20);
+  const moreEl = document.getElementById('cp24MoreHeadlines');
+  if (moreEl && moreItems.length) {
+    let h = '<div class="cp24-more-header">More Headlines</div>';
+    moreItems.forEach(item => {
+      const a = item.article;
+      h += '<div class="cp24-headline-row" onclick="openMosaicArticle(' + item.globalIdx + ')">' +
+        '<span class="cp24-headline-dot" style="background:' + (a.color || '#CC0000') + '"></span>' +
+        '<span class="cp24-headline-title">' + a.title + '</span>' +
+        '<span class="cp24-headline-source">' + a.source + '</span>' +
+        '<span class="cp24-headline-time">' + timeAgo(a.date) + '</span>' +
+        '</div>';
+    });
+    moreEl.innerHTML = h;
+  }
+
+  // Update TSX crawler
+  updateTSXCrawler();
+}
+
+function showCP24Hero(heroes, animate) {
+  const item = heroes[cp24HeroIdx];
+  if (!item) return;
+  const a = item.article;
+  const gradEl = document.getElementById('cp24HeroGradient');
+  if (gradEl) gradEl.style.background = 'radial-gradient(ellipse at 30% 50%,' + (a.color || '#CC0000') + ',transparent 70%)';
+  const badge = document.getElementById('cp24HeroBadge');
+  if (badge) {
+    const breakingKw = /breaking|urgent|emergency|alert|fatal|shooting/i;
+    badge.textContent = breakingKw.test(a.title) ? 'BREAKING' : 'TOP STORY';
+    badge.style.background = breakingKw.test(a.title) ? '#CC0000' : 'rgba(204,0,0,.85)';
+  }
+  document.getElementById('cp24HeroTitle').textContent = a.title;
+  document.getElementById('cp24HeroSource').textContent = a.source;
+  document.getElementById('cp24HeroTime').textContent = timeAgo(a.date);
+  if (animate) {
+    const c = document.getElementById('cp24HeroContent');
+    c.style.animation = 'none'; void c.offsetWidth;
+    c.style.animation = 'heroFadeIn 400ms both';
+  }
+  document.querySelectorAll('.cp24-hero-pip').forEach((p, i) => p.classList.toggle('active', i === cp24HeroIdx));
+}
+
+function jumpCP24Hero(i) {
+  const topStories = getTopStories();
+  cp24HeroIdx = i;
+  showCP24Hero(topStories.slice(0, 4), true);
+  if (cp24HeroTimer) clearInterval(cp24HeroTimer);
+  const heroes = topStories.slice(0, 4);
+  if (heroes.length > 1) cp24HeroTimer = setInterval(() => { cp24HeroIdx = (cp24HeroIdx + 1) % heroes.length; showCP24Hero(heroes, true); }, 8000);
+}
+
+function openCP24Hero() {
+  const topStories = getTopStories();
+  const item = topStories[cp24HeroIdx];
+  if (item) openMosaicArticle(item.globalIdx);
+}
+
+/* ── CP24 SIDEBAR WEATHER ────────────────────────────── */
+function updateCP24Weather(c, icons, d, windUnitLabel) {
+  const el = id => document.getElementById(id);
+  if (el('cp24WxIcon')) el('cp24WxIcon').textContent = icons[c.weather_code] || '⛅';
+  if (el('cp24WxTemp')) el('cp24WxTemp').textContent = Math.round(c.temperature_2m) + '°';
+  if (el('cp24WxDesc')) el('cp24WxDesc').textContent = WMO_CODES[c.weather_code] || '';
+  if (el('cp24WxDetail')) el('cp24WxDetail').textContent = 'Feels ' + Math.round(c.apparent_temperature) + '° · Wind ' + Math.round(c.wind_speed_10m) + ' ' + windUnitLabel + ' · 💧 ' + c.relative_humidity_2m + '%';
+  // Mini forecast
+  if (d && el('cp24WxForecast')) {
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    let html = '';
+    for (let i = 0; i < Math.min(7, d.time.length); i++) {
+      const date = new Date(d.time[i] + 'T12:00');
+      const name = i === 0 ? 'Today' : dayNames[date.getDay()];
+      html += '<div class="cp24-wx-fday"><div class="cp24-wx-fday-name">' + name + '</div><div class="cp24-wx-fday-icon">' + (WMO_ICONS[d.weather_code[i]] || '⛅') + '</div><div class="cp24-wx-fday-temps"><span class="cp24-wx-fday-hi">' + Math.round(d.temperature_2m_max[i]) + '°</span> <span class="cp24-wx-fday-lo">' + Math.round(d.temperature_2m_min[i]) + '°</span></div></div>';
+    }
+    el('cp24WxForecast').innerHTML = html;
+  }
+}
+
+/* ── CP24 CAMERA PREVIEW ─────────────────────────────── */
+const CAMERA_REGIONS = {
+  'Cobourg': [
+    { label: '401 @ Cobourg', views: [{id:448,dir:'E'},{id:449,dir:'OH'},{id:450,dir:'W'}] },
+    { label: '401 @ Newcastle', views: [{id:445,dir:'E'},{id:446,dir:'OH'},{id:447,dir:'W'}] },
+    { label: '401 @ Brighton', views: [{id:451,dir:'E'},{id:452,dir:'OH'},{id:453,dir:'W'}] },
+    { label: '401 @ Trenton', views: [{id:454,dir:'E'},{id:455,dir:'OH'},{id:456,dir:'W'}] },
+    { label: '115 @ Peterborough', views: [{id:370,dir:'E'},{id:371,dir:'OH'},{id:372,dir:'W'}] },
+  ],
+  'GTA East': [
+    { label: '401 @ Whitby', views: [{id:442,dir:'E'},{id:443,dir:'OH'},{id:444,dir:'W'}] },
+    { label: '401 @ Scarborough', views: [{id:439,dir:'E'},{id:440,dir:'OH'},{id:441,dir:'W'}] },
+    { label: '404 @ Don Mills', views: [{id:493,dir:'E'},{id:494,dir:'OH'},{id:495,dir:'W'}] },
+    { label: '404 @ Aurora', views: [{id:498,dir:'E'},{id:499,dir:'OH'},{id:500,dir:'W'}] },
+  ],
+  'Toronto': [
+    { label: '401 @ Scarborough', views: [{id:439,dir:'E'},{id:440,dir:'OH'},{id:441,dir:'W'}] },
+    { label: '401 @ Etobicoke', views: [{id:436,dir:'E'},{id:437,dir:'OH'},{id:438,dir:'W'}] },
+    { label: '401 @ Burlington', views: [{id:433,dir:'E'},{id:434,dir:'OH'},{id:435,dir:'W'}] },
+    { label: '404 @ Don Mills', views: [{id:493,dir:'E'},{id:494,dir:'OH'},{id:495,dir:'W'}] },
+  ],
+  'GTA West': [
+    { label: '401 @ Burlington', views: [{id:433,dir:'E'},{id:434,dir:'OH'},{id:435,dir:'W'}] },
+    { label: 'QEW @ Burlington', views: [{id:584,dir:'OH'},{id:585,dir:'OH'},{id:586,dir:'OH'}] },
+    { label: 'QEW @ Hamilton', views: [{id:574,dir:'OH'},{id:575,dir:'OH'},{id:576,dir:'OH'}] },
+    { label: 'QEW @ St Catharines', views: [{id:563,dir:'OH'},{id:564,dir:'OH'},{id:566,dir:'OH'}] },
+    { label: 'QEW @ Skyway', views: [{id:579,dir:'OH'},{id:580,dir:'OH'},{id:581,dir:'OH'}] },
+  ],
+  'North': [
+    { label: '400 @ Vaughan', views: [{id:388,dir:'E'},{id:389,dir:'OH'},{id:390,dir:'W'}] },
+    { label: '400 @ King City', views: [{id:391,dir:'E'},{id:392,dir:'OH'},{id:393,dir:'W'}] },
+    { label: '400 @ Bradford', views: [{id:394,dir:'E'},{id:395,dir:'OH'},{id:396,dir:'W'}] },
+    { label: '400 @ Innisfil', views: [{id:397,dir:'E'},{id:398,dir:'OH'},{id:399,dir:'W'}] },
+    { label: '400 @ Barrie', views: [{id:400,dir:'E'},{id:401,dir:'OH'},{id:402,dir:'W'}] },
+    { label: '400 @ Parry Sound', views: [{id:406,dir:'E'},{id:407,dir:'OH'},{id:408,dir:'W'}] },
+  ],
+  'East': [
+    { label: '401 @ Napanee', views: [{id:457,dir:'E'},{id:458,dir:'OH'},{id:459,dir:'W'}] },
+    { label: '401 @ Kingston W', views: [{id:460,dir:'E'},{id:461,dir:'OH'},{id:462,dir:'W'}] },
+    { label: '401 @ Kingston E', views: [{id:463,dir:'E'},{id:464,dir:'OH'},{id:465,dir:'W'}] },
+    { label: '401 @ Brockville', views: [{id:466,dir:'E'},{id:467,dir:'OH'},{id:468,dir:'W'}] },
+    { label: '401 @ Cornwall', views: [{id:475,dir:'E'},{id:476,dir:'OH'},{id:477,dir:'W'}] },
+  ],
+  'Southwest': [
+    { label: '401 @ Milton', views: [{id:430,dir:'E'},{id:431,dir:'OH'},{id:432,dir:'W'}] },
+    { label: '401 @ Cambridge', views: [{id:427,dir:'E'},{id:428,dir:'OH'},{id:429,dir:'W'}] },
+    { label: '401 @ Woodstock', views: [{id:424,dir:'E'},{id:425,dir:'OH'},{id:426,dir:'W'}] },
+    { label: '401 @ London', views: [{id:415,dir:'E'},{id:416,dir:'OH'},{id:417,dir:'W'}] },
+    { label: '401 @ Windsor', views: [{id:409,dir:'E'},{id:410,dir:'OH'},{id:411,dir:'W'}] },
+  ],
+};
+
+let activeCamRegion = 'Cobourg';
+let activePreviewCamIdx = 0;
+
+function renderCamPreview() {
+  const regionsEl = document.getElementById('cp24CamRegions');
+  const selectorEl = document.getElementById('cp24CamSelector');
+  if (!regionsEl || !selectorEl) return;
+
+  // Region tabs
+  regionsEl.innerHTML = Object.keys(CAMERA_REGIONS).map(r =>
+    '<button class="cp24-cam-region' + (r === activeCamRegion ? ' on' : '') + '" onclick="switchCamRegion(\'' + r + '\')">' + r + '</button>'
+  ).join('');
+
+  // Camera selector within region
+  const cams = CAMERA_REGIONS[activeCamRegion] || [];
+  selectorEl.innerHTML = cams.map((c, i) =>
+    '<button class="cp24-cam-loc' + (i === activePreviewCamIdx ? ' on' : '') + '" onclick="switchPreviewCam(' + i + ')">' + c.label.replace(/^401 @ |^QEW @ |^400 @ |^403 @ /, '') + '</button>'
+  ).join('');
+
+  // Update preview image
+  const cam = cams[activePreviewCamIdx];
+  if (cam) {
+    const ohView = cam.views.find(v => v.dir === 'OH') || cam.views[0];
+    document.getElementById('cp24CamImg').src = 'https://511on.ca/map/Cctv/' + ohView.id + '?t=' + Date.now();
+    document.getElementById('cp24CamLabel').textContent = cam.label;
+  }
+}
+
+function switchCamRegion(region) {
+  activeCamRegion = region;
+  activePreviewCamIdx = 0;
+  renderCamPreview();
+}
+
+function switchPreviewCam(idx) {
+  activePreviewCamIdx = idx;
+  renderCamPreview();
+}
+
+function openCamModalFromPreview() {
+  const cams = CAMERA_REGIONS[activeCamRegion] || [];
+  const cam = cams[activePreviewCamIdx];
+  if (!cam) return;
+  // Find in TRAFFIC_CAMS or open the image directly
+  const existingIdx = TRAFFIC_CAMS.findIndex(tc => tc.label === cam.label);
+  if (existingIdx >= 0) {
+    openCamModal(existingIdx);
+  } else {
+    // Open a generic modal for this camera
+    const ohView = cam.views.find(v => v.dir === 'OH') || cam.views[0];
+    document.getElementById('camModalTitle').textContent = cam.label;
+    document.getElementById('camModalImg').src = 'https://511on.ca/map/Cctv/' + ohView.id + '?t=' + Date.now();
+    document.getElementById('camModalViews').innerHTML = cam.views.map((v, vi) =>
+      '<button class="cam-view-btn' + (v.dir === 'OH' || v.dir === 'N' ? ' on' : '') + '" onclick="document.getElementById(\'camModalImg\').src=\'https://511on.ca/map/Cctv/' + v.id + '?t=\'+Date.now();document.querySelectorAll(\'.cam-view-btn\').forEach((b,i)=>b.classList.toggle(\'on\',i===' + vi + '))">' + v.dir + '</button>'
+    ).join('');
+    document.getElementById('camModalOverlay').classList.add('on');
+  }
+}
+
+/* ── TSX STOCK CRAWLER ───────────────────────────────── */
+function updateTSXCrawler() {
+  const container = document.getElementById('tsxCrawlContent');
+  if (!container) return;
+
+  const stocks = TSX_SEED;
+  if (!stocks.length) return;
+
+  const items = stocks.map(s => {
+    const up = s.chg >= 0;
+    return '<span class="tsx-crawler-item"><span class="tsx-crawler-sym">' + s.sym + '</span>' +
+      '<span class="tsx-crawler-price">$' + s.price.toFixed(2) + '</span>' +
+      '<span class="tsx-crawler-chg ' + (up ? 'up' : 'dn') + '">' + (up ? '▲' : '▼') + ' ' + (up ? '+' : '') + s.chg.toFixed(2) + '%</span></span>' +
+      '<span class="tsx-crawler-sep">│</span>';
+  }).join('');
+
+  container.innerHTML = items + items;
+
+  requestAnimationFrame(() => {
+    const contentWidth = container.scrollWidth / 2;
+    const speed = 50;
+    const duration = contentWidth / speed;
+    container.style.animation = 'tsxScroll ' + duration + 's linear infinite';
+  });
+}
+
+/* ── GLOBAL STOCK EXCHANGES ──────────────────────────── */
+const GLOBAL_EXCHANGES = [
+  { name: 'S&P/TSX Composite', sym: '^GSPTSE', flag: '🇨🇦', market: 'Toronto', tz: 'America/Toronto' },
+  { name: 'S&P 500', sym: '^GSPC', flag: '🇺🇸', market: 'New York', tz: 'America/New_York' },
+  { name: 'Dow Jones', sym: '^DJI', flag: '🇺🇸', market: 'New York', tz: 'America/New_York' },
+  { name: 'NASDAQ', sym: '^IXIC', flag: '🇺🇸', market: 'New York', tz: 'America/New_York' },
+  { name: 'Russell 2000', sym: '^RUT', flag: '🇺🇸', market: 'New York', tz: 'America/New_York' },
+  { name: 'FTSE 100', sym: '^FTSE', flag: '🇬🇧', market: 'London', tz: 'Europe/London' },
+  { name: 'DAX', sym: '^GDAXI', flag: '🇩🇪', market: 'Frankfurt', tz: 'Europe/Berlin' },
+  { name: 'CAC 40', sym: '^FCHI', flag: '🇫🇷', market: 'Paris', tz: 'Europe/Paris' },
+  { name: 'EURO STOXX 50', sym: '^STOXX50E', flag: '🇪🇺', market: 'Europe', tz: 'Europe/Berlin' },
+  { name: 'Nikkei 225', sym: '^N225', flag: '🇯🇵', market: 'Tokyo', tz: 'Asia/Tokyo' },
+  { name: 'Hang Seng', sym: '^HSI', flag: '🇭🇰', market: 'Hong Kong', tz: 'Asia/Hong_Kong' },
+  { name: 'Shanghai Comp.', sym: '000001.SS', flag: '🇨🇳', market: 'Shanghai', tz: 'Asia/Shanghai' },
+  { name: 'BSE Sensex', sym: '^BSESN', flag: '🇮🇳', market: 'Mumbai', tz: 'Asia/Kolkata' },
+  { name: 'ASX 200', sym: '^AXJO', flag: '🇦🇺', market: 'Sydney', tz: 'Australia/Sydney' },
+  { name: 'KOSPI', sym: '^KS11', flag: '🇰🇷', market: 'Seoul', tz: 'Asia/Seoul' },
+  { name: 'IBOVESPA', sym: '^BVSP', flag: '🇧🇷', market: 'São Paulo', tz: 'America/Sao_Paulo' },
+  { name: 'Swiss Market', sym: '^SSMI', flag: '🇨🇭', market: 'Zurich', tz: 'Europe/Zurich' },
+  { name: 'MOEX Russia', sym: 'IMOEX.ME', flag: '🇷🇺', market: 'Moscow', tz: 'Europe/Moscow' },
+];
+
+const EXCHANGE_SEED = [
+  { sym: '^GSPTSE', price: 24286.15, chg: -0.68, pts: -166.72 },
+  { sym: '^GSPC', price: 5572.07, chg: -1.39, pts: -78.45 },
+  { sym: '^DJI', price: 41350.93, chg: -1.30, pts: -543.21 },
+  { sym: '^IXIC', price: 17648.45, chg: -1.96, pts: -352.87 },
+  { sym: '^RUT', price: 2036.19, chg: -1.72, pts: -35.62 },
+  { sym: '^FTSE', price: 8560.20, chg: +0.45, pts: +38.41 },
+  { sym: '^GDAXI', price: 22537.50, chg: +0.68, pts: +152.34 },
+  { sym: '^FCHI', price: 7948.35, chg: +0.52, pts: +41.12 },
+  { sym: '^STOXX50E', price: 5358.40, chg: +0.61, pts: +32.55 },
+  { sym: '^N225', price: 37799.97, chg: -0.48, pts: -182.40 },
+  { sym: '^HSI', price: 23649.83, chg: +1.24, pts: +289.55 },
+  { sym: '000001.SS', price: 3372.55, chg: +0.32, pts: +10.75 },
+  { sym: '^BSESN', price: 73828.98, chg: +0.15, pts: +110.45 },
+  { sym: '^AXJO', price: 7856.20, chg: -0.34, pts: -26.78 },
+  { sym: '^KS11', price: 2610.45, chg: +0.89, pts: +23.12 },
+  { sym: '^BVSP', price: 128458.90, chg: -0.55, pts: -713.22 },
+  { sym: '^SSMI', price: 12345.60, chg: +0.28, pts: +34.56 },
+  { sym: 'IMOEX.ME', price: 2890.30, chg: +0.42, pts: +12.10 },
+];
+
+function getExchangeStatus(tz) {
+  try {
+    const now = new Date();
+    const local = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+    const h = local.getHours(), day = local.getDay();
+    if (day === 0 || day === 6) return { label: 'Closed', cls: 'closed' };
+    if (h >= 9 && h < 16) return { label: 'Open', cls: 'open' };
+    return { label: 'Closed', cls: 'closed' };
+  } catch (e) {
+    return { label: 'Closed', cls: 'closed' };
+  }
+}
+
+function renderExchanges() {
+  const grid = document.getElementById('exchangesGrid');
+  if (!grid) return;
+
+  let html = '';
+  GLOBAL_EXCHANGES.forEach(ex => {
+    const seed = EXCHANGE_SEED.find(s => s.sym === ex.sym);
+    const price = seed ? seed.price : 0;
+    const chg = seed ? seed.chg : 0;
+    const pts = seed ? seed.pts : 0;
+    const up = chg >= 0;
+    const status = getExchangeStatus(ex.tz);
+
+    html += '<div class="exchange-card">' +
+      '<div class="exchange-card-header"><span class="exchange-card-flag">' + ex.flag + '</span><div><div class="exchange-card-name">' + esc(ex.name) + '</div><div class="exchange-card-market">' + ex.market + '</div></div></div>' +
+      '<div class="exchange-card-price">' + price.toLocaleString('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</div>' +
+      '<div class="exchange-card-footer">' +
+      '<span class="exchange-card-chg ' + (up ? 'up' : 'dn') + '">' + (up ? '+' : '') + chg.toFixed(2) + '%</span>' +
+      '<span class="exchange-card-pts">' + (up ? '+' : '') + pts.toFixed(2) + ' pts</span>' +
+      '<span class="exchange-card-status ' + status.cls + '">' + status.label + '</span>' +
+      '</div></div>';
+  });
+  grid.innerHTML = html;
+}
+
 /* ── TRAFFIC (Ontario 511) ────────────────────────────── */
 const TRAFFIC_CAMS = [
   { label: '401 @ Cobourg', views: [
@@ -3421,6 +4128,77 @@ let camRefreshTimer = null;
 let activeCamIdx = 0;
 let activeCamView = 1; // default to Overhead
 let camModalRefreshTimer = null;
+let activeTrafficRegion = null; // null = default Cobourg cams
+const DEFAULT_TRAFFIC_CAMS = TRAFFIC_CAMS.map(c => ({label:c.label, views:c.views.map(v=>({...v}))}));
+
+/* ── Traffic page region filter ──────────────────────── */
+function renderTrafficRegionBar() {
+  const bar = document.getElementById('trafficRegionBar');
+  if (!bar) return;
+  const regions = Object.keys(CAMERA_REGIONS);
+  bar.innerHTML = regions.map(r => {
+    const count = CAMERA_REGIONS[r].length;
+    return '<button class="traffic-region-btn' + (r === activeTrafficRegion ? ' on' : '') + '" onclick="filterTrafficRegion(\'' + r.replace(/'/g, "\\'") + '\')">' + r + ' <span class="region-count">' + count + '</span></button>';
+  }).join('');
+}
+
+function filterTrafficRegion(region) {
+  // Toggle: clicking same region again resets to default
+  if (activeTrafficRegion === region) {
+    activeTrafficRegion = null;
+    rebuildCamGrid(DEFAULT_TRAFFIC_CAMS);
+  } else {
+    activeTrafficRegion = region;
+    const regionCams = CAMERA_REGIONS[region] || [];
+    // Build camera array in TRAFFIC_CAMS format
+    const mapped = regionCams.map(c => ({
+      label: c.label,
+      views: c.views.map(v => ({
+        id: v.id,
+        dir: v.dir === 'E' ? 'East' : v.dir === 'W' ? 'West' : v.dir === 'N' ? 'North' : v.dir === 'S' ? 'South' : 'Overhead'
+      }))
+    }));
+    rebuildCamGrid(mapped);
+  }
+  renderTrafficRegionBar();
+  highlightMapRegion(activeTrafficRegion);
+}
+
+function rebuildCamGrid(cams) {
+  const grid = document.getElementById('camGrid');
+  if (!grid) return;
+  // Temporarily replace TRAFFIC_CAMS for modal navigation
+  TRAFFIC_CAMS.length = 0;
+  cams.forEach(c => TRAFFIC_CAMS.push(c));
+
+  const t = Date.now();
+  const now = new Date();
+  const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  grid.innerHTML = cams.map((cam, i) => {
+    const ohView = cam.views.find(v => v.dir === 'Overhead' || v.dir === 'OH') || cam.views[1] || cam.views[0];
+    return '<div class="cam-card' + (i === 0 ? ' featured' : '') + '" onclick="openCamModal(' + i + ')">' +
+      '<img class="cam-img" id="cam-' + i + '" src="https://511on.ca/map/Cctv/' + ohView.id + '?t=' + t + '" alt="' + cam.label + '" loading="lazy">' +
+      '<div class="cam-label"><span>' + cam.label + ' <span class="cam-timestamp" id="cam-ts-' + i + '">' + ts + '</span></span><span class="cam-live"><span class="cam-live-dot"></span>LIVE</span></div>' +
+      '</div>';
+  }).join('');
+}
+
+function highlightMapRegion(region) {
+  document.querySelectorAll('.traffic-map-svg .cam-dot').forEach(dot => {
+    const r = dot.getAttribute('data-region');
+    if (!region) {
+      dot.style.opacity = '';
+      dot.style.r = '';
+    } else if (r === region) {
+      dot.style.opacity = '1';
+      dot.setAttribute('r', '5');
+    } else {
+      dot.style.opacity = '.3';
+      dot.setAttribute('r', '3');
+    }
+  });
+}
 
 function refreshCameras() {
   const t = Date.now();
@@ -3638,6 +4416,9 @@ async function fetchTrafficData() {
   renderNotesTabs();
   fetchEarthquakes();
   fetchTrafficData();
+  renderCamPreview();
+  renderTrafficRegionBar();
+  renderExchanges();
   loadTmrs();updateCompactRing();if(timers.some(t=>t.state==='running'))startTick();
   if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();
   const now=new Date();renderCal(now.getFullYear(),now.getMonth());
@@ -3649,6 +4430,7 @@ async function fetchTrafficData() {
   setInterval(fetchCurrency,30*60*1000);
   setInterval(fetchEarthquakes,30*60*1000);
   setInterval(refreshCameras, 30000);
+  setInterval(()=>renderCamPreview(), 30000);
   setInterval(fetchTrafficData, 5 * 60 * 1000);
   setInterval(renderMarketStatus, 60000);
 })();
