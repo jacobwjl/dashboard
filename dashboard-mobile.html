@@ -193,6 +193,23 @@ img{max-width:100%;height:auto}
 .sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .spill-count{font-size:.5rem;opacity:.6;margin-left:2px}
 
+/* ══ NEWS FILTER BAR ════════════════════════════════════════ */
+.news-filters{padding:0 0 8px;display:flex;flex-direction:column;gap:6px}
+.filter-row{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.filter-row::-webkit-scrollbar{display:none}
+.fpill{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:8px;font-size:.58rem;font-weight:600;background:var(--s1);color:var(--sub0);border:1px solid var(--border);white-space:nowrap;flex-shrink:0;min-height:32px;transition:all .15s}
+.fpill.on{background:var(--ac);color:white;border-color:var(--ac)}
+.fpill.cat-local.on{background:#a6e3a1;color:#1a1a26;border-color:#a6e3a1}
+.fpill.cat-police.on{background:#f38ba8;color:#1a1a26;border-color:#f38ba8}
+.fpill.cat-municipal.on{background:#94e2d5;color:#1a1a26;border-color:#94e2d5}
+.fpill.cat-regional.on{background:#89b4fa;color:#1a1a26;border-color:#89b4fa}
+.fpill .fpill-icon{font-size:.7rem}
+.news-search-wrap{display:flex;align-items:center;gap:8px;background:var(--s0);border:1px solid var(--border);border-radius:10px;padding:0 10px;height:36px}
+.news-search-wrap svg{flex-shrink:0;color:var(--ov0);width:14px;height:14px}
+.news-search{flex:1;height:100%;font-size:.72rem;background:none;color:var(--tx);border:none;outline:none}
+.news-search::placeholder{color:var(--ov0)}
+.filter-summary{font-size:.52rem;color:var(--ov0);padding:2px 0}
+
 /* Hero card */
 .mosaic-hero{
   position:relative;border-radius:14px;overflow:hidden;height:180px;margin-bottom:12px;
@@ -715,7 +732,17 @@ img { -webkit-user-drag: none }
       <button class="refresh-btn" onclick="fetchAllFeeds()">↻ Refresh</button>
     </div>
   </div>
-  <div class="source-pills" id="sourcePills"></div>
+  <!-- Filter bar -->
+  <div class="news-filters">
+    <div class="news-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="news-search" id="newsSearch" placeholder="Filter articles..." autocomplete="off" spellcheck="false" oninput="applyNewsFilters()">
+    </div>
+    <div class="filter-row" id="sourcePills"></div>
+    <div class="filter-row" id="categoryPills"></div>
+    <div class="filter-row" id="datePills"></div>
+    <div class="filter-summary" id="filterSummary"></div>
+  </div>
   <div class="news-feed" id="newsFeed">
     <div style="padding:16px 0"><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div>
   </div>
@@ -1124,31 +1151,75 @@ function setupSearch(){
 function cycleEngine(){const keys=Object.keys(engines);curEngine=keys[(keys.indexOf(curEngine)+1)%keys.length];LS('searchEngine',curEngine);document.getElementById('sbadge').textContent=curEngine}
 
 /* ── NEWS SYSTEM ══════════════════════════════════════════ */
-let allArticles=[],activeSource='all',activeArticleIdx=-1;
+let allArticles=[],activeArticleIdx=-1;
+/* ── MULTI-FILTER STATE ──────────────────────────────────── */
+let nf={source:'all',category:'all',dateRange:'all',search:'',_debounce:null};
+const CATEGORIES=['Local','Police','Municipal','Regional','News'];
+const DATE_RANGES=[{key:'all',label:'All Time'},{key:'today',label:'Today'},{key:'week',label:'This Week'},{key:'month',label:'This Month'}];
+
 function estimateReadTime(text){if(!text)return'1 min read';return`${Math.max(1,Math.round(text.split(/\s+/).length/200))} min read`}
-function getCategoryFromSource(s){const c={'northumberland':'Local','cobourg':'Local','consider':'Local','today':'Local','cbc':'Canada','global':'Canada','ctv':'Canada','bbc':'World','reuters':'World','ars':'Tech','verge':'Tech','bloomberg':'Finance','cnbc':'Finance'};const l=s.toLowerCase();for(const[k,v]of Object.entries(c))if(l.includes(k))return v;return'News'}
+function getCategoryFromSource(s){const c={'cobourg blog':'Local','cobourg police':'Police','today':'Local','consider':'Local','northumberland daily':'Local','town of cobourg':'Municipal','hamilton township':'Municipal','cramahe':'Municipal','kawarthanow':'Regional','kawartha 411':'Regional','burd report':'Local','classic rock':'Local','google news':'Local','opp':'Police','port hope police':'Police','global':'Regional','cbc':'Regional','quinte':'Regional','inquinte':'Regional','peterborough':'Regional','ptbo':'Regional','r/cobourg':'Local'};const l=s.toLowerCase();for(const[k,v]of Object.entries(c))if(l.includes(k))return v;return'News'}
+
+function getFilteredArticles(){
+  let filtered=allArticles;
+  if(nf.source!=='all')filtered=filtered.filter(a=>a.source===nf.source);
+  if(nf.category!=='all')filtered=filtered.filter(a=>getCategoryFromSource(a.source)===nf.category);
+  if(nf.dateRange!=='all'){const now=new Date();let cutoff;if(nf.dateRange==='today'){cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate())}else if(nf.dateRange==='week'){cutoff=new Date(now-7*86400000)}else if(nf.dateRange==='month'){cutoff=new Date(now-30*86400000)}if(cutoff)filtered=filtered.filter(a=>a.date>=cutoff)}
+  if(nf.search){const q=nf.search.toLowerCase();filtered=filtered.filter(a=>(a.title||'').toLowerCase().includes(q)||(a.description||'').toLowerCase().includes(q)||(a.source||'').toLowerCase().includes(q))}
+  return filtered;
+}
 
 function renderSourcePills(){
   const pills=document.getElementById('sourcePills');if(!pills)return;
   const counts={};allArticles.forEach(a=>{counts[a.source]=(counts[a.source]||0)+1});
-  let html=`<button class="spill${activeSource==='all'?' on':''}" onclick="filterSource('all')">All<span class="spill-count">${allArticles.length}</span></button>`;
+  let html=`<button class="spill${nf.source==='all'?' on':''}" onclick="setNewsFilter('source','all')">All<span class="spill-count">${allArticles.length}</span></button>`;
   const seen=new Set();
   allArticles.forEach(a=>{if(seen.has(a.source))return;seen.add(a.source);
-    html+=`<button class="spill${activeSource===a.source?' on':''}" onclick="filterSource('${a.source.replace(/'/g,"\\'")}')"><span class="sdot" style="background:${a.color||'var(--ac)'}"></span>${a.source}<span class="spill-count">${counts[a.source]||0}</span></button>`});
+    html+=`<button class="spill${nf.source===a.source?' on':''}" onclick="setNewsFilter('source','${a.source.replace(/'/g,"\\'")}')"><span class="sdot" style="background:${a.color||'var(--ac)'}"></span>${a.source}<span class="spill-count">${counts[a.source]||0}</span></button>`});
   pills.innerHTML=html;
+}
+
+function renderCategoryPills(){
+  const el=document.getElementById('categoryPills');if(!el)return;
+  const catCounts={};allArticles.forEach(a=>{const c=getCategoryFromSource(a.source);catCounts[c]=(catCounts[c]||0)+1});
+  let html=`<button class="fpill${nf.category==='all'?' on':''}" onclick="setNewsFilter('category','all')">All Categories</button>`;
+  CATEGORIES.forEach(cat=>{if(!catCounts[cat])return;const cls=cat.toLowerCase().replace(/\s/g,'-');
+    html+=`<button class="fpill cat-${cls}${nf.category===cat?' on':''}" onclick="setNewsFilter('category','${cat}')">${cat}<span class="spill-count">${catCounts[cat]||0}</span></button>`});
+  el.innerHTML=html;
+}
+
+function renderDatePills(){
+  const el=document.getElementById('datePills');if(!el)return;
+  const now=new Date();
+  const rangeCounts={};DATE_RANGES.forEach(r=>{if(r.key==='all'){rangeCounts.all=allArticles.length;return}let cutoff;if(r.key==='today')cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate());else if(r.key==='week')cutoff=new Date(now-7*86400000);else if(r.key==='month')cutoff=new Date(now-30*86400000);rangeCounts[r.key]=allArticles.filter(a=>a.date>=cutoff).length});
+  el.innerHTML=DATE_RANGES.map(r=>`<button class="fpill${nf.dateRange===r.key?' on':''}" onclick="setNewsFilter('dateRange','${r.key}')">${r.label}<span class="spill-count">${rangeCounts[r.key]||0}</span></button>`).join('');
+}
+
+function renderFilterSummary(){
+  const el=document.getElementById('filterSummary');if(!el)return;
+  const filtered=getFilteredArticles();
+  const parts=[];
+  if(nf.source!=='all')parts.push(nf.source);
+  if(nf.category!=='all')parts.push(nf.category);
+  if(nf.dateRange!=='all')parts.push(DATE_RANGES.find(r=>r.key===nf.dateRange)?.label||nf.dateRange);
+  if(nf.search)parts.push(`"${nf.search}"`);
+  el.textContent=parts.length?`${filtered.length} article${filtered.length!==1?'s':''} · Filtered by ${parts.join(' + ')}`:`${filtered.length} articles`;
 }
 
 function renderNewsFeed(){
   const feed=document.getElementById('newsFeed');if(!feed)return;
-  const filtered=activeSource==='all'?allArticles:allArticles.filter(a=>a.source===activeSource);
-  if(!filtered.length){feed.innerHTML='<div class="empty">No articles found</div>';return}
+  const filtered=getFilteredArticles();
+  if(!filtered.length){feed.innerHTML='<div class="empty">No articles match your filters</div>';renderFilterSummary();return}
   let html='';
-  filtered.forEach(article=>{const gi=allArticles.indexOf(article);const cat=getCategoryFromSource(article.source);
+  filtered.slice(0,100).forEach(article=>{const gi=allArticles.indexOf(article);const cat=getCategoryFromSource(article.source);
     html+=`<div class="feed-item${gi===activeArticleIdx?' active':''}" onclick="openArticle(${gi})"><div class="feed-item-img">📰</div><div class="feed-item-body"><div class="feed-source-info"><span class="fsrc">${article.source}</span><span style="color:var(--s2)">·</span><span class="ftime">${timeAgo(article.date)}</span></div><div class="feed-title">${article.title}</div>${article.description?`<div class="feed-desc">${article.description}</div>`:''}<div class="feed-meta-bottom"><span class="feed-read-time">📖 ${estimateReadTime(article.description)}</span><span class="feed-category">${cat}</span></div></div></div>`});
   feed.innerHTML=html;
+  renderFilterSummary();
 }
 
-function filterSource(source){activeSource=source;renderSourcePills();renderNewsFeed()}
+function setNewsFilter(key,val){nf[key]=val;renderSourcePills();renderCategoryPills();renderDatePills();renderNewsFeed()}
+function applyNewsFilters(){clearTimeout(nf._debounce);nf._debounce=setTimeout(()=>{nf.search=(document.getElementById('newsSearch')?.value||'').trim();renderNewsFeed();renderFilterSummary()},200)}
+function filterSource(source){setNewsFilter('source',source)}
 
 /* ── ARTICLE FETCHING ─────────────────────────────────── */
 function parseRSSXML(xml){
@@ -1161,7 +1232,7 @@ function parseRSSXML(xml){
 
 function normalizeItems(srcKey,raw){
   const srcDef=newsSources.find(s=>s.key===srcKey)||{name:srcKey,dot:'#888'};
-  return raw.slice(0,15).map(item=>{const title=(item.title||'').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,'').trim();const link=item.url||item.link||'';const description=stripHTML(item.desc||item.description||'').slice(0,300);const fullContent=item.fullContent||item.desc||'';const date=item.pubDate?new Date(item.pubDate):new Date(0);return{title,link,description,fullContent,date,source:srcDef.name,color:srcDef.dot,sourceIcon:'📰'}}).filter(i=>i.title&&i.link);
+  return raw.slice(0,30).map(item=>{const title=(item.title||'').replace(/&amp;/g,'&').replace(/&#039;/g,"'").replace(/&quot;/g,'"').replace(/<[^>]+>/g,'').trim();const link=item.url||item.link||'';const description=stripHTML(item.desc||item.description||'').slice(0,300);const fullContent=item.fullContent||item.desc||'';const date=item.pubDate?new Date(item.pubDate):new Date(0);return{title,link,description,fullContent,date,source:srcDef.name,color:srcDef.dot,sourceIcon:'📰'}}).filter(i=>i.title&&i.link);
 }
 
 const newsSources=[
@@ -1182,6 +1253,14 @@ const newsSources=[
   {key:'gn2',name:'Google News Northumberland',dot:'#a6adc8',feed:'https://news.google.com/rss/search?q=%22Cobourg%22+OR+%22Port+Hope%22+OR+%22Northumberland+County%22&hl=en-CA&gl=CA&ceid=CA:en'},
   {key:'opp',name:'OPP East Region',dot:'#f5c2e7',feed:'https://news.google.com/rss/search?q=%22OPP%22+%22Northumberland%22+OR+%22OPP%22+%22Cobourg%22+OR+%22OPP%22+%22Port+Hope%22&hl=en-CA&gl=CA&ceid=CA:en'},
   {key:'php',name:'Port Hope Police',dot:'#cba6f7',feed:'https://news.google.com/rss/search?q=%22Port+Hope+Police%22+OR+%22PHPS%22+%22Port+Hope%22&hl=en-CA&gl=CA&ceid=CA:en'},
+  {key:'gp',name:'Global Peterborough',dot:'#E8364E',feed:'https://globalnews.ca/peterborough/feed/'},
+  {key:'gd',name:'Global Durham',dot:'#D03040',feed:'https://globalnews.ca/durham/feed/'},
+  {key:'cbcot',name:'CBC Ottawa',dot:'#E07020',feed:'https://www.cbc.ca/webfeed/rss/rss-canada-ottawa'},
+  {key:'cbcto',name:'CBC Toronto',dot:'#E88830',feed:'https://www.cbc.ca/webfeed/rss/rss-canada-toronto'},
+  {key:'qn',name:'Quinte News',dot:'#9B72CF',feed:'https://www.quintenews.com/feed/'},
+  {key:'iq',name:'InQuinte',dot:'#8A60C0',feed:'https://www.inquinte.ca/feed'},
+  {key:'pc',name:'Peterborough Currents',dot:'#30B8A0',feed:'https://peterboroughcurrents.ca/feed/'},
+  {key:'ptbo',name:'PtboCanada',dot:'#28A898',feed:'https://www.ptbocanada.com/journal?format=rss'},
   {key:'rd',name:'r/Cobourg',dot:'#ff6314',reddit:true},
 ];
 
@@ -1260,7 +1339,7 @@ async function fetchCobourgReddit(){
 }
 
 async function fetchAllNews(forceRefresh){
-  if(!forceRefresh){const cached=LS('newsCache');if(cached&&cached.length){allArticles=cached.map(i=>({...i,date:new Date(i.date)}));renderSourcePills();renderNewsFeed();renderMosaicSources();renderMosaic()}}
+  if(!forceRefresh){const cached=LS('newsCache');if(cached&&cached.length){allArticles=cached.map(i=>({...i,date:new Date(i.date)}));renderAllNewsUI()}}
   const fetchers=[...newsSources.filter(s=>s.feed).map(s=>fetchRSSSource(s)),fetchCobourgReddit()];
   const results=await Promise.allSettled(fetchers);
   const merged=[];
@@ -1268,8 +1347,9 @@ async function fetchAllNews(forceRefresh){
   merged.sort((a,b)=>b.date-a.date);
   if(merged.length){allArticles=merged;LS('newsCache',allArticles.map(i=>{const{fullContent,...rest}=i;return{...rest,date:i.date.toISOString()}}))}
   const upd=document.getElementById('newsUpdated');if(upd)upd.textContent=`Updated ${new Date().toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}`;
-  if(allArticles.length){renderSourcePills();renderNewsFeed();renderMosaicSources();renderMosaic()}
+  if(allArticles.length){renderAllNewsUI()}
 }
+function renderAllNewsUI(){renderSourcePills();renderCategoryPills();renderDatePills();renderNewsFeed();renderFilterSummary();renderMosaicSources();renderMosaic()}
 function fetchAllFeeds(){fetchAllNews(true)}
 
 /* ── NEWS CRAWL ───────────────────────────────────────── */
